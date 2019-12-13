@@ -6,7 +6,7 @@ Authors
 
 
 Numba Maintainer
--------
+
 * Jiraphapa Jiravaraphan
 
 
