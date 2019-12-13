@@ -1,7 +1,12 @@
 Authors
 -------
 
-* Eric (New contributor)
-* Anthony 
+* Alexander Heilmeier
+* Tim Stahl
+
+
+Numba Maintainer
+-------
+* Jiraphapa Jiravaraphan
 
 
