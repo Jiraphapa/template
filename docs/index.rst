@@ -17,7 +17,11 @@ Contents:
 
    *
 
+.. toctree::
+   :maxdepth: 2
+   :caption: First Steps:
 
+   
 
 Indices and tables
 ==================
