@@ -5,7 +5,7 @@ Authors
 * Tim Stahl
 
 
-Numba code Maintainer
+Numba code maintainer
 
 * Jiraphapa Jiravaraphan
 
