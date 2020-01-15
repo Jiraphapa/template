@@ -11,19 +11,12 @@ The repository provides some helper functions we frequently use in our trajector
 
 Contents:
 
-```eval_rst
 .. toctree::
    :maxdepth: 2
    :glob:
 
    *
-```
 
-```eval_rst
-.. toctree::
-   :maxdepth: 2
-   :caption: First Steps:
-```
 
 
 Indices and tables
