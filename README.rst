@@ -16,7 +16,7 @@ Each of the modules are converted into the optimized version with `Numba` in a s
 
 calc_vel_profile_numba
 --------
-The `calc_vel_profile_numba` is 
+The `calc_vel_profile_numba` consists of the main function `calc_vel_profile` which usually called by external modules (ex. `OnlineTrajectoryHandler`)
 
 
 calc_splines_numba
