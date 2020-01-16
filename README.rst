@@ -32,10 +32,10 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
     # Module name
     cc = CC('calc_vel_profile_numba')
 
-It is required to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names).
+AOT compilation require to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names).
 
 .. code-block:: python
-    :emphasize-lines: 2
+    :emphasize-lines: 1,2
 
     @cc.export('calc_vel_profile', 'float64[:](float64[:,:], float64[:], float64[:], boolean, float64, float64, optional(float64[:,:]), optional(float64[:,:]), optional(float64), optional(float64), optional(float64[:]), optional(float64), optional(float64), optional(int64))')
     @jit(nopython=True, cache=True)
@@ -54,7 +54,8 @@ It is required to specify the function signatures explicitly, each exported func
                      v_end: float = None,
                      filt_window: int = None) -> np.ndarray:
 
-If you run this Python script, it will generate an extension module named my_module. Depending on your platform, the actual filename may be my_module.so, my_module.pyd, my_module.cpython-34m.so, etc.
+The array types is declared by subscripting an elementary type according to the number of dimensions ex. float64[:] for 1-dimension double precision floating point (64 bit) array and float64[:,:,:] for 3-dimensions array, etc. (see `CNN <http://cnn.com>`_). 
+ If you run this Python script, it will generate an extension module named my_module. Depending on your platform, the actual filename may be my_module.so, my_module.pyd, my_module.cpython-34m.so, etc.
 
 
 calc_splines_numba
