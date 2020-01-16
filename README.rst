@@ -1,5 +1,5 @@
 Modules
-========
+================================
 
 According to CPU profiling, the following mudules are the main bottleneck of the running process main_mod_local_traj.py:
 1. **calc_vel_profile** <br />
