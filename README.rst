@@ -28,10 +28,11 @@ The first step is to import necessary Numba modules:
 To produces a compiled extension module which does not depend on Numba, Numba's Ahead-of-Time compilation (AOT) allows to distribute the module on machines which do not have Numba installed (but Numpy is required). We declare the following module name with
 
 .. code-block:: python
-# Module name
-cc = CC('calc_vel_profile_numba')
 
-It is required to specify the function signatures explicitly, each exported function can have only one signature.
+    # Module name
+    cc = CC('calc_vel_profile_numba')
+
+It is required to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names)
 
 calc_splines_numba
 ------------
