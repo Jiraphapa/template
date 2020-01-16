@@ -27,4 +27,4 @@ For example, to call ``calc_splines`` function in the module ``calc_splines_numb
 
 	calc_splines_numba.calc_splines(path, el_lengths, None, None, None)
 
- (test ``.so`` file `my_module <https://trello.com/c/jNKMAOdM>`_). 
+ (test ``.so`` file `see <https://trello.com/c/jNKMAOdM>`_). 
