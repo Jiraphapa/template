@@ -80,7 +80,16 @@ this can be solved by replacing with alternative implementation with supported N
             for i in range(kappa.size-1):            # same functionality with: p_ggv = np.repeat(np.expand_dims(ggv, axis=0), kappa.size, axis=0)
                 p_ggv = np.concatenate((p_ggv, np.expand_dims(ggv, axis=0)), axis=0)    
 
-Some parts are tricky, in the follwing hilighted lines would throw an error as loc_gg is an `optional` type which could be ```None```
+Some parts are tricky, in the follwing hilighted lines would throw an error as ``loc_gg`` is an `optional` type which could be ``None``, an invalid parameter for ``np.column_stack`` function
+
+.. code-block:: python
+    :emphasize-lines: 3
+
+    # CASE 2: local gg diagram supplied -> add velocity dimension (artificial velocity of 10.0 m/s)
+    else:
+         p_ggv = np.expand_dims(np.column_stack((np.ones(loc_gg.shape[0]) * 10.0, loc_gg)), axis=1)
+
+The following version of ``calc_vel_profile`` implementation can be converted into the valid Numba version by adding ``np.copy`` to ensure the value of type ``ndarray`` as follows:
 
 .. code-block:: python
     :emphasize-lines: 3
