@@ -60,7 +60,7 @@ If you run this Python script, it will generate an extension module named ``calc
 
 There are some limitations to the default parameters in currently used version of Numba (see this `thread <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_), in order to fulfill the functionality, one declares the ``optional(typ)`` decorator in the function signature indicating that optional type that allow any value of either of underlying typ or None.
 
-Numba understands calls to NumPy ufuncs and is able to generate equivalent native code for many of them and NumPy arrays are supported as native types, however, not all Numpy implemenations are supported. In the following
+Numba understands calls to NumPy ufuncs and is able to generate equivalent native code for many of them and NumPy arrays are supported as native types, however, not all Numpy implemenations are supported. The following code block of the function ``calc_vel_profile`` will thrown an error in Numba compilation.
 
 .. code-block:: python
     if ggv is not None:
