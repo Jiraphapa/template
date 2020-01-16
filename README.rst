@@ -58,6 +58,7 @@ AOT compilation require to specify the function signatures explicitly (as shown 
 The array types is declared by subscripting an elementary type according to the number of dimensions ex. ``float64[:]`` for 1-dimension double precision floating point (64 bit) array and ``float64[:,:,:]`` for 3-dimensions array, etc. (see `Numba's types and signatures <https://numba.pydata.org/numba-doc/dev/reference/types.html>`_). 
 If you run this Python script, it will generate an extension module named ``calc_vel_profile``. Depending on the running platform, the actual filename may be ``calc_vel_profile.so``, ``calc_vel_profile.pyd``, ``calc_vel_profile.cpython-34m.so``, etc.
 
+There are some limitations to the default parameters in Numba (see this `thread <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_), in order to fulfill the functionality, one declares the ``optional(typ)`` decorator in the function signature indicating that optional type that allow any value of either of underlying typ or None.
 
 calc_splines_numba
 ------------
