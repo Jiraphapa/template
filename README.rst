@@ -32,11 +32,11 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
     # Module name
     cc = CC('calc_vel_profile_numba')
 
-It is required to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names)
+It is required to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names).
 
 .. code-block:: python
     :emphasize-lines: 3,5
-    
+
     @cc.export('calc_vel_profile', 'float64[:](float64[:,:], float64[:], float64[:], boolean, float64, float64, optional(float64[:,:]), optional(float64[:,:]), optional(float64), optional(float64), optional(float64[:]), optional(float64), optional(float64), optional(int64))')
     @jit(nopython=True, cache=True)
     def calc_vel_profile(ax_max_machines: np.ndarray,
@@ -53,6 +53,8 @@ It is required to specify the function signatures explicitly, each exported func
                      v_start: float = None,
                      v_end: float = None,
                      filt_window: int = None) -> np.ndarray:
+
+If you run this Python script, it will generate an extension module named my_module. Depending on your platform, the actual filename may be my_module.so, my_module.pyd, my_module.cpython-34m.so, etc.
 
 
 calc_splines_numba
