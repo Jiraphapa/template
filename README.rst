@@ -60,11 +60,21 @@ If you run this Python script, it will generate an extension module named ``calc
 
 There are some limitations to the default parameters in currently used version of Numba (see this `thread <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_), in order to fulfill the functionality, one declares the ``optional(typ)`` decorator in the function signature indicating that optional type that allow any value of either of underlying typ or None.
 
-Numba understands calls to NumPy ufuncs and is able to generate equivalent native code for many of them and NumPy arrays are supported as native types, however, not all Numpy implemenations are supported. The following code block of the function ``calc_vel_profile`` will thrown an error in Numba compilation.
+Numba understands calls to NumPy ufuncs and is able to generate equivalent native code for many of them and NumPy arrays are supported as native types, however, not all Numpy implemenations are supported. The following code block of the function ``calc_vel_profile`` will thrown an error of `Use of unsupported NumPy function` in Numba compilation (see `Supported NumPy features <https://numba.pydata.org/numba-doc/dev/reference/numpysupported.html>`_).
 
 .. code-block:: python
     if ggv is not None:
         p_ggv = np.repeat(np.expand_dims(ggv, axis=0), kappa.size, axis=0)
+
+this can be solved by replacing with alternative implementation with supported Numpy features or writing code imposing Numpy implemenation:
+
+.. code-block:: python
+    if ggv is not None:
+        p_ggv = np.empty((0, 0, 3))
+        if kappa.size >= 0:
+            p_ggv = np.expand_dims(ggv, axis=0)      # Notes: Numba 0.46.0 currently not support numpy.repeat with axis argument
+            for i in range(kappa.size-1):            # same functionality with: p_ggv = np.repeat(np.expand_dims(ggv, axis=0), kappa.size, axis=0)
+                p_ggv = np.concatenate((p_ggv, np.expand_dims(ggv, axis=0)), axis=0)    
 
 
 calc_splines_numba
