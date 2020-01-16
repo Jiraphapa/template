@@ -18,7 +18,7 @@ calc_vel_profile_numba
 --------
 The ``calc_vel_profile_numba`` consists of the main functions `calc_vel_profile` which usually called by external modules (ex. `OnlineTrajectoryHandler`) and `calc_ax_poss`. The functions `__solver_fb_unclosed`, `__solver_fb_closed`, `__solver_fb_acc_profile` are used internally. 
 
-```Python
+```python
 from numba.pycc import CC
 from numba import jit
 ```
