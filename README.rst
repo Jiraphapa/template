@@ -16,16 +16,15 @@ Each of the modules are converted into the optimized version with `Numba` in a s
 
 calc_vel_profile_numba
 --------
-The ``calc_vel_profile_numba`` consists of the main functions ``calc_vel_profile`` (which usually called by external modules ex. ``OnlineTrajectoryHandler``) and ``calc_ax_poss``. The functions ``__solver_fb_unclosed``, ``__solver_fb_closed``, ``__solver_fb_acc_profile`` are used internally. 
+The ``calc_vel_profile_numba`` consists of the main functions ``calc_vel_profile`` (which usually called by external modules ex. ``OnlineTrajectoryHandler``) and ``calc_ax_poss``. The functions ``__solver_fb_unclosed``, ``__solver_fb_closed``, ``__solver_fb_acc_profile`` are used internally.
+The first step is to import necessary Numba modules:
 
 .. code-block:: python
    :emphasize-lines: 3,5
 
-   def some_function():
-       interesting = False
-       print 'This line is highlighted.'
-       print 'This one is not...'
-       print '...but this one is.'
+   from numba.pycc import CC
+   from numba import jit
+
 
 calc_splines_numba
 ------------
