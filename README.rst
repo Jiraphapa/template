@@ -35,7 +35,7 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
 It is required to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names).
 
 .. code-block:: python
-    :emphasize-lines: 3,5
+    :emphasize-lines: 2
 
     @cc.export('calc_vel_profile', 'float64[:](float64[:,:], float64[:], float64[:], boolean, float64, float64, optional(float64[:,:]), optional(float64[:,:]), optional(float64), optional(float64), optional(float64[:]), optional(float64), optional(float64), optional(int64))')
     @jit(nopython=True, cache=True)
