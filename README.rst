@@ -1,8 +1,15 @@
-Template
+Modules
 ========
 
-$project will solve your problem of where to start with documentation,
-by providing a basic explanation of how to do it easily.
+According to CPU profiling, the following mudules are the main bottleneck of the running process main_mod_local_traj.py:
+1. **calc_vel_profile** <br />
+  Calculates a velocity profile using the tire and motor limits as good as possible.
+2. **calc_splines** <br />
+  Solve for a curvature continuous cubic spline between given poses.
+3. **conv_filt** <br />
+  Filter a given temporal signal using a convolution (moving average) filter.
+
+
 
 Look how easy it is to use:
 
