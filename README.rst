@@ -113,7 +113,7 @@ todo: write about type unifying
         # check index diffs -> we only need the first point of every acceleration phase
         acc_inds_diffs = np.diff(acc_inds)
         acc_inds_diffs = insert(acc_inds_diffs, 0, 2)       # first point is always a starting point, Notes: Numba 0.46.0 currently not support numpy.insert 
-        acc_inds_rel = list(acc_inds[acc_inds_diffs > 1])         # starting point indices for acceleration phases
+        acc_inds_rel = acc_inds[acc_inds_diffs > 1]         # starting point indices for acceleration phases
     else:
         acc_inds_rel = [np.int64(x) for x in range(0)]      # if vmax is low and can be driven all the time
 
