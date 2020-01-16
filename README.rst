@@ -25,7 +25,11 @@ The first step is to import necessary Numba modules:
    from numba.pycc import CC
    from numba import jit
 
-OT compilation produces a compiled extension module which does not depend on Numba: you can distribute the module on machines which do not have Numba installed (but Numpy is required).
+To produces a compiled extension module which does not depend on Numba, Numba's Ahead-of-Time compilation (AOT) allows to distribute the module on machines which do not have Numba installed (but Numpy is required). We declare the following module name with
+
+.. code-block:: python
+# Module name
+cc = CC('calc_vel_profile_numba')
 
 calc_splines_numba
 ------------
