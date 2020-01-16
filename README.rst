@@ -8,35 +8,22 @@ According to CPU profiling, the following mudules are the main bottleneck of the
   Solve for a curvature continuous cubic spline between given poses.
 3. **conv_filt** <br />
   Filter a given temporal signal using a convolution (moving average) filter.
+Each of the following modules are converted into the optimized version with Numba in a separated modules named with the suffix `_numba` as follows:
 
 
-
-calc_vel_profile
+calc_vel_profile_numba
 --------
+The `calc_vel_profile` is 
 
-- Be awesome
-- Make things faster
 
-calc_splines
+calc_splines_numba
 ------------
 
-Install $project by running:
 
-    install project
 
-conv_filt
+conv_filt_numba
 ----------
 
-- Issue Tracker: github.com/$project/$project/issues
-- Source Code: github.com/$project/$project
 
-Support
--------
 
-If you are having issues, please let us know.
-We have a mailing list located at: project@google-groups.com
 
-License
--------
-
-The project is licensed under the BSD license.
