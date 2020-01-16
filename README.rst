@@ -32,7 +32,7 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
     # Module name
     cc = CC('calc_vel_profile_numba')
 
-todo: add description
+todo: add more description
 
 .. code-block:: python
 
