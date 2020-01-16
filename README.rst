@@ -98,6 +98,24 @@ The following version of ``calc_vel_profile`` implementation can be converted in
     else:
         p_ggv = np.expand_dims(np.column_stack((np.ones(loc_gg.shape[0]) * 10.0, np.copy(loc_gg))), axis=1)
 
+todo: write about type unifying
+
+.. code-block:: python
+    :emphasize-lines: 11,13
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # SEARCH START POINTS FOR ACCELERATION PHASES ----------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
+
+    vx_diffs = np.diff(np.copy(vx_profile))
+    acc_inds = np.where(vx_diffs > 0.0)[0]                  # indices of points with positive acceleration
+    if acc_inds.size != 0:
+        # check index diffs -> we only need the first point of every acceleration phase
+        acc_inds_diffs = np.diff(acc_inds)
+        acc_inds_diffs = insert(acc_inds_diffs, 0, 2)       # first point is always a starting point, Notes: Numba 0.46.0 currently not support numpy.insert 
+        acc_inds_rel = list(acc_inds[acc_inds_diffs > 1])         # starting point indices for acceleration phases
+    else:
+        acc_inds_rel = [np.int64(x) for x in range(0)]      # if vmax is low and can be driven all the time
 
 calc_splines_numba
 ------------
