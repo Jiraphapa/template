@@ -2,6 +2,7 @@ Modules
 ================================
 
 According to CPU profiling, the following mudules are the main bottleneck of the running process `main_mod_local_traj`:
+
 1. **calc_vel_profile** <br />
   Calculates a velocity profile using the tire and motor limits as good as possible.
 2. **calc_splines** <br />
