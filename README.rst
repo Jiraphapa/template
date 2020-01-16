@@ -63,12 +63,14 @@ There are some limitations to the default parameters in currently used version o
 Numba understands calls to NumPy ufuncs and is able to generate equivalent native code for many of them and NumPy arrays are supported as native types, however, not all Numpy implemenations are supported. The following code block of the function ``calc_vel_profile`` will thrown an error of `Use of unsupported NumPy function` in Numba compilation (see `Supported NumPy features <https://numba.pydata.org/numba-doc/dev/reference/numpysupported.html>`_).
 
 .. code-block:: python
+
     if ggv is not None:
         p_ggv = np.repeat(np.expand_dims(ggv, axis=0), kappa.size, axis=0)
 
 this can be solved by replacing with alternative implementation with supported Numpy features or writing code imposing Numpy implemenation:
 
 .. code-block:: python
+
     if ggv is not None:
         p_ggv = np.empty((0, 0, 3))
         if kappa.size >= 0:
