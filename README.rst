@@ -32,10 +32,11 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
     # Module name
     cc = CC('calc_vel_profile_numba')
 
-AOT compilation require to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names).
+With AOT there is no compilation overhead at runtime nor any overhead of importing Numba.
+AOT compilation require to specify the function signatures explicitly (as shown in the hilighted line below), each exported function can have only one signature (can be multiple signature with different function names). On the other hand, the ``@jit`` decorators tells the compiler to compile the decorated function on-the-fly (at execution time) to produce efficient machine code.
 
 .. code-block:: python
-    :emphasize-lines: 1,2
+    :emphasize-lines: 1
 
     @cc.export('calc_vel_profile', 'float64[:](float64[:,:], float64[:], float64[:], boolean, float64, float64, optional(float64[:,:]), optional(float64[:,:]), optional(float64), optional(float64), optional(float64[:]), optional(float64), optional(float64), optional(int64))')
     @jit(nopython=True, cache=True)
@@ -55,7 +56,7 @@ AOT compilation require to specify the function signatures explicitly, each expo
                      filt_window: int = None) -> np.ndarray:
 
 The array types is declared by subscripting an elementary type according to the number of dimensions ex. ``float64[:]`` for 1-dimension double precision floating point (64 bit) array and ``float64[:,:,:]`` for 3-dimensions array, etc. (see `Numba's types and signatures <https://numba.pydata.org/numba-doc/dev/reference/types.html>`_). 
- If you run this Python script, it will generate an extension module named ``calc_vel_profile``. Depending on the running platform, the actual filename may be ``calc_vel_profile.so``, ``calc_vel_profile.pyd``, ``calc_vel_profile.cpython-34m.so``, etc.
+If you run this Python script, it will generate an extension module named ``calc_vel_profile``. Depending on the running platform, the actual filename may be ``calc_vel_profile.so``, ``calc_vel_profile.pyd``, ``calc_vel_profile.cpython-34m.so``, etc.
 
 
 calc_splines_numba
