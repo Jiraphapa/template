@@ -2,7 +2,7 @@
 Usage
 ========
 
-To import the compiled module, make sure to add the module_name.so file to PYTHONPATH and import:
+To import the compiled module, make sure to add the module_name.so file to PYTHONPATH before import:
 
 .. code-block:: python
 
