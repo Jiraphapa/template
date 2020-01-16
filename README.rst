@@ -25,6 +25,7 @@ The first step is to import necessary Numba modules:
    from numba.pycc import CC
    from numba import jit
 
+OT compilation produces a compiled extension module which does not depend on Numba: you can distribute the module on machines which do not have Numba installed (but Numpy is required).
 
 calc_splines_numba
 ------------
