@@ -34,6 +34,25 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
 
 It is required to specify the function signatures explicitly, each exported function can have only one signature (can be multiple signature with different function names)
 
+.. code-block:: python
+    @cc.export('calc_vel_profile', 'float64[:](float64[:,:], float64[:], float64[:], boolean, float64, float64, optional(float64[:,:]), optional(float64[:,:]), optional(float64), optional(float64), optional(float64[:]), optional(float64), optional(float64), optional(int64))')
+    @jit(nopython=True, cache=True)
+    def calc_vel_profile(ax_max_machines: np.ndarray,
+                     kappa: np.ndarray,
+                     el_lengths: np.ndarray,
+                     closed: bool,
+                     drag_coeff: float,
+                     m_veh: float,
+                     ggv: np.ndarray = None,
+                     loc_gg: np.ndarray = None,
+                     v_max: float = None,
+                     dyn_model_exp: float = 1.0,
+                     mu: np.ndarray = None,
+                     v_start: float = None,
+                     v_end: float = None,
+                     filt_window: int = None) -> np.ndarray:
+
+
 calc_splines_numba
 ------------
 
