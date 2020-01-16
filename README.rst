@@ -54,8 +54,8 @@ AOT compilation require to specify the function signatures explicitly, each expo
                      v_end: float = None,
                      filt_window: int = None) -> np.ndarray:
 
-The array types is declared by subscripting an elementary type according to the number of dimensions ex. float64[:] for 1-dimension double precision floating point (64 bit) array and float64[:,:,:] for 3-dimensions array, etc. (see `CNN <http://cnn.com>`_). 
- If you run this Python script, it will generate an extension module named my_module. Depending on your platform, the actual filename may be my_module.so, my_module.pyd, my_module.cpython-34m.so, etc.
+The array types is declared by subscripting an elementary type according to the number of dimensions ex. ``float64[:]`` for 1-dimension double precision floating point (64 bit) array and ``float64[:,:,:]`` for 3-dimensions array, etc. (see `Numba's types and signatures <https://numba.pydata.org/numba-doc/dev/reference/types.html>`_). 
+ If you run this Python script, it will generate an extension module named ``calc_vel_profile``. Depending on the running platform, the actual filename may be ``calc_vel_profile.so``, ``calc_vel_profile.pyd``, ``calc_vel_profile.cpython-34m.so``, etc.
 
 
 calc_splines_numba
