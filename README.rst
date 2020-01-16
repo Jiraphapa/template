@@ -31,7 +31,7 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
 # Module name
 cc = CC('calc_vel_profile_numba')
 
-It is required to specify the function signatures explicitly (it's posiible to have several different signatures under different names)
+It is required to specify the function signatures explicitly, each exported function can have only one signature.
 
 calc_splines_numba
 ------------
