@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use this template, simply update it::
+To import the compiled module, make sure to add the module_name.so file to PYTHONPATH and import::
 
-	import read-the-docs-template
+	import module_name
