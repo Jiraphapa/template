@@ -64,6 +64,7 @@ Numba understands calls to NumPy ufuncs and is able to generate equivalent nativ
 
 .. code-block:: python
 
+    # CASE 1: ggv supplied -> copy it for every waypoint
     if ggv is not None:
         p_ggv = np.repeat(np.expand_dims(ggv, axis=0), kappa.size, axis=0)
 
@@ -71,12 +72,22 @@ this can be solved by replacing with alternative implementation with supported N
 
 .. code-block:: python
 
+    # CASE 1: ggv supplied -> copy it for every waypoint
     if ggv is not None:
         p_ggv = np.empty((0, 0, 3))
         if kappa.size >= 0:
             p_ggv = np.expand_dims(ggv, axis=0)      # Notes: Numba 0.46.0 currently not support numpy.repeat with axis argument
             for i in range(kappa.size-1):            # same functionality with: p_ggv = np.repeat(np.expand_dims(ggv, axis=0), kappa.size, axis=0)
                 p_ggv = np.concatenate((p_ggv, np.expand_dims(ggv, axis=0)), axis=0)    
+
+Some parts are tricky, in the follwing hilighted lines would throw an error as loc_gg is an `optional` type which could be ```None```
+
+.. code-block:: python
+    :emphasize-lines: 3
+
+    # CASE 2: local gg diagram supplied -> add velocity dimension (artificial velocity of 10.0 m/s)
+    else:
+        p_ggv = np.expand_dims(np.column_stack((np.ones(loc_gg.shape[0]) * 10.0, np.copy(loc_gg))), axis=1)
 
 
 calc_splines_numba
