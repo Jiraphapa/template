@@ -33,7 +33,7 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
     cc = CC('calc_vel_profile_numba')
 
 With AOT there is no compilation overhead at runtime nor any overhead of importing Numba.
-AOT compilation require to specify the function signatures explicitly (as shown in the hilighted line below), each exported function can have only one signature (can be multiple signature with different function names). On the other hand, the ``@jit`` decorators tells the compiler to compile the decorated function on-the-fly (at execution time) to produce efficient machine code.
+AOT compilation require to specify the function signatures explicitly (as shown in the hilighted line below), each exported function can have only one signature (can be multiple signature with different function names). On the other hand, the ``@jit`` decorators tells the compiler to compile the decorated function on-the-fly (at execution time) to produce efficient machine code, the nopython=True enables mode that generates code that does not access the Python C API (see `Numba's Glossary <https://numba.pydata.org/numba-doc/dev/glossary.html>`_).
 
 .. code-block:: python
     :emphasize-lines: 1
