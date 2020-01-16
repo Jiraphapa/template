@@ -10,7 +10,7 @@ According to CPU profiling, the following Python mudules are the main bottleneck
 3. **conv_filt** 
   Filter a given temporal signal using a convolution (moving average) filter.
 
-The above modules make a lot of use NumPy arrays and functions, and loops.
+The above modules make a lot of use NumPy arrays and functions, and loops and in order to optimize these modules, the compiler techniques are considered for the optimal runtime speed. Numba is a just-in-time compiler for Python that works best on code that uses NumPy arrays and functions, and loops.
 Each of the modules are converted into the optimized version with Numba in a separated modules named with the suffix `_numba` as follows:
 
 
