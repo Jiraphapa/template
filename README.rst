@@ -11,26 +11,20 @@ According to CPU profiling, the following mudules are the main bottleneck of the
 
 
 
-Look how easy it is to use:
-
-    import project
-    # Get your stuff done
-    project.do_stuff()
-
-Features
+calc_vel_profile
 --------
 
 - Be awesome
 - Make things faster
 
-Installation
+calc_splines
 ------------
 
 Install $project by running:
 
     install project
 
-Contribute
+conv_filt
 ----------
 
 - Issue Tracker: github.com/$project/$project/issues
