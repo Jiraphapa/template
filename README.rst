@@ -189,7 +189,7 @@ the call is made to internal ``isclose`` function implementation.
 
 The compact implemention of Numpy's is according to the original Numpy's implemention, with a restriction on finite array.
 
-Another limitation of Numba is on the support of Numpy's ``diff`` function with ``axis`` argument, the default argument for the ``axis```
+Another limitation of Numba is on the support of Numpy's ``diff`` function with ``axis`` argument, the default argument for the ``axis``
 parameter the last axis, however, one shall implement the function for axis support
 
 .. code-block:: python
