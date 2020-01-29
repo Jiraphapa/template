@@ -160,11 +160,11 @@ The tuple return type is declared by the prefix ``UniTuple`` with the content ty
                  psi_e: float = None,
                  use_dist_scaling: bool = True) -> tuple:
 
-the function first check whether the path is close by calling ``np.isclose`` function, however, current version of Numba used (0.46.0) does not support the Numpy ``isclose``, therefore,
-the call is made to internal isclose function implementation.
+the function first check whether the path is close by calling ``np.isclose`` function, however, current version of Numba used (0.46.0) does not support the Numpy `isclose`, therefore,
+the call is made to internal ``isclose`` function implementation.
 
 .. code-block:: python
-    :emphasize-lines: 15
+    :emphasize-lines: 16
 
     @cc.export('isclose', 'boolean[:](float64[:], float64[:])')
     @jit(nopython=True, cache=True)
@@ -177,9 +177,11 @@ the call is made to internal isclose function implementation.
         return result 
 
     ...
+
+    def calc_splines(...):
+
     ...
 
-    # check if path is closed
         if np.all(isclose(path[0], path[-1])):      # Numba 0.46.0 does not support NumPy function 'numpy.isclose'
             closed = True
 
