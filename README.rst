@@ -146,7 +146,7 @@ The first step is to import necessary Numba modules and declare module name, the
    cc = CC('calc_vel_profile_numba')
 
 AOT compilation require to specify the function signatures explicitly (as discussed in the `calc_vel_profile_numba` section).
-The tuple return type is declared by the prefix ``UniTuple`` of the tuple content type
+The tuple return type is declared by the prefix ``UniTuple`` with the content type as the first parameter and number of elements as the second paramer.
 
 .. code-block:: python
     :emphasize-lines: 1
