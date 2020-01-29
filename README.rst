@@ -106,7 +106,7 @@ The following version of ``calc_vel_profile`` implementation can be converted in
         p_ggv = np.expand_dims(np.column_stack((np.ones(loc_gg.shape[0]) * 10.0, np.copy(loc_gg))), axis=1)
 
 One of the common reasons that of compile failure in Numba code is that it cannot statically determine the return type of a function. The above lines
-will cause a `type unification` error as it cannot unify the `list` and `array` type:
+will cause a `type unification` error as it cannot unify the `list` and `array` type (see `Numba's type unification problem <https://numba.pydata.org/numba-doc/latest/user/troubleshoot.html#my-code-has-a-type-unification-problem>`_)
 
 .. code-block:: python
     :emphasize-lines: 11,13
@@ -133,7 +133,17 @@ This can be solved by explicitly casting the ``acc_inds_rel`` into `list` type, 
 
 calc_splines_numba
 ------------
+The ``calc_splines_numba`` consists of the main functions ``calc_splines`` (which usually called by external modules ex. ``OnlineTrajectoryHandler``) and additional functions implementing Numpy features e.g. ``isclose`` and ``diff``.
+The first step is to import necessary Numba modules and declare module name, the additional `timeit` module can also be used for runtime measurement:
 
+.. code-block:: python
+   
+   from timeit import Timer
+   from numba.pycc import CC
+   from numba import jit
+
+   # Module name
+   cc = CC('calc_vel_profile_numba')
 
 
 conv_filt_numba
