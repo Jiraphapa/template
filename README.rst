@@ -187,7 +187,28 @@ the call is made to internal ``isclose`` function implementation.
         if np.all(isclose(path[0], path[-1])):      # Numba 0.46.0 does not support NumPy function 'numpy.isclose'
             closed = True
 
-The compact implemention of Numpy's is according to the original Numpy's implemention, with a restriction on finite array
+The compact implemention of Numpy's is according to the original Numpy's implemention, with a restriction on finite array.
+
+Another limitation of Numba is on the support of Numpy's ``diff`` function with ``axis`` argument, the default argument for the ``axis```
+parameter the last axis, however, one shall implement the function for axis support
+
+.. code-block:: python
+    :emphasize-lines: 19
+
+    @cc.export('diff', 'float64[:,:](float64[:,:], optional(uint8))')
+    @jit(nopython=True, cache=True)
+    def diff(arr, axis=1):   # implementation for np.diff function with axis parameter supported
+        assert arr.ndim == 2
+        assert axis in [0, 1]
+        if axis == 0:
+            col_diff_arr = np.empty((arr.shape[1], arr.shape[0]-1))
+            for i in range(arr.shape[1]):   # loop through columns
+                col_arr = np.copy(arr)[:, i].flatten()
+                col_diff_arr[i] = np.diff(col_arr)
+            return np.transpose(col_diff_arr)
+        else:
+            return np.diff(np.copy(arr))    # default is the last axis (axis=1)
+
 
 conv_filt_numba
 ----------
