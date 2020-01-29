@@ -65,7 +65,7 @@ AOT compilation require to specify the function signatures explicitly (as shown 
 The array types is declared by subscripting an elementary type according to the number of dimensions ex. ``float64[:]`` for 1-dimension double precision floating point (64 bit) array and ``float64[:,:,:]`` for 3-dimensions array, etc. (see `Numba's types and signatures <https://numba.pydata.org/numba-doc/dev/reference/types.html>`_). 
 If you run this Python script, it will generate an extension module named ``calc_vel_profile``. Depending on the running platform, the actual filename may be ``calc_vel_profile.so``, ``calc_vel_profile.pyd``, ``calc_vel_profile.cpython-34m.so``, etc.
 
-There are some limitations to the default parameters in currently used version of Numba (see this `thread <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_), in order to fulfill the functionality, one declares the ``optional(typ)`` decorator in the function signature indicating that optional type that allow any value of either of underlying typ or None.
+There are some limitations to the default parameters in currently used version (0.46.0) of Numba (see this `thread <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_), in order to fulfill the functionality, one declares the ``optional(typ)`` decorator in the function signature indicating that optional type that allow any value of either of underlying typ or None.
 
 Numba understands calls to NumPy ufuncs and is able to generate equivalent native code for many of them and NumPy arrays are supported as native types, however, not all Numpy implemenations are supported. The following code block of the function ``calc_vel_profile`` will thrown an error of `Use of unsupported NumPy function` in Numba compilation (see `Supported NumPy features <https://numba.pydata.org/numba-doc/dev/reference/numpysupported.html>`_).
 
@@ -146,7 +146,8 @@ The first step is to import necessary Numba modules and declare module name, the
    cc = CC('calc_vel_profile_numba')
 
 AOT compilation require to specify the function signatures explicitly (as discussed in the `calc_vel_profile_numba` section).
-The tuple return type is declared by the prefix ``UniTuple`` with the content type as the first parameter and number of elements as the second paramer.
+The tuple return type is declared by the prefix ``UniTuple`` with the content type as the first parameter and number of elements as the second paramer. The function
+``calc_splines`` returns a tuple of four double precision floating point (64 bit) arrays which are ``coeffs_x``, ``coeffs_y``, ``M`` and ``normvec_normalized``:
 
 .. code-block:: python
     :emphasize-lines: 1
@@ -158,6 +159,29 @@ The tuple return type is declared by the prefix ``UniTuple`` with the content ty
                  psi_s: float = None,
                  psi_e: float = None,
                  use_dist_scaling: bool = True) -> tuple:
+
+the function first check whether the path is close by calling ``np.isclose`` function, however, current version of Numba used (0.46.0) does not support the Numpy ``isclose``, therefore,
+the call is made to internal isclose function implementation.
+
+.. code-block:: python
+    :emphasize-lines: 15
+
+    @cc.export('isclose', 'boolean[:](float64[:], float64[:])')
+    @jit(nopython=True, cache=True)
+    def isclose(a, b):  # implementation for np.isclose function
+        assert np.all(np.isfinite(a)) and np.all(np.isfinite(b))
+        rtol, atol = 1.e-5, 1.e-8
+        x, y = np.asarray(a), np.asarray(b)
+        # check if arrays are element-wise equal within a tolerance (assume that both arrays are of valid format)
+        result = np.less_equal(np.abs(x-y), atol + rtol * np.abs(y))   
+        return result 
+
+    ...
+    ...
+
+    # check if path is closed
+        if np.all(isclose(path[0], path[-1])):      # Numba 0.46.0 does not support NumPy function 'numpy.isclose'
+            closed = True
 
 
 
