@@ -32,7 +32,7 @@ To produces a compiled extension module which does not depend on Numba, Numba's 
     # Module name
     cc = CC('calc_vel_profile_numba')
 
-todo: add more description
+and tell the interpreter to compile the module
 
 .. code-block:: python
 
@@ -105,7 +105,8 @@ The following version of ``calc_vel_profile`` implementation can be converted in
     else:
         p_ggv = np.expand_dims(np.column_stack((np.ones(loc_gg.shape[0]) * 10.0, np.copy(loc_gg))), axis=1)
 
-todo: write about type unifying
+One of the common reasons that of compile failure in Numba code is that it cannot statically determine the return type of a function. The above lines
+will cause a type unification error
 
 .. code-block:: python
     :emphasize-lines: 11,13
