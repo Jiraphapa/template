@@ -125,7 +125,11 @@ will cause a `type unification` error as it cannot unify the `list` and `array` 
     else:
         acc_inds_rel = [np.int64(x) for x in range(0)]      # if vmax is low and can be driven all the time
 
-This can be solved by explicitly casting the ``acc_inds_rel`` into `list` type, e.g. ``acc_inds_rel = list(acc_inds[acc_inds_diffs > 1])``  
+This can be solved by explicitly casting the ``acc_inds_rel`` into `list` type, e.g. 
+
+.. code-block:: python
+
+    acc_inds_rel = list(acc_inds[acc_inds_diffs > 1])
 
 calc_splines_numba
 ------------
