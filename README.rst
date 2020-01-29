@@ -145,6 +145,21 @@ The first step is to import necessary Numba modules and declare module name, the
    # Module name
    cc = CC('calc_vel_profile_numba')
 
+AOT compilation require to specify the function signatures explicitly (as discussed in the `calc_vel_profile_numba` section).
+The tuple return type is declared by the prefix ``UniTuple`` of the tuple content type
+
+.. code-block:: python
+    :emphasize-lines: 1
+
+    @cc.export('calc_splines', 'UniTuple(float64[:,:],4)(float64[:,:], optional(float64[:]), optional(float64), optional(float64), optional(boolean))')
+    @jit(nopython=True, cache=True)
+    def calc_splines(path: np.ndarray,
+                 el_lengths: np.ndarray = None,
+                 psi_s: float = None,
+                 psi_e: float = None,
+                 use_dist_scaling: bool = True) -> tuple:
+
+
 
 conv_filt_numba
 ----------
