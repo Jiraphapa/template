@@ -106,7 +106,7 @@ The following version of ``calc_vel_profile`` implementation can be converted in
         p_ggv = np.expand_dims(np.column_stack((np.ones(loc_gg.shape[0]) * 10.0, np.copy(loc_gg))), axis=1)
 
 One of the common reasons that of compile failure in Numba code is that it cannot statically determine the return type of a function. The above lines
-will cause a type unification error
+will cause a `type unification` error as it cannot unify the `list` and `array` type:
 
 .. code-block:: python
     :emphasize-lines: 11,13
@@ -124,6 +124,8 @@ will cause a type unification error
         acc_inds_rel = acc_inds[acc_inds_diffs > 1]         # starting point indices for acceleration phases
     else:
         acc_inds_rel = [np.int64(x) for x in range(0)]      # if vmax is low and can be driven all the time
+
+This can be solved by explicitly casting the ``acc_inds_rel`` into `list` type, e.g. ``acc_inds_rel = list(acc_inds[acc_inds_diffs > 1])``  
 
 calc_splines_numba
 ------------
