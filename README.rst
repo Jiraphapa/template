@@ -164,7 +164,7 @@ the function first check whether the path is close by calling ``np.isclose`` fun
 the call is made to internal ``isclose`` function implementation.
 
 .. code-block:: python
-    :emphasize-lines: 16
+    :emphasize-lines: 19
 
     @cc.export('isclose', 'boolean[:](float64[:], float64[:])')
     @jit(nopython=True, cache=True)
@@ -176,16 +176,18 @@ the call is made to internal ``isclose`` function implementation.
         result = np.less_equal(np.abs(x-y), atol + rtol * np.abs(y))   
         return result 
 
-    ...
+    ..
+    ..
 
     def calc_splines(...):
 
-    ...
+        ..
+        ..
 
         if np.all(isclose(path[0], path[-1])):      # Numba 0.46.0 does not support NumPy function 'numpy.isclose'
             closed = True
 
-
+The compact implemention of Numpy's is according to the original Numpy's implemention, with a restriction on finite array
 
 conv_filt_numba
 ----------
