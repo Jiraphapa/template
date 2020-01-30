@@ -32,6 +32,7 @@ The measurement of the performance is done by using the ``timeit`` module functi
 
     print("Execution time for calc_splines with numba (after compilation):",t.timeit(number=1))
 
+
 The example code are executed on x86\_64 architecture and gave the following output:
 
 .. code-block:: python
