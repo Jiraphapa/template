@@ -18,7 +18,7 @@ The conventional CPU profiling is done through the sampling of function calls st
 
 .. raw:: html
 
-   <img src="images/mod_local_traj_interactive_profile.svg.svg" alt="Latest PyPi version"></a>
+   <img src="mod_local_traj_interactive_profile.svg" alt="Latest PyPi version"></a>
 
 
 The stack traces are collected using sampling where each box represents the function. The boxes are stack from bottom (parent) to top (child) which corresponds to the calling ancestry. The horizontal ordering and colors has no indication of performance profile. The width of the stack boxes is proportional to the function time and frequency (for example, blocking time) according to the sample time.
