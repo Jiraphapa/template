@@ -63,6 +63,7 @@ Each of the modules are converted into the optimized version with Numba in a sep
 Exucution Time Comparison
 --------
 
+The contained data used to test is always for an entire race track (Berlin, Monteblanco, Modena). Below are comparisons of execution time of the original and optimized modules. 
 
 .. list-table:: Exucution Time Comparison for `calc_vel_profile` module
    :widths: 25 25 50
