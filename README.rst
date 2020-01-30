@@ -230,7 +230,7 @@ explicitly cast the type, for example, in the step `create template for M array 
 
 
 
-It is explicitly specified with ``np.array(...)`` that the element declared inside is of type Numpy array, not a list of list. It is needed to be explicitly specified because the signature of b_x and b_y are Numpy array. This is also related to the `type unification` problem mentioned in `calc_vel_profile_numba` section.
+It is explicitly specified with ``np.array(...)`` that the element declared inside is of type Numpy array, not a list of list. It is needed to be explicitly specified because the signature of ``b_x`` and ``b_y`` are Numpy array. This is also related to the `type unification` problem mentioned in ``calc_vel_profile_numba`` section.
 
 
 conv_filt_numba
