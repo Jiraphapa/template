@@ -1,0 +1,821 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" width="1200" height="326" onload="init(evt)" viewBox="0 0 1200 326" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Flame graph stack visualization. See https://github.com/brendangregg/FlameGraph for latest version, and http://www.brendangregg.com/flamegraphs.html for examples. -->
+<!-- NOTES:  -->
+<defs>
+	<linearGradient id="background" y1="0" y2="1" x1="0" x2="0" >
+		<stop stop-color="#eeeeee" offset="5%" />
+		<stop stop-color="#eeeeb0" offset="95%" />
+	</linearGradient>
+</defs>
+<style type="text/css">
+	text { font-family:Verdana; font-size:12px; fill:rgb(0,0,0); }
+	#search { opacity:0.1; cursor:pointer; }
+	#search:hover, #search.show { opacity:1; }
+	#subtitle { text-anchor:middle; font-color:rgb(160,160,160); }
+	#title { text-anchor:middle; font-size:17px}
+	#unzoom { cursor:pointer; }
+	#frames > *:hover { stroke:black; stroke-width:0.5; cursor:pointer; }
+	.hide { display:none; }
+	.parent { opacity:0.5; }
+</style>
+<script type="text/ecmascript">
+<![CDATA[
+	"use strict";
+	var details, searchbtn, unzoombtn, matchedtxt, svg, searching;
+	function init(evt) {
+		details = document.getElementById("details").firstChild;
+		searchbtn = document.getElementById("search");
+		unzoombtn = document.getElementById("unzoom");
+		matchedtxt = document.getElementById("matched");
+		svg = document.getElementsByTagName("svg")[0];
+		searching = 0;
+	}
+
+	window.addEventListener("click", function(e) {
+		var target = find_group(e.target);
+		if (target) {
+			if (target.nodeName == "a") {
+				if (e.ctrlKey === false) return;
+				e.preventDefault();
+			}
+			if (target.classList.contains("parent")) unzoom();
+			zoom(target);
+		}
+		else if (e.target.id == "unzoom") unzoom();
+		else if (e.target.id == "search") search_prompt();
+	}, false)
+
+	// mouse-over for info
+	// show
+	window.addEventListener("mouseover", function(e) {
+		var target = find_group(e.target);
+		if (target) details.nodeValue = "Function: " + g_to_text(target);
+	}, false)
+
+	// clear
+	window.addEventListener("mouseout", function(e) {
+		var target = find_group(e.target);
+		if (target) details.nodeValue = ' ';
+	}, false)
+
+	// ctrl-F for search
+	window.addEventListener("keydown",function (e) {
+		if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
+			e.preventDefault();
+			search_prompt();
+		}
+	}, false)
+
+	// functions
+	function find_child(node, selector) {
+		var children = node.querySelectorAll(selector);
+		if (children.length) return children[0];
+		return;
+	}
+	function find_group(node) {
+		var parent = node.parentElement;
+		if (!parent) return;
+		if (parent.id == "frames") return node;
+		return find_group(parent);
+	}
+	function orig_save(e, attr, val) {
+		if (e.attributes["_orig_" + attr] != undefined) return;
+		if (e.attributes[attr] == undefined) return;
+		if (val == undefined) val = e.attributes[attr].value;
+		e.setAttribute("_orig_" + attr, val);
+	}
+	function orig_load(e, attr) {
+		if (e.attributes["_orig_"+attr] == undefined) return;
+		e.attributes[attr].value = e.attributes["_orig_" + attr].value;
+		e.removeAttribute("_orig_"+attr);
+	}
+	function g_to_text(e) {
+		var text = find_child(e, "title").firstChild.nodeValue;
+		return (text)
+	}
+	function g_to_func(e) {
+		var func = g_to_text(e);
+		// if there's any manipulation we want to do to the function
+		// name before it's searched, do it here before returning.
+		return (func);
+	}
+	function update_text(e) {
+		var r = find_child(e, "rect");
+		var t = find_child(e, "text");
+		var w = parseFloat(r.attributes.width.value) -3;
+		var txt = find_child(e, "title").textContent.replace(/\([^(]*\)$/,"");
+		t.attributes.x.value = parseFloat(r.attributes.x.value) + 3;
+
+		// Smaller than this size won't fit anything
+		if (w < 2 * 12 * 0.59) {
+			t.textContent = "";
+			return;
+		}
+
+		t.textContent = txt;
+		// Fit in full text width
+		if (/^ *$/.test(txt) || t.getSubStringLength(0, txt.length) < w)
+			return;
+
+		for (var x = txt.length - 2; x > 0; x--) {
+			if (t.getSubStringLength(0, x + 2) <= w) {
+				t.textContent = txt.substring(0, x) + "..";
+				return;
+			}
+		}
+		t.textContent = "";
+	}
+
+	// zoom
+	function zoom_reset(e) {
+		if (e.attributes != undefined) {
+			orig_load(e, "x");
+			orig_load(e, "width");
+		}
+		if (e.childNodes == undefined) return;
+		for (var i = 0, c = e.childNodes; i < c.length; i++) {
+			zoom_reset(c[i]);
+		}
+	}
+	function zoom_child(e, x, ratio) {
+		if (e.attributes != undefined) {
+			if (e.attributes.x != undefined) {
+				orig_save(e, "x");
+				e.attributes.x.value = (parseFloat(e.attributes.x.value) - x - 10) * ratio + 10;
+				if (e.tagName == "text")
+					e.attributes.x.value = find_child(e.parentNode, "rect[x]").attributes.x.value + 3;
+			}
+			if (e.attributes.width != undefined) {
+				orig_save(e, "width");
+				e.attributes.width.value = parseFloat(e.attributes.width.value) * ratio;
+			}
+		}
+
+		if (e.childNodes == undefined) return;
+		for (var i = 0, c = e.childNodes; i < c.length; i++) {
+			zoom_child(c[i], x - 10, ratio);
+		}
+	}
+	function zoom_parent(e) {
+		if (e.attributes) {
+			if (e.attributes.x != undefined) {
+				orig_save(e, "x");
+				e.attributes.x.value = 10;
+			}
+			if (e.attributes.width != undefined) {
+				orig_save(e, "width");
+				e.attributes.width.value = parseInt(svg.width.baseVal.value) - (10 * 2);
+			}
+		}
+		if (e.childNodes == undefined) return;
+		for (var i = 0, c = e.childNodes; i < c.length; i++) {
+			zoom_parent(c[i]);
+		}
+	}
+	function zoom(node) {
+		var attr = find_child(node, "rect").attributes;
+		var width = parseFloat(attr.width.value);
+		var xmin = parseFloat(attr.x.value);
+		var xmax = parseFloat(xmin + width);
+		var ymin = parseFloat(attr.y.value);
+		var ratio = (svg.width.baseVal.value - 2 * 10) / width;
+
+		// XXX: Workaround for JavaScript float issues (fix me)
+		var fudge = 0.0001;
+
+		unzoombtn.classList.remove("hide");
+
+		var el = document.getElementById("frames").children;
+		for (var i = 0; i < el.length; i++) {
+			var e = el[i];
+			var a = find_child(e, "rect").attributes;
+			var ex = parseFloat(a.x.value);
+			var ew = parseFloat(a.width.value);
+			var upstack;
+			// Is it an ancestor
+			if (0 == 0) {
+				upstack = parseFloat(a.y.value) > ymin;
+			} else {
+				upstack = parseFloat(a.y.value) < ymin;
+			}
+			if (upstack) {
+				// Direct ancestor
+				if (ex <= xmin && (ex+ew+fudge) >= xmax) {
+					e.classList.add("parent");
+					zoom_parent(e);
+					update_text(e);
+				}
+				// not in current path
+				else
+					e.classList.add("hide");
+			}
+			// Children maybe
+			else {
+				// no common path
+				if (ex < xmin || ex + fudge >= xmax) {
+					e.classList.add("hide");
+				}
+				else {
+					zoom_child(e, xmin, ratio);
+					update_text(e);
+				}
+			}
+		}
+	}
+	function unzoom() {
+		unzoombtn.classList.add("hide");
+		var el = document.getElementById("frames").children;
+		for(var i = 0; i < el.length; i++) {
+			el[i].classList.remove("parent");
+			el[i].classList.remove("hide");
+			zoom_reset(el[i]);
+			update_text(el[i]);
+		}
+	}
+
+	// search
+	function reset_search() {
+		var el = document.querySelectorAll("#frames rect");
+		for (var i = 0; i < el.length; i++) {
+			orig_load(el[i], "fill")
+		}
+	}
+	function search_prompt() {
+		if (!searching) {
+			var term = prompt("Enter a search term (regexp " +
+			    "allowed, eg: ^ext4_)", "");
+			if (term != null) {
+				search(term)
+			}
+		} else {
+			reset_search();
+			searching = 0;
+			searchbtn.classList.remove("show");
+			searchbtn.firstChild.nodeValue = "Search"
+			matchedtxt.classList.add("hide");
+			matchedtxt.firstChild.nodeValue = ""
+		}
+	}
+	function search(term) {
+		var re = new RegExp(term);
+		var el = document.getElementById("frames").children;
+		var matches = new Object();
+		var maxwidth = 0;
+		for (var i = 0; i < el.length; i++) {
+			var e = el[i];
+			var func = g_to_func(e);
+			var rect = find_child(e, "rect");
+			if (func == null || rect == null)
+				continue;
+
+			// Save max width. Only works as we have a root frame
+			var w = parseFloat(rect.attributes.width.value);
+			if (w > maxwidth)
+				maxwidth = w;
+
+			if (func.match(re)) {
+				// highlight
+				var x = parseFloat(rect.attributes.x.value);
+				orig_save(rect, "fill");
+				rect.attributes.fill.value = "rgb(230,0,230)";
+
+				// remember matches
+				if (matches[x] == undefined) {
+					matches[x] = w;
+				} else {
+					if (w > matches[x]) {
+						// overwrite with parent
+						matches[x] = w;
+					}
+				}
+				searching = 1;
+			}
+		}
+		if (!searching)
+			return;
+
+		searchbtn.classList.add("show");
+		searchbtn.firstChild.nodeValue = "Reset Search";
+
+		// calculate percent matched, excluding vertical overlap
+		var count = 0;
+		var lastx = -1;
+		var lastw = 0;
+		var keys = Array();
+		for (k in matches) {
+			if (matches.hasOwnProperty(k))
+				keys.push(k);
+		}
+		// sort the matched frames by their x location
+		// ascending, then width descending
+		keys.sort(function(a, b){
+			return a - b;
+		});
+		// Step through frames saving only the biggest bottom-up frames
+		// thanks to the sort order. This relies on the tree property
+		// where children are always smaller than their parents.
+		var fudge = 0.0001;	// JavaScript floating point
+		for (var k in keys) {
+			var x = parseFloat(keys[k]);
+			var w = matches[keys[k]];
+			if (x >= lastx + lastw - fudge) {
+				count += w;
+				lastx = x;
+				lastw = w;
+			}
+		}
+		// display matched percent
+		matchedtxt.classList.remove("hide");
+		var pct = 100 * count / maxwidth;
+		if (pct != 100) pct = pct.toFixed(1)
+		matchedtxt.firstChild.nodeValue = "Matched: " + pct + "%";
+	}
+]]>
+</script>
+<rect x="0.0" y="0" width="1200.0" height="326.0" fill="url(#background)"  />
+<text id="title" x="600.00" y="24" >Flame Graph</text>
+<text id="details" x="10.00" y="309" > </text>
+<text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
+<text id="search" x="1090.00" y="24" >Search</text>
+<text id="matched" x="1090.00" y="309" > </text>
+<g id="frames">
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:481 (39 samples, 42.86%)</title><rect x="399.0" y="261" width="505.7" height="15.0" fill="rgb(249,194,5)" rx="2" ry="2" />
+<text  x="402.01" y="271.5" >/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1386 (1 samples, 1.10%)</title><rect x="1073.3" y="149" width="13.0" height="15.0" fill="rgb(229,23,32)" rx="2" ry="2" />
+<text  x="1076.30" y="159.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:calc_vel_profile:93 (15 samples, 16.48%)</title><rect x="917.7" y="229" width="194.5" height="15.0" fill="rgb(215,224,51)" rx="2" ry="2" />
+<text  x="920.69" y="239.5" >/usr/local/lib/python3.5/..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:solve:6 (14 samples, 15.38%)</title><rect x="424.9" y="197" width="181.6" height="15.0" fill="rgb(218,180,25)" rx="2" ry="2" />
+<text  x="427.95" y="207.5" >&lt;__array_function__ int..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:find_spec:1248 (1 samples, 1.10%)</title><rect x="386.0" y="69" width="13.0" height="15.0" fill="rgb(253,82,34)" rx="2" ry="2" />
+<text  x="389.04" y="79.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:stack:4 (1 samples, 1.10%)</title><rect x="658.4" y="197" width="12.9" height="15.0" fill="rgb(209,197,33)" rx="2" ry="2" />
+<text  x="661.35" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/ad_interface_functions/zmq_import.py:zmq_import:50 (1 samples, 1.10%)</title><rect x="386.0" y="229" width="13.0" height="15.0" fill="rgb(212,18,17)" rx="2" ry="2" />
+<text  x="389.04" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:set_initial_pose:214 (22 samples, 24.18%)</title><rect x="61.9" y="245" width="285.2" height="15.0" fill="rgb(230,31,40)" rx="2" ry="2" />
+<text  x="64.87" y="255.5" >/home/roborace/Desktop/mod_local_traje..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:201 (1 samples, 1.10%)</title><rect x="412.0" y="229" width="12.9" height="15.0" fill="rgb(226,153,50)" rx="2" ry="2" />
+<text  x="414.98" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:set_initial_pose:243 (3 samples, 3.30%)</title><rect x="347.1" y="245" width="38.9" height="15.0" fill="rgb(234,178,47)" rx="2" ry="2" />
+<text  x="350.14" y="255.5" >/ho..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:gen_trajectories:489 (38 samples, 41.76%)</title><rect x="412.0" y="245" width="492.7" height="15.0" fill="rgb(225,119,6)" rx="2" ry="2" />
+<text  x="414.98" y="255.5" >/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/s..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load:969 (1 samples, 1.10%)</title><rect x="386.0" y="197" width="13.0" height="15.0" fill="rgb(214,98,49)" rx="2" ry="2" />
+<text  x="389.04" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:vstack:282 (2 samples, 2.20%)</title><rect x="308.2" y="197" width="26.0" height="15.0" fill="rgb(211,8,36)" rx="2" ry="2" />
+<text  x="311.24" y="207.5" >/..</text>
+</g>
+<g >
+<title>(idle) (2 samples, 2.20%)</title><rect x="10.0" y="261" width="25.9" height="15.0" fill="rgb(235,76,41)" rx="2" ry="2" />
+<text  x="13.00" y="271.5" >(..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/Logging.py:log_onlinegraph:91 (3 samples, 3.30%)</title><rect x="1151.1" y="245" width="38.9" height="15.0" fill="rgb(247,204,52)" rx="2" ry="2" />
+<text  x="1154.10" y="255.5" >/ho..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/type_check.py:iscomplexobj:320 (1 samples, 1.10%)</title><rect x="1021.4" y="117" width="13.0" height="15.0" fill="rgb(224,69,5)" rx="2" ry="2" />
+<text  x="1024.43" y="127.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:399 (1 samples, 1.10%)</title><rect x="386.0" y="261" width="13.0" height="15.0" fill="rgb(243,169,41)" rx="2" ry="2" />
+<text  x="389.04" y="271.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:152 (14 samples, 15.38%)</title><rect x="424.9" y="213" width="181.6" height="15.0" fill="rgb(229,18,8)" rx="2" ry="2" />
+<text  x="427.95" y="223.5" >/usr/local/lib/python3...</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:get_closest_nodes:249 (13 samples, 14.29%)</title><rect x="165.6" y="229" width="168.6" height="15.0" fill="rgb(248,171,44)" rx="2" ry="2" />
+<text  x="168.60" y="239.5" >/home/roborace/Deskto..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:589 (4 samples, 4.40%)</title><rect x="1138.1" y="261" width="51.9" height="15.0" fill="rgb(247,147,1)" rx="2" ry="2" />
+<text  x="1141.13" y="271.5" >/home..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/get_s_coord.py:get_s_coord:34 (1 samples, 1.10%)</title><rect x="1112.2" y="245" width="13.0" height="15.0" fill="rgb(225,108,13)" rx="2" ry="2" />
+<text  x="1115.20" y="255.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:122 (3 samples, 3.30%)</title><rect x="204.5" y="165" width="38.9" height="15.0" fill="rgb(225,128,20)" rx="2" ry="2" />
+<text  x="207.51" y="175.5" >/us..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:atleast_2d:6 (9 samples, 9.89%)</title><rect x="191.5" y="181" width="116.7" height="15.0" fill="rgb(237,2,54)" rx="2" ry="2" />
+<text  x="194.54" y="191.5" >&lt;__array_funct..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:522 (16 samples, 17.58%)</title><rect x="904.7" y="261" width="207.5" height="15.0" fill="rgb(242,182,30)" rx="2" ry="2" />
+<text  x="907.73" y="271.5" >/home/roborace/Desktop/mod_..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:6 (3 samples, 3.30%)</title><rect x="1008.5" y="165" width="38.9" height="15.0" fill="rgb(215,18,32)" rx="2" ry="2" />
+<text  x="1011.46" y="175.5" >&lt;__..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:any:6 (1 samples, 1.10%)</title><rect x="48.9" y="181" width="13.0" height="15.0" fill="rgb(216,48,8)" rx="2" ry="2" />
+<text  x="51.90" y="191.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:set_node_filter_layers:504 (2 samples, 2.20%)</title><rect x="697.3" y="197" width="25.9" height="15.0" fill="rgb(216,137,23)" rx="2" ry="2" />
+<text  x="700.25" y="207.5" >/..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:iscomplexobj:6 (1 samples, 1.10%)</title><rect x="1021.4" y="133" width="13.0" height="15.0" fill="rgb(251,72,30)" rx="2" ry="2" />
+<text  x="1024.43" y="143.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/linalg/linalg.py:solve:403 (4 samples, 4.40%)</title><rect x="606.5" y="181" width="51.9" height="15.0" fill="rgb(226,134,5)" rx="2" ry="2" />
+<text  x="609.48" y="191.5" >/usr/..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/gen_local_node_template.py:gen_local_node_template:96 (12 samples, 13.19%)</title><rect x="749.1" y="213" width="155.6" height="15.0" fill="rgb(233,69,45)" rx="2" ry="2" />
+<text  x="752.12" y="223.5" >/home/roborace/Desk..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_spec:896 (1 samples, 1.10%)</title><rect x="386.0" y="117" width="13.0" height="15.0" fill="rgb(213,59,53)" rx="2" ry="2" />
+<text  x="389.04" y="127.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1412 (1 samples, 1.10%)</title><rect x="1034.4" y="149" width="13.0" height="15.0" fill="rgb(210,151,7)" rx="2" ry="2" />
+<text  x="1037.40" y="159.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:121 (1 samples, 1.10%)</title><rect x="191.5" y="165" width="13.0" height="15.0" fill="rgb(234,200,34)" rx="2" ry="2" />
+<text  x="194.54" y="175.5" ></text>
+</g>
+<g >
+<title>/usr/lib/python3.5/json/__init__.py:dumps:237 (3 samples, 3.30%)</title><rect x="1151.1" y="229" width="38.9" height="15.0" fill="rgb(222,38,13)" rx="2" ry="2" />
+<text  x="1154.10" y="239.5" >/us..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_call_with_frames_removed:222 (1 samples, 1.10%)</title><rect x="386.0" y="165" width="13.0" height="15.0" fill="rgb(232,54,3)" rx="2" ry="2" />
+<text  x="389.04" y="175.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load_unlocked:944 (1 samples, 1.10%)</title><rect x="386.0" y="181" width="13.0" height="15.0" fill="rgb(211,84,24)" rx="2" ry="2" />
+<text  x="389.04" y="191.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:find_spec:1139 (1 samples, 1.10%)</title><rect x="386.0" y="101" width="13.0" height="15.0" fill="rgb(239,29,40)" rx="2" ry="2" />
+<text  x="389.04" y="111.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:&lt;listcomp&gt;:3503 (2 samples, 2.20%)</title><rect x="697.3" y="165" width="25.9" height="15.0" fill="rgb(236,15,23)" rx="2" ry="2" />
+<text  x="700.25" y="175.5" >/..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1412 (1 samples, 1.10%)</title><rect x="1086.3" y="149" width="12.9" height="15.0" fill="rgb(208,107,0)" rx="2" ry="2" />
+<text  x="1089.26" y="159.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__calc_ax_poss:346 (4 samples, 4.40%)</title><rect x="995.5" y="181" width="51.9" height="15.0" fill="rgb(233,123,52)" rx="2" ry="2" />
+<text  x="998.49" y="191.5" >/usr/..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__solver_fb_acc_profile:285 (1 samples, 1.10%)</title><rect x="1099.2" y="197" width="13.0" height="15.0" fill="rgb(223,6,8)" rx="2" ry="2" />
+<text  x="1102.23" y="207.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:remove_nodes_filter:536 (11 samples, 12.09%)</title><rect x="762.1" y="197" width="142.6" height="15.0" fill="rgb(231,32,8)" rx="2" ry="2" />
+<text  x="765.09" y="207.5" >/home/roborace/Des..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/fromnumeric.py:_wrapreduction:88 (1 samples, 1.10%)</title><rect x="48.9" y="149" width="13.0" height="15.0" fill="rgb(247,45,25)" rx="2" ry="2" />
+<text  x="51.90" y="159.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/get_s_coord.py:get_s_coord:34 (1 samples, 1.10%)</title><rect x="35.9" y="213" width="13.0" height="15.0" fill="rgb(234,202,38)" rx="2" ry="2" />
+<text  x="38.93" y="223.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__calc_ax_poss:358 (4 samples, 4.40%)</title><rect x="1047.4" y="181" width="51.8" height="15.0" fill="rgb(215,92,24)" rx="2" ry="2" />
+<text  x="1050.36" y="191.5" >/usr/..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_head_curv_an.py:calc_head_curv_an:55 (1 samples, 1.10%)</title><rect x="684.3" y="213" width="13.0" height="15.0" fill="rgb(237,30,20)" rx="2" ry="2" />
+<text  x="687.29" y="223.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:96 (1 samples, 1.10%)</title><rect x="671.3" y="213" width="13.0" height="15.0" fill="rgb(226,178,54)" rx="2" ry="2" />
+<text  x="674.32" y="223.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:129 (1 samples, 1.10%)</title><rect x="295.3" y="165" width="12.9" height="15.0" fill="rgb(232,11,3)" rx="2" ry="2" />
+<text  x="298.27" y="175.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__calc_ax_poss:345 (5 samples, 5.49%)</title><rect x="930.7" y="181" width="64.8" height="15.0" fill="rgb(205,126,36)" rx="2" ry="2" />
+<text  x="933.66" y="191.5" >/usr/lo..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:get_closest_nodes:250 (1 samples, 1.10%)</title><rect x="334.2" y="229" width="12.9" height="15.0" fill="rgb(220,111,34)" rx="2" ry="2" />
+<text  x="337.18" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1381 (1 samples, 1.10%)</title><rect x="1021.4" y="149" width="13.0" height="15.0" fill="rgb(214,64,25)" rx="2" ry="2" />
+<text  x="1024.43" y="159.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:vstack:279 (9 samples, 9.89%)</title><rect x="191.5" y="197" width="116.7" height="15.0" fill="rgb(215,64,18)" rx="2" ry="2" />
+<text  x="194.54" y="207.5" >/usr/local/lib..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:_get_spec:1113 (1 samples, 1.10%)</title><rect x="386.0" y="85" width="13.0" height="15.0" fill="rgb(209,61,23)" rx="2" ry="2" />
+<text  x="389.04" y="95.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:160 (1 samples, 1.10%)</title><rect x="658.4" y="213" width="12.9" height="15.0" fill="rgb(223,51,2)" rx="2" ry="2" />
+<text  x="661.35" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:66 (16 samples, 17.58%)</title><rect x="697.3" y="229" width="207.4" height="15.0" fill="rgb(226,126,12)" rx="2" ry="2" />
+<text  x="700.25" y="239.5" >/home/roborace/Desktop/mod_..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load_unlocked:954 (1 samples, 1.10%)</title><rect x="386.0" y="133" width="13.0" height="15.0" fill="rgb(236,29,2)" rx="2" ry="2" />
+<text  x="389.04" y="143.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/closest_path_index.py:closest_path_index:24 (1 samples, 1.10%)</title><rect x="35.9" y="197" width="13.0" height="15.0" fill="rgb(243,31,18)" rx="2" ry="2" />
+<text  x="38.93" y="207.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:&lt;listcomp&gt;:53 (1 samples, 1.10%)</title><rect x="386.0" y="37" width="13.0" height="15.0" fill="rgb(215,199,14)" rx="2" ry="2" />
+<text  x="389.04" y="47.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/closest_path_index.py:closest_path_index:27 (1 samples, 1.10%)</title><rect x="399.0" y="229" width="13.0" height="15.0" fill="rgb(211,92,35)" rx="2" ry="2" />
+<text  x="402.01" y="239.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:vstack:6 (13 samples, 14.29%)</title><rect x="165.6" y="213" width="168.6" height="15.0" fill="rgb(210,14,46)" rx="2" ry="2" />
+<text  x="168.60" y="223.5" >&lt;__array_function__ i..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:solve:6 (4 samples, 4.40%)</title><rect x="606.5" y="197" width="51.9" height="15.0" fill="rgb(247,1,8)" rx="2" ry="2" />
+<text  x="609.48" y="207.5" >&lt;__ar..</text>
+</g>
+<g >
+<title>all (91 samples, 100%)</title><rect x="10.0" y="277" width="1180.0" height="15.0" fill="rgb(233,74,6)" rx="2" ry="2" />
+<text  x="13.00" y="287.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/_asarray.py:asanyarray:138 (3 samples, 3.30%)</title><rect x="204.5" y="149" width="38.9" height="15.0" fill="rgb(242,141,2)" rx="2" ry="2" />
+<text  x="207.51" y="159.5" >/us..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/zmq/sugar/socket.py:recv_string:592 (1 samples, 1.10%)</title><rect x="386.0" y="213" width="13.0" height="15.0" fill="rgb(251,30,53)" rx="2" ry="2" />
+<text  x="389.04" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/check_inside_bounds.py:check_inside_bounds:32 (1 samples, 1.10%)</title><rect x="35.9" y="229" width="13.0" height="15.0" fill="rgb(205,134,39)" rx="2" ry="2" />
+<text  x="38.93" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:&lt;listcomp&gt;:248 (1 samples, 1.10%)</title><rect x="152.6" y="213" width="13.0" height="15.0" fill="rgb(239,130,38)" rx="2" ry="2" />
+<text  x="155.64" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:574 (1 samples, 1.10%)</title><rect x="1125.2" y="261" width="12.9" height="15.0" fill="rgb(240,21,32)" rx="2" ry="2" />
+<text  x="1128.16" y="271.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/interp_splines.py:interp_splines:114 (1 samples, 1.10%)</title><rect x="347.1" y="229" width="13.0" height="15.0" fill="rgb(229,161,6)" rx="2" ry="2" />
+<text  x="350.14" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/gen_local_node_template.py:gen_local_node_template:121 (3 samples, 3.30%)</title><rect x="697.3" y="213" width="38.9" height="15.0" fill="rgb(251,205,53)" rx="2" ry="2" />
+<text  x="700.25" y="223.5" >/ho..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/_methods.py:_any:45 (1 samples, 1.10%)</title><rect x="48.9" y="133" width="13.0" height="15.0" fill="rgb(240,30,30)" rx="2" ry="2" />
+<text  x="51.90" y="143.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/function_base.py:linspace:147 (1 samples, 1.10%)</title><rect x="373.1" y="181" width="12.9" height="15.0" fill="rgb(223,118,23)" rx="2" ry="2" />
+<text  x="376.08" y="191.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:search_graph_layer:654 (1 samples, 1.10%)</title><rect x="412.0" y="213" width="12.9" height="15.0" fill="rgb(213,90,50)" rx="2" ry="2" />
+<text  x="414.98" y="223.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1381 (2 samples, 2.20%)</title><rect x="956.6" y="149" width="25.9" height="15.0" fill="rgb(227,83,33)" rx="2" ry="2" />
+<text  x="959.59" y="159.5" >/..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/check_inside_bounds.py:check_inside_bounds:35 (1 samples, 1.10%)</title><rect x="48.9" y="229" width="13.0" height="15.0" fill="rgb(221,82,4)" rx="2" ry="2" />
+<text  x="51.90" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/fromnumeric.py:any:2270 (1 samples, 1.10%)</title><rect x="48.9" y="165" width="13.0" height="15.0" fill="rgb(206,229,2)" rx="2" ry="2" />
+<text  x="51.90" y="175.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:6 (4 samples, 4.40%)</title><rect x="943.6" y="165" width="51.9" height="15.0" fill="rgb(233,92,12)" rx="2" ry="2" />
+<text  x="946.63" y="175.5" >&lt;__ar..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1412 (1 samples, 1.10%)</title><rect x="982.5" y="149" width="13.0" height="15.0" fill="rgb(236,74,20)" rx="2" ry="2" />
+<text  x="985.53" y="159.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:_path_join:53 (1 samples, 1.10%)</title><rect x="386.0" y="53" width="13.0" height="15.0" fill="rgb(213,105,2)" rx="2" ry="2" />
+<text  x="389.04" y="63.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:get_closest_nodes:247 (8 samples, 8.79%)</title><rect x="61.9" y="229" width="103.7" height="15.0" fill="rgb(221,89,9)" rx="2" ry="2" />
+<text  x="64.87" y="239.5" >/home/robora..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:calc_vel_profile:79 (1 samples, 1.10%)</title><rect x="904.7" y="229" width="13.0" height="15.0" fill="rgb(235,84,52)" rx="2" ry="2" />
+<text  x="907.73" y="239.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:iscomplexobj:6 (2 samples, 2.20%)</title><rect x="956.6" y="133" width="25.9" height="15.0" fill="rgb(240,33,7)" rx="2" ry="2" />
+<text  x="959.59" y="143.5" >&lt;..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:set_node_filter_layers:510 (1 samples, 1.10%)</title><rect x="723.2" y="197" width="13.0" height="15.0" fill="rgb(210,195,43)" rx="2" ry="2" />
+<text  x="726.19" y="207.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:trim_trajectory:885 (16 samples, 17.58%)</title><rect x="904.7" y="245" width="207.5" height="15.0" fill="rgb(242,66,30)" rx="2" ry="2" />
+<text  x="907.73" y="255.5" >/home/roborace/Desktop/mod_..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__solver_fb_acc_profile:283 (14 samples, 15.38%)</title><rect x="917.7" y="197" width="181.5" height="15.0" fill="rgb(240,50,26)" rx="2" ry="2" />
+<text  x="920.69" y="207.5" >/usr/local/lib/python3...</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:gen_trajectories:465 (1 samples, 1.10%)</title><rect x="399.0" y="245" width="13.0" height="15.0" fill="rgb(231,30,4)" rx="2" ry="2" />
+<text  x="402.01" y="255.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:search_graph:602 (1 samples, 1.10%)</title><rect x="412.0" y="197" width="12.9" height="15.0" fill="rgb(252,182,7)" rx="2" ry="2" />
+<text  x="414.98" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:123 (1 samples, 1.10%)</title><rect x="243.4" y="165" width="13.0" height="15.0" fill="rgb(208,16,9)" rx="2" ry="2" />
+<text  x="246.41" y="175.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/closest_path_index.py:closest_path_index:24 (1 samples, 1.10%)</title><rect x="1112.2" y="229" width="13.0" height="15.0" fill="rgb(248,214,47)" rx="2" ry="2" />
+<text  x="1115.20" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/linalg/linalg.py:solve:403 (14 samples, 15.38%)</title><rect x="424.9" y="181" width="181.6" height="15.0" fill="rgb(251,85,53)" rx="2" ry="2" />
+<text  x="427.95" y="191.5" >/usr/local/lib/python3...</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:remove_nodes_filter:535 (1 samples, 1.10%)</title><rect x="749.1" y="197" width="13.0" height="15.0" fill="rgb(220,10,36)" rx="2" ry="2" />
+<text  x="752.12" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:126 (3 samples, 3.30%)</title><rect x="256.4" y="165" width="38.9" height="15.0" fill="rgb(214,121,22)" rx="2" ry="2" />
+<text  x="259.37" y="175.5" >/us..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/function_base.py:linspace:150 (1 samples, 1.10%)</title><rect x="48.9" y="197" width="13.0" height="15.0" fill="rgb(226,178,30)" rx="2" ry="2" />
+<text  x="51.90" y="207.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:6 (4 samples, 4.40%)</title><rect x="1047.4" y="165" width="51.8" height="15.0" fill="rgb(253,19,21)" rx="2" ry="2" />
+<text  x="1050.36" y="175.5" >&lt;__ar..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:select:3503 (2 samples, 2.20%)</title><rect x="697.3" y="181" width="25.9" height="15.0" fill="rgb(243,106,45)" rx="2" ry="2" />
+<text  x="700.25" y="191.5" >/..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/interp_splines.py:interp_splines:120 (1 samples, 1.10%)</title><rect x="360.1" y="229" width="13.0" height="15.0" fill="rgb(226,205,12)" rx="2" ry="2" />
+<text  x="363.11" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:296 (20 samples, 21.98%)</title><rect x="424.9" y="229" width="259.4" height="15.0" fill="rgb(213,166,47)" rx="2" ry="2" />
+<text  x="427.95" y="239.5" >/home/roborace/Desktop/mod_local_t..</text>
+</g>
+<g >
+<title>/usr/lib/python3.5/json/encoder.py:iterencode:256 (3 samples, 3.30%)</title><rect x="1151.1" y="197" width="38.9" height="15.0" fill="rgb(253,171,40)" rx="2" ry="2" />
+<text  x="1154.10" y="207.5" >/us..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:linspace:6 (1 samples, 1.10%)</title><rect x="48.9" y="213" width="13.0" height="15.0" fill="rgb(247,81,41)" rx="2" ry="2" />
+<text  x="51.90" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/gen_local_node_template.py:gen_local_node_template:94 (1 samples, 1.10%)</title><rect x="736.2" y="213" width="12.9" height="15.0" fill="rgb(221,190,44)" rx="2" ry="2" />
+<text  x="739.15" y="223.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:concatenate:6 (2 samples, 2.20%)</title><rect x="308.2" y="181" width="26.0" height="15.0" fill="rgb(217,75,52)" rx="2" ry="2" />
+<text  x="311.24" y="191.5" >&lt;..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:select:3477 (1 samples, 1.10%)</title><rect x="749.1" y="165" width="13.0" height="15.0" fill="rgb(247,170,36)" rx="2" ry="2" />
+<text  x="752.12" y="175.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/Logging.py:log_onlinegraph:74 (1 samples, 1.10%)</title><rect x="1138.1" y="245" width="13.0" height="15.0" fill="rgb(213,201,28)" rx="2" ry="2" />
+<text  x="1141.13" y="255.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_spline_lengths.py:calc_spline_lengths:57 (1 samples, 1.10%)</title><rect x="373.1" y="213" width="12.9" height="15.0" fill="rgb(229,118,31)" rx="2" ry="2" />
+<text  x="376.08" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:imp_bhst:316 (1 samples, 1.10%)</title><rect x="386.0" y="245" width="13.0" height="15.0" fill="rgb(248,85,9)" rx="2" ry="2" />
+<text  x="389.04" y="255.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/normalize_psi.py:normalize_psi:28 (1 samples, 1.10%)</title><rect x="684.3" y="197" width="13.0" height="15.0" fill="rgb(250,74,20)" rx="2" ry="2" />
+<text  x="687.29" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/lib/python3.5/json/encoder.py:encode:198 (3 samples, 3.30%)</title><rect x="1151.1" y="213" width="38.9" height="15.0" fill="rgb(221,78,38)" rx="2" ry="2" />
+<text  x="1154.10" y="223.5" >/us..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/interp_splines.py:interp_splines:71 (1 samples, 1.10%)</title><rect x="373.1" y="229" width="12.9" height="15.0" fill="rgb(240,221,38)" rx="2" ry="2" />
+<text  x="376.08" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__solver_fb_unclosed:146 (15 samples, 16.48%)</title><rect x="917.7" y="213" width="194.5" height="15.0" fill="rgb(235,88,28)" rx="2" ry="2" />
+<text  x="920.69" y="223.5" >/usr/local/lib/python3.5/..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:select:3504 (1 samples, 1.10%)</title><rect x="749.1" y="181" width="13.0" height="15.0" fill="rgb(208,186,17)" rx="2" ry="2" />
+<text  x="752.12" y="191.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:569 (1 samples, 1.10%)</title><rect x="1112.2" y="261" width="13.0" height="15.0" fill="rgb(242,140,21)" rx="2" ry="2" />
+<text  x="1115.20" y="271.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:linspace:6 (1 samples, 1.10%)</title><rect x="373.1" y="197" width="12.9" height="15.0" fill="rgb(225,5,30)" rx="2" ry="2" />
+<text  x="376.08" y="207.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:set_initial_pose:207 (2 samples, 2.20%)</title><rect x="35.9" y="245" width="26.0" height="15.0" fill="rgb(242,136,49)" rx="2" ry="2" />
+<text  x="38.93" y="255.5" >/..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:309 (1 samples, 1.10%)</title><rect x="684.3" y="229" width="13.0" height="15.0" fill="rgb(220,26,1)" rx="2" ry="2" />
+<text  x="687.29" y="239.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:4 (1 samples, 1.10%)</title><rect x="995.5" y="165" width="13.0" height="15.0" fill="rgb(227,67,37)" rx="2" ry="2" />
+<text  x="998.49" y="175.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/numeric.py:full:332 (1 samples, 1.10%)</title><rect x="904.7" y="213" width="13.0" height="15.0" fill="rgb(216,29,18)" rx="2" ry="2" />
+<text  x="907.73" y="223.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1379 (1 samples, 1.10%)</title><rect x="943.6" y="149" width="13.0" height="15.0" fill="rgb(222,61,41)" rx="2" ry="2" />
+<text  x="946.63" y="159.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load:969 (1 samples, 1.10%)</title><rect x="386.0" y="149" width="13.0" height="15.0" fill="rgb(238,135,44)" rx="2" ry="2" />
+<text  x="389.04" y="159.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:390 (27 samples, 29.67%)</title><rect x="35.9" y="261" width="350.1" height="15.0" fill="rgb(245,114,47)" rx="2" ry="2" />
+<text  x="38.93" y="271.5" >/home/roborace/Desktop/mod_local_trajectory/ltp..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:153 (4 samples, 4.40%)</title><rect x="606.5" y="213" width="51.9" height="15.0" fill="rgb(221,53,9)" rx="2" ry="2" />
+<text  x="609.48" y="223.5" >/usr/..</text>
+</g>
+</g>
+</svg>

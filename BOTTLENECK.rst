@@ -18,9 +18,9 @@ The conventional CPU profiling is done through the sampling of function calls st
 
 .. raw:: html
 
-    <object data="images/mod_local_traj_interactive_profile.svg.svg" type="image/svg+xml"></object>
+    <object data="mod_local_traj_interactive_profile.svg.svg" type="image/svg+xml"></object>
 
 
 The stack traces are collected using sampling where each box represents the function. The boxes are stack from bottom (parent) to top (child) which corresponds to the calling ancestry. The horizontal ordering and colors has no indication of performance profile. The width of the stack boxes is proportional to the function time and frequency (for example, blocking time) according to the sample time.
 
-In the graph, the module ``main_ltpl`` consumes most of the computation time, its main bottleneck children include ``OnlineTrajectoryHandler.py``, ``main_online_callback.py``, ``calc\_splines.py``, ``gen_local_node_template.py``, ``calc_vel_profile.py``, ``GraphBase.py`` and so on (see detailed analysis by investigating interactive image above).
+In the graph, the module ``main_ltpl`` consumes most of the computation time, its main bottleneck children include ``OnlineTrajectoryHandler.py``, ``main_online_callback.py``, ``calc_splines.py``, ``gen_local_node_template.py``, ``calc_vel_profile.py``, ``GraphBase.py`` and so on (see detailed analysis by investigating interactive image above).
