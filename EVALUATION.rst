@@ -47,19 +47,6 @@ Comparing with original ``calc_splines.py`` where the execution time was  0.0011
 - define a timer for function call like ``t = Timer(lambda: calc_splines(path))``
 - item execute timer ``t.timeit(number=1)`` multiple times and compare the time of first call and last execution
 
-
-
-According to CPU profiling, the following Python mudules are the main bottleneck of the running process `main_mod_local_traj`:
-
-1. **calc_vel_profile** 
-  Calculates a velocity profile using the tire and motor limits as good as possible.
-2. **calc_splines** 
-  Solve for a curvature continuous cubic spline between given poses.
-3. **conv_filt** 
-  Filter a given temporal signal using a convolution (moving average) filter.
-
-Each of the modules are converted into the optimized version with Numba in a separated modules named with the suffix `_numba`.
-
 Exucution Time Comparison
 --------
 
@@ -83,18 +70,9 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    * - Module name
      - Average execution time after compilation (seconds)
    * - calc_splines.py
-     - 
+     - 0.4458398690000001
    * - calc_splines_numba.py
-     - 
+     - 0.44003033999999985
 
-.. list-table:: Table 3: Execution time comparison
-   :widths: 40 40
-   :header-rows: 1
 
-   * - Module name
-     - Average execution time after compilation (seconds)
-   * - conv_filt.py
-     - 
-   * - conv_filt_numba.py
-     - 
 
