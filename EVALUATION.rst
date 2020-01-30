@@ -70,7 +70,7 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    :header-rows: 1
 
    * - Module name
-     - Average execution time (without compilation)
+     - Average execution time after compilation (seconds)
    * - calc_vel_profile.py
      - 0.0003124909999999981
    * - calc_vel_profile_numba.py
@@ -81,7 +81,7 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    :header-rows: 1
 
    * - Module name
-     - Average execution time (without compilation)
+     - Average execution time after compilation (seconds)
    * - calc_splines.py
      - 
    * - calc_splines_numba.py
@@ -92,9 +92,9 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    :header-rows: 1
 
    * - Module name
-     - Average execution time without compilation (in seconds)
+     - Average execution time after compilation (seconds)
    * - conv_filt.py
      - 
    * - conv_filt_numba.py
-     - 
+     - 0.00015910099999993932
 
