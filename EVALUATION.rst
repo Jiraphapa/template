@@ -21,7 +21,6 @@ in a faster code. For instance, the code taken partially from ``calc_splines_num
                     
     ...
     ...
-    ...
 
     # testing -------------------------------
     if __name__ == "__main__":
@@ -30,8 +29,8 @@ in a faster code. For instance, the code taken partially from ``calc_splines_num
     path = np.ones((15,2))
     el_lengths = np.ones((14))
     t = Timer(lambda: calc_splines(path,el_lengths))
-    print("Execution time for calc_splines with numba (with compilation):",t.timeit(number=1))
 
+    print("Execution time for calc_splines with numba (with compilation):",t.timeit(number=1))
     print("Execution time for calc_splines with numba (after compilation):",t.timeit(number=1))
 
 
@@ -59,7 +58,12 @@ According to CPU profiling, the following Python mudules are the main bottleneck
 3. **conv_filt** 
   Filter a given temporal signal using a convolution (moving average) filter.
 
-.. list-table:: Title
+Each of the modules are converted into the optimized version with Numba in a separated modules named with the suffix _numba.
+
+Runtime Comparison
+--------
+
+.. list-table:: 
    :widths: 25 25 50
    :header-rows: 1
 
