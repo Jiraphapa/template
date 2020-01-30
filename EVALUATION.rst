@@ -65,7 +65,7 @@ Exucution Time Comparison
 
 The contained data used to test is always for an entire race track (Berlin, Monteblanco, Modena). Below are comparisons of execution time of the original and optimized modules. 
 
-.. list-table:: Execution time comparison
+.. list-table:: Table 1: Execution time comparison
    :widths: 40 40
    :header-rows: 1
 
@@ -74,5 +74,27 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    * - calc_vel_profile.py
      - 55
    * - calc_vel_profile_numba.py
+     - 555
+
+.. list-table:: Table 2: Execution time comparison
+   :widths: 40 40
+   :header-rows: 1
+
+   * - Module name
+     - Average execution time (without compilation)
+   * - calc_splines.py
+     - 55
+   * - calc_splines_numba.py
+     - 555
+
+.. list-table:: Table 3: Execution time comparison
+   :widths: 40 40
+   :header-rows: 1
+
+   * - Module name
+     - Average execution time (without compilation)
+   * - conv_filt.py
+     - 55
+   * - conv_filt_numba.py
      - 555
 

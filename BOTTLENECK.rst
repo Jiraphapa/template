@@ -20,8 +20,7 @@ The conventional CPU profiling is done through the sampling of function calls st
 
    <img src="../images/mod_local_traj_interactive_profile.svg.svg" alt="Latest PyPi version"></a>
 
-.. raw:: html
-    :file: mod_local_traj_interactive_profile.svg.svg
+
 
 .. raw:: html
     :file: mod_local_traj_interactive_profile.svg
