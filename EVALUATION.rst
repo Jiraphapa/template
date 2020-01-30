@@ -74,7 +74,7 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    * - calc_vel_profile.py
      - 0.0003124909999999981
    * - calc_vel_profile_numba.py
-     - 555
+     - 0.00015319499999977282
 
 .. list-table:: Table 2: Execution time comparison
    :widths: 40 40
