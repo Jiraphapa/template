@@ -1,1197 +1,821 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="7pt" height="2pt" viewBox="0 0 7 2" version="1.1">
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" width="1200" height="326" onload="init(evt)" viewBox="0 0 1200 326" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Flame graph stack visualization. See https://github.com/brendangregg/FlameGraph for latest version, and http://www.brendangregg.com/flamegraphs.html for examples. -->
+<!-- NOTES:  -->
 <defs>
-<g>
-<symbol overflow="visible" id="glyph0-0">
-<path style="stroke:none;" d="M 0.015625 0 L 0.015625 -0.078125 L 0.09375 -0.078125 L 0.09375 0 Z M 0.015625 0 L 0.078125 0 L 0.078125 -0.078125 L 0.015625 -0.078125 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-1">
-<path style="stroke:none;" d="M 0.0625 -0.0625 L 0.015625 -0.0625 L 0.015625 -0.046875 L 0.046875 -0.046875 L 0.046875 -0.03125 L 0.015625 -0.03125 L 0.015625 0 L 0.015625 -0.078125 L 0.0625 -0.078125 Z M 0.0625 -0.0625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-2">
-<path style="stroke:none;" d="M 0.015625 0 L 0.015625 -0.078125 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-3">
-<path style="stroke:none;" d="M 0.046875 0 C 0.046875 0 0.0390625 0 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0.0078125 -0.0234375 0.015625 -0.03125 0.015625 -0.03125 C 0.0234375 -0.03125 0.0351562 -0.03125 0.046875 -0.03125 L 0.046875 -0.046875 C 0.046875 -0.046875 0.0390625 -0.046875 0.03125 -0.046875 C 0.0195312 -0.046875 0.015625 -0.046875 0.015625 -0.046875 L 0.015625 -0.0625 C 0.015625 -0.0625 0.0195312 -0.0625 0.03125 -0.0625 C 0.0390625 -0.0625 0.046875 -0.0546875 0.046875 -0.046875 Z M 0.046875 -0.015625 L 0.046875 -0.03125 C 0.0351562 -0.03125 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.015625 -0.0234375 0.015625 -0.015625 C 0.015625 -0.015625 0.0195312 -0.015625 0.03125 -0.015625 C 0.03125 -0.015625 0.0351562 -0.015625 0.046875 -0.015625 Z M 0.046875 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-4">
-<path style="stroke:none;" d="M 0.09375 0 L 0.078125 0 L 0.078125 -0.03125 C 0.078125 -0.0390625 0.078125 -0.046875 0.078125 -0.046875 C 0.078125 -0.046875 0.0703125 -0.046875 0.0625 -0.046875 C 0.0625 -0.046875 0.0546875 -0.046875 0.046875 -0.046875 C 0.046875 -0.046875 0.046875 -0.0390625 0.046875 -0.03125 L 0.046875 0 L 0.046875 -0.03125 C 0.046875 -0.0390625 0.046875 -0.046875 0.046875 -0.046875 C 0.046875 -0.046875 0.0390625 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.0234375 -0.046875 0.015625 -0.046875 L 0.015625 0 L 0.015625 -0.0625 L 0.015625 -0.046875 C 0.0234375 -0.0546875 0.03125 -0.0625 0.03125 -0.0625 C 0.0390625 -0.0625 0.046875 -0.0546875 0.046875 -0.046875 C 0.0546875 -0.046875 0.0625 -0.046875 0.0625 -0.046875 C 0.0625 -0.0546875 0.0664062 -0.0625 0.078125 -0.0625 C 0.078125 -0.0625 0.078125 -0.0546875 0.078125 -0.046875 C 0.0859375 -0.046875 0.09375 -0.0390625 0.09375 -0.03125 Z M 0.09375 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-5">
-<path style="stroke:none;" d="M 0.046875 -0.03125 L 0.015625 -0.03125 C 0.015625 -0.0195312 0.015625 -0.015625 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.0390625 -0.0078125 0.046875 -0.015625 0.046875 -0.015625 L 0.046875 0 C 0.046875 0 0.0390625 0 0.03125 0 C 0.0195312 0 0.0078125 0 0 0 C 0 -0.0078125 0 -0.0195312 0 -0.03125 C 0 -0.0390625 0 -0.046875 0 -0.046875 C 0.0078125 -0.0546875 0.0195312 -0.0625 0.03125 -0.0625 C 0.0390625 -0.0625 0.046875 -0.0546875 0.046875 -0.046875 C 0.046875 -0.046875 0.046875 -0.0390625 0.046875 -0.03125 Z M 0.046875 -0.03125 C 0.046875 -0.0390625 0.0390625 -0.046875 0.03125 -0.046875 C 0.0195312 -0.046875 0.015625 -0.046875 0.015625 -0.046875 C 0.015625 -0.046875 0.015625 -0.0390625 0.015625 -0.03125 Z M 0.046875 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-6">
-<path style="stroke:none;" d=""/>
-</symbol>
-<symbol overflow="visible" id="glyph0-7">
-<path style="stroke:none;" d="M 0.0625 0 C 0.0625 0 0.0546875 0 0.046875 0 C 0.0351562 0 0.0234375 0 0.015625 0 C 0.015625 0 0.015625 -0.00390625 0.015625 -0.015625 C 0.015625 -0.015625 0.0078125 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0 -0.0507812 0.00390625 -0.0625 0.015625 -0.0625 C 0.0234375 -0.0703125 0.0351562 -0.078125 0.046875 -0.078125 C 0.0546875 -0.078125 0.0625 -0.0703125 0.0625 -0.0625 C 0.0625 -0.0625 0.0546875 -0.0625 0.046875 -0.0625 C 0.0351562 -0.0625 0.0234375 -0.0546875 0.015625 -0.046875 C 0.015625 -0.0234375 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.0351562 0 0.046875 0 C 0.0546875 -0.0078125 0.0625 -0.015625 0.0625 -0.015625 L 0.0625 -0.03125 L 0.046875 -0.03125 L 0.0625 -0.03125 Z M 0.0625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-8">
-<path style="stroke:none;" d="M 0.046875 -0.046875 C 0.046875 -0.046875 0.0390625 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.0234375 -0.046875 0.015625 -0.046875 L 0.015625 0 L 0.015625 -0.0625 L 0.015625 -0.046875 C 0.0234375 -0.0546875 0.03125 -0.0625 0.03125 -0.0625 C 0.0390625 -0.0625 0.046875 -0.0625 0.046875 -0.0625 Z M 0.046875 -0.046875 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-9">
-<path style="stroke:none;" d="M 0.0625 -0.03125 C 0.0625 -0.0195312 0.0546875 -0.015625 0.046875 -0.015625 C 0.046875 -0.015625 0.046875 -0.0078125 0.046875 0 C 0.046875 0 0.0390625 0 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 L 0.015625 0.015625 L 0.015625 -0.0625 L 0.015625 -0.046875 C 0.0234375 -0.0546875 0.03125 -0.0625 0.03125 -0.0625 C 0.0390625 -0.0625 0.046875 -0.0546875 0.046875 -0.046875 C 0.0546875 -0.046875 0.0625 -0.0390625 0.0625 -0.03125 Z M 0.046875 -0.03125 C 0.046875 -0.0390625 0.046875 -0.046875 0.046875 -0.046875 C 0.046875 -0.046875 0.0390625 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.0234375 -0.046875 0.015625 -0.046875 L 0.015625 -0.015625 C 0.0234375 -0.015625 0.03125 -0.015625 0.03125 -0.015625 C 0.0390625 -0.015625 0.046875 -0.0195312 0.046875 -0.03125 Z M 0.046875 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph0-10">
-<path style="stroke:none;" d="M 0.046875 0 L 0.046875 -0.03125 C 0.046875 -0.0390625 0.046875 -0.046875 0.046875 -0.046875 C 0.046875 -0.046875 0.0390625 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.0234375 -0.046875 0.015625 -0.046875 L 0.015625 0 L 0.015625 -0.078125 L 0.015625 -0.046875 C 0.0234375 -0.0546875 0.03125 -0.0625 0.03125 -0.0625 C 0.0390625 -0.0625 0.046875 -0.0546875 0.046875 -0.046875 C 0.046875 -0.046875 0.046875 -0.0390625 0.046875 -0.03125 Z M 0.046875 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph1-0">
-<path style="stroke:none;" d="M 0.015625 0 L 0.015625 -0.0625 L 0.0625 -0.0625 L 0.0625 0 Z M 0.015625 0 L 0.0625 0 L 0.0625 -0.046875 L 0.015625 -0.046875 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph1-1">
-<path style="stroke:none;" d="M 0.046875 -0.015625 C 0.046875 -0.015625 0.046875 -0.0078125 0.046875 0 C 0.046875 0 0.0390625 0 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 L 0 -0.015625 C 0.0078125 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 C 0.03125 -0.015625 0.0234375 -0.015625 0.015625 -0.015625 C 0.015625 -0.0234375 0.015625 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.0078125 -0.03125 0 -0.03125 C 0 -0.03125 0 -0.0351562 0 -0.046875 C 0.0078125 -0.046875 0.0195312 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.0351562 -0.046875 0.046875 -0.046875 C 0.0351562 -0.046875 0.03125 -0.046875 0.03125 -0.046875 C 0.0195312 -0.046875 0.015625 -0.046875 0.015625 -0.046875 C 0.015625 -0.0351562 0.015625 -0.03125 0.015625 -0.03125 C 0.0234375 -0.03125 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.03125 -0.0234375 0.03125 -0.015625 C 0.0390625 -0.015625 0.046875 -0.015625 0.046875 -0.015625 Z M 0.046875 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph1-2">
-<path style="stroke:none;" d="M 0.03125 -0.015625 L 0.015625 -0.015625 C 0.015625 -0.00390625 0.015625 0 0.015625 0 C 0.015625 0 0.0195312 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 L 0.03125 0 C 0.0195312 0 0.0078125 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0.0078125 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.03125 -0.03125 0.03125 -0.0234375 0.03125 -0.015625 Z M 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 Z M 0.03125 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph1-3">
-<path style="stroke:none;" d="M 0.03125 0 C 0.0195312 0 0.015625 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 0 0 -0.00390625 0 -0.015625 C 0 -0.015625 0.00390625 -0.015625 0.015625 -0.015625 C 0.015625 -0.0234375 0.015625 -0.03125 0.015625 -0.03125 C 0.0234375 -0.03125 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.0078125 -0.03125 0 -0.03125 L 0 -0.046875 C 0.0078125 -0.046875 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 Z M 0.03125 -0.015625 C 0.03125 -0.015625 0.0234375 -0.015625 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph1-4">
-<path style="stroke:none;" d="M 0.03125 -0.03125 C 0.0195312 -0.03125 0.015625 -0.03125 0.015625 -0.03125 L 0.015625 0 L 0 0 L 0 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 Z M 0.03125 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph1-5">
-<path style="stroke:none;" d="M 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.00390625 0 0 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0.0078125 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.015625 -0.0234375 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph1-6">
-<path style="stroke:none;" d="M 0.03125 0 L 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.0195312 -0.03125 0.015625 -0.03125 0.015625 -0.03125 L 0.015625 0 L 0 0 L 0 -0.0625 L 0.015625 -0.0625 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 Z M 0.03125 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-0">
-<path style="stroke:none;" d="M 0.015625 0 L 0.015625 -0.0625 L 0.0625 -0.0625 L 0.0625 0 Z M 0.015625 0 L 0.0625 0 L 0.0625 -0.046875 L 0.015625 -0.046875 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-1">
-<path style="stroke:none;" d="M 0.03125 -0.0625 L 0 0.015625 L 0.015625 -0.0625 Z M 0.03125 -0.0625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-2">
-<path style="stroke:none;" d="M 0.03125 0 L 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.0195312 -0.03125 0.015625 -0.03125 0.015625 -0.03125 L 0.015625 0 L 0 0 L 0 -0.0625 L 0.015625 -0.0625 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 Z M 0.03125 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-3">
-<path style="stroke:none;" d="M 0.046875 -0.015625 C 0.046875 -0.015625 0.0390625 -0.0078125 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0.0078125 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.0390625 -0.03125 0.046875 -0.0234375 0.046875 -0.015625 Z M 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.015625 -0.0234375 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-4">
-<path style="stroke:none;" d="M 0.0625 0 L 0.0625 -0.015625 C 0.0625 -0.0234375 0.0546875 -0.03125 0.046875 -0.03125 C 0.046875 -0.03125 0.0390625 -0.03125 0.03125 -0.03125 L 0.03125 0 L 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 L 0.015625 0 L 0 0 L 0 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.0390625 -0.03125 0.046875 -0.03125 0.046875 -0.03125 C 0.046875 -0.0390625 0.046875 -0.046875 0.046875 -0.046875 C 0.0546875 -0.046875 0.0625 -0.0390625 0.0625 -0.03125 Z M 0.0625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-5">
-<path style="stroke:none;" d="M 0.03125 -0.015625 L 0.015625 -0.015625 C 0.015625 -0.00390625 0.015625 0 0.015625 0 C 0.015625 0 0.0195312 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 L 0.03125 0 C 0.0195312 0 0.0078125 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0.0078125 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.03125 -0.03125 0.03125 -0.0234375 0.03125 -0.015625 Z M 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 Z M 0.03125 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-6">
-<path style="stroke:none;" d="M 0.03125 -0.03125 C 0.0195312 -0.03125 0.015625 -0.03125 0.015625 -0.03125 L 0.015625 0 L 0 0 L 0 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 Z M 0.03125 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-7">
-<path style="stroke:none;" d="M 0.046875 -0.015625 C 0.046875 -0.015625 0.0390625 -0.0078125 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 L 0 0 L 0 -0.0625 L 0.015625 -0.0625 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.0390625 -0.03125 0.046875 -0.0234375 0.046875 -0.015625 Z M 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.0195312 -0.03125 0.015625 -0.03125 0.015625 -0.03125 L 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-8">
-<path style="stroke:none;" d="M 0.03125 0 C 0.0195312 0 0.015625 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 0 0 -0.00390625 0 -0.015625 C 0 -0.015625 0.00390625 -0.015625 0.015625 -0.015625 C 0.015625 -0.0234375 0.015625 -0.03125 0.015625 -0.03125 C 0.0234375 -0.03125 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.0078125 -0.03125 0 -0.03125 C 0.0078125 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 Z M 0.03125 -0.015625 C 0.03125 -0.015625 0.0234375 -0.015625 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-9">
-<path style="stroke:none;" d="M 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.00390625 0 0 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0.0078125 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.015625 -0.0234375 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-10">
-<path style="stroke:none;" d="M 0.046875 -0.03125 C 0.046875 -0.0195312 0.046875 -0.015625 0.046875 -0.015625 C 0.046875 -0.015625 0.0390625 -0.0078125 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 L 0 0 L 0 -0.046875 L 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.0351562 -0.046875 0.046875 -0.046875 C 0.046875 -0.046875 0.046875 -0.0390625 0.046875 -0.03125 Z M 0.046875 -0.03125 C 0.046875 -0.03125 0.0390625 -0.03125 0.03125 -0.03125 C 0.03125 -0.0390625 0.03125 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.0234375 -0.046875 0.015625 -0.046875 L 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 C 0.0390625 -0.015625 0.046875 -0.015625 0.046875 -0.015625 C 0.046875 -0.015625 0.046875 -0.0195312 0.046875 -0.03125 Z M 0.046875 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-11">
-<path style="stroke:none;" d="M 0.03125 -0.015625 C 0.03125 -0.00390625 0.03125 0 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 L 0 -0.015625 C 0 -0.015625 0 -0.0078125 0 0 C 0.0078125 0 0.015625 0 0.015625 0 C 0.0234375 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 C 0.03125 -0.015625 0.0234375 -0.015625 0.015625 -0.015625 C 0.00390625 -0.015625 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0.0078125 -0.03125 0.015625 -0.03125 0.015625 -0.03125 C 0.015625 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.015625 -0.046875 0.015625 -0.0390625 0.015625 -0.03125 C 0.0234375 -0.03125 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.0195312 0.015625 -0.015625 0.015625 -0.015625 C 0.015625 -0.015625 0.0195312 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-12">
-<path style="stroke:none;" d="M 0.046875 0 L 0.03125 0 L 0.015625 -0.015625 L 0.015625 0 L 0 0 L 0 -0.0625 L 0.015625 -0.0625 L 0.015625 -0.015625 L 0.03125 -0.046875 L 0.046875 -0.046875 L 0.015625 -0.015625 Z M 0.046875 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-13">
-<path style="stroke:none;" d="M 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 0 0 -0.00390625 0 -0.015625 L 0 -0.046875 L 0.03125 -0.046875 L 0.03125 -0.03125 L 0.015625 -0.03125 L 0.015625 -0.015625 C 0.015625 -0.00390625 0.015625 0 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 Z M 0.03125 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-14">
-<path style="stroke:none;" d="M 0.046875 -0.015625 C 0.046875 -0.015625 0.0390625 -0.015625 0.03125 -0.015625 C 0.03125 -0.015625 0.03125 -0.0078125 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 L 0.015625 0.015625 L 0 0.015625 L 0 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 C 0.0390625 -0.03125 0.046875 -0.0234375 0.046875 -0.015625 Z M 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.0195312 -0.03125 0.015625 -0.03125 0.015625 -0.03125 L 0.015625 -0.015625 C 0.015625 -0.00390625 0.015625 0 0.015625 0 C 0.0234375 0 0.03125 0 0.03125 0 C 0.03125 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-15">
-<path style="stroke:none;" d="M 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0 -0.03125 0.00390625 -0.03125 0.015625 -0.03125 C 0.015625 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 L 0.03125 -0.0625 Z M 0.03125 -0.015625 L 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.015625 -0.0234375 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-16">
-<path style="stroke:none;" d="M 0.046875 0.015625 L 0 0.015625 L 0 0 L 0.046875 0 Z M 0.046875 0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-17">
-<path style="stroke:none;" d="M 0.015625 0 L 0 0 L 0 -0.0625 L 0.015625 -0.0625 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-18">
-<path style="stroke:none;" d="M 0.015625 -0.046875 Z M 0.015625 0 C 0.015625 0.0078125 0.015625 0.015625 0.015625 0.015625 C 0.015625 0.015625 0.0078125 0.015625 0 0.015625 C 0.0078125 0.015625 0.015625 0.0078125 0.015625 0 L 0.015625 -0.03125 L 0 -0.03125 L 0 -0.046875 L 0.015625 -0.046875 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-19">
-<path style="stroke:none;" d="M 0.046875 -0.046875 L 0.015625 0.015625 L 0.015625 0 L 0 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.015625 L 0.03125 -0.046875 Z M 0.046875 -0.046875 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-20">
-<path style="stroke:none;" d="M 0.015625 -0.046875 L 0 -0.046875 Z M 0.015625 0 L 0 0 L 0 -0.046875 L 0.015625 -0.046875 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-21">
-<path style="stroke:none;" d="M 0.03125 0 L 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.0195312 -0.03125 0.015625 -0.03125 0.015625 -0.03125 L 0.015625 0 L 0 0 L 0 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.03125 C 0.015625 -0.0390625 0.0195312 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 Z M 0.03125 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-22">
-<path style="stroke:none;" d="M 0.015625 0 L 0.015625 -0.015625 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-23">
-<path style="stroke:none;" d="M 0.015625 -0.03125 L 0.015625 -0.046875 Z M 0.015625 0 L 0.015625 -0.015625 Z M 0.015625 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-24">
-<path style="stroke:none;" d="M 0.046875 0 L 0.015625 -0.015625 L 0.015625 -0.03125 L 0.046875 -0.046875 L 0.046875 -0.03125 L 0.015625 -0.015625 L 0.046875 -0.015625 Z M 0.046875 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-25">
-<path style="stroke:none;" d="M 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 0 0 -0.00390625 0 -0.015625 L 0 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.015625 C 0.015625 -0.00390625 0.015625 0 0.015625 0 C 0.0234375 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 L 0.03125 -0.046875 Z M 0.03125 0 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-26">
-<path style="stroke:none;" d="M 0.03125 -0.03125 C 0.03125 -0.03125 0.03125 -0.0234375 0.03125 -0.015625 C 0.0390625 -0.015625 0.046875 -0.015625 0.046875 -0.015625 C 0.046875 -0.015625 0.0390625 -0.0078125 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 L 0 -0.015625 C 0.0078125 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.03125 -0.00390625 0.03125 -0.015625 C 0.03125 -0.015625 0.03125 -0.0195312 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.0234375 -0.03125 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.03125 -0.0351562 0.03125 -0.046875 C 0.03125 -0.046875 0.0234375 -0.046875 0.015625 -0.046875 C 0.015625 -0.046875 0.0078125 -0.046875 0 -0.046875 C 0.0078125 -0.046875 0.015625 -0.046875 0.015625 -0.046875 C 0.015625 -0.0546875 0.015625 -0.0625 0.015625 -0.0625 C 0.0234375 -0.0625 0.03125 -0.0546875 0.03125 -0.046875 C 0.03125 -0.0351562 0.03125 -0.03125 0.03125 -0.03125 Z M 0.03125 -0.03125 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-27">
-<path style="stroke:none;" d="M 0.046875 -0.015625 C 0.046875 -0.015625 0.0390625 -0.0078125 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 L 0 -0.015625 C 0.0078125 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0 0.03125 -0.00390625 0.03125 -0.015625 C 0.03125 -0.0234375 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 L 0.015625 -0.046875 L 0.046875 -0.046875 L 0.015625 -0.046875 L 0.015625 -0.03125 C 0.0234375 -0.03125 0.03125 -0.03125 0.03125 -0.03125 C 0.03125 -0.03125 0.03125 -0.0234375 0.03125 -0.015625 C 0.0390625 -0.015625 0.046875 -0.015625 0.046875 -0.015625 Z M 0.046875 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-28">
-<path style="stroke:none;" d="M 0.03125 -0.046875 C 0.03125 -0.046875 0.0234375 -0.046875 0.015625 -0.046875 L 0.03125 -0.046875 L 0.03125 -0.03125 L 0.015625 -0.03125 L 0.015625 0 L 0 0 L 0 -0.046875 C 0.0078125 -0.0546875 0.015625 -0.0625 0.015625 -0.0625 C 0.0234375 -0.0625 0.03125 -0.0625 0.03125 -0.0625 Z M 0.03125 -0.046875 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-29">
-<path style="stroke:none;" d=""/>
-</symbol>
-<symbol overflow="visible" id="glyph2-30">
-<path style="stroke:none;" d="M 0.03125 0 C 0.03125 0.0078125 0.0234375 0.015625 0.015625 0.015625 C 0.015625 0.015625 0.0078125 0.015625 0 0.015625 L 0 0 C 0.0078125 0 0.015625 0 0.015625 0 C 0.015625 0.0078125 0.015625 0.015625 0.015625 0.015625 C 0.0234375 0.015625 0.03125 0.0078125 0.03125 0 C 0.03125 0 0.0234375 0 0.015625 0 C 0.015625 0 0.0078125 0 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0 -0.03125 0.00390625 -0.03125 0.015625 -0.03125 C 0.015625 -0.0390625 0.015625 -0.046875 0.015625 -0.046875 C 0.0234375 -0.046875 0.03125 -0.046875 0.03125 -0.046875 C 0.03125 -0.046875 0.03125 -0.0390625 0.03125 -0.03125 L 0.03125 -0.046875 Z M 0.03125 -0.015625 L 0.03125 -0.03125 C 0.03125 -0.03125 0.0234375 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.015625 -0.0234375 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 -0.0078125 0.03125 -0.015625 0.03125 -0.015625 Z M 0.03125 -0.015625 "/>
-</symbol>
-<symbol overflow="visible" id="glyph2-31">
-<path style="stroke:none;" d="M 0.03125 0.015625 L 0.015625 0.015625 C 0.015625 0.015625 0.0078125 0.0078125 0 0 C 0 -0.0078125 0 -0.015625 0 -0.015625 C 0 -0.0234375 0 -0.03125 0 -0.03125 C 0.0078125 -0.0390625 0.015625 -0.0507812 0.015625 -0.0625 L 0.03125 -0.0625 C 0.03125 -0.0507812 0.0234375 -0.046875 0.015625 -0.046875 C 0.015625 -0.0351562 0.015625 -0.03125 0.015625 -0.03125 C 0.015625 -0.03125 0.015625 -0.0234375 0.015625 -0.015625 C 0.015625 -0.015625 0.015625 -0.0078125 0.015625 0 C 0.0234375 0.0078125 0.03125 0.015625 0.03125 0.015625 Z M 0.03125 0.015625 "/>
-</symbol>
-</g>
-<linearGradient id="linear0" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1" gradientTransform="matrix(7,0,0,2,0,0)">
-<stop offset="0.05" style="stop-color:rgb(93.333333%,93.333333%,93.333333%);stop-opacity:1;"/>
-<stop offset="0.95" style="stop-color:rgb(93.333333%,93.333333%,69.019608%);stop-opacity:1;"/>
-</linearGradient>
-<filter id="alpha" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%">
-  <feColorMatrix type="matrix" in="SourceGraphic" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
-</filter>
-<mask id="mask0">
-  <g filter="url(#alpha)">
-<rect x="0" y="0" width="7" height="2" style="fill:rgb(0%,0%,0%);fill-opacity:0.101961;stroke:none;"/>
-  </g>
-</mask>
-<clipPath id="clip1">
-  <rect width="7" height="2"/>
-</clipPath>
-<g id="surface6" clip-path="url(#clip1)">
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph1-1" x="6.359375" y="0.148234"/>
-  <use xlink:href="#glyph1-2" x="6.407227" y="0.148234"/>
-  <use xlink:href="#glyph1-3" x="6.448926" y="0.148234"/>
-  <use xlink:href="#glyph1-4" x="6.490967" y="0.148234"/>
-  <use xlink:href="#glyph1-5" x="6.52084" y="0.148234"/>
-  <use xlink:href="#glyph1-6" x="6.55731" y="0.148234"/>
-</g>
-</g>
+	<linearGradient id="background" y1="0" y2="1" x1="0" x2="0" >
+		<stop stop-color="#eeeeee" offset="5%" />
+		<stop stop-color="#eeeeb0" offset="95%" />
+	</linearGradient>
 </defs>
-<g id="surface1">
-<rect x="0" y="0" width="7" height="2" style="fill:url(#linear0);stroke:none;"/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph0-1" x="3.179688" y="0.148024"/>
-  <use xlink:href="#glyph0-2" x="3.236785" y="0.148024"/>
-  <use xlink:href="#glyph0-3" x="3.264049" y="0.148024"/>
-  <use xlink:href="#glyph0-4" x="3.323721" y="0.148024"/>
-  <use xlink:href="#glyph0-5" x="3.420358" y="0.148024"/>
-  <use xlink:href="#glyph0-6" x="3.479546" y="0.148024"/>
-  <use xlink:href="#glyph0-7" x="3.514478" y="0.148024"/>
-  <use xlink:href="#glyph0-8" x="3.591519" y="0.148024"/>
-  <use xlink:href="#glyph0-3" x="3.633918" y="0.148024"/>
-  <use xlink:href="#glyph0-9" x="3.69359" y="0.148024"/>
-  <use xlink:href="#glyph0-10" x="3.755496" y="0.148024"/>
+<style type="text/css">
+	text { font-family:Verdana; font-size:12px; fill:rgb(0,0,0); }
+	#search { opacity:0.1; cursor:pointer; }
+	#search:hover, #search.show { opacity:1; }
+	#subtitle { text-anchor:middle; font-color:rgb(160,160,160); }
+	#title { text-anchor:middle; font-size:17px}
+	#unzoom { cursor:pointer; }
+	#frames > *:hover { stroke:black; stroke-width:0.5; cursor:pointer; }
+	.hide { display:none; }
+	.parent { opacity:0.5; }
+</style>
+<script type="text/ecmascript">
+<![CDATA[
+	"use strict";
+	var details, searchbtn, unzoombtn, matchedtxt, svg, searching;
+	function init(evt) {
+		details = document.getElementById("details").firstChild;
+		searchbtn = document.getElementById("search");
+		unzoombtn = document.getElementById("unzoom");
+		matchedtxt = document.getElementById("matched");
+		svg = document.getElementsByTagName("svg")[0];
+		searching = 0;
+	}
+
+	window.addEventListener("click", function(e) {
+		var target = find_group(e.target);
+		if (target) {
+			if (target.nodeName == "a") {
+				if (e.ctrlKey === false) return;
+				e.preventDefault();
+			}
+			if (target.classList.contains("parent")) unzoom();
+			zoom(target);
+		}
+		else if (e.target.id == "unzoom") unzoom();
+		else if (e.target.id == "search") search_prompt();
+	}, false)
+
+	// mouse-over for info
+	// show
+	window.addEventListener("mouseover", function(e) {
+		var target = find_group(e.target);
+		if (target) details.nodeValue = "Function: " + g_to_text(target);
+	}, false)
+
+	// clear
+	window.addEventListener("mouseout", function(e) {
+		var target = find_group(e.target);
+		if (target) details.nodeValue = ' ';
+	}, false)
+
+	// ctrl-F for search
+	window.addEventListener("keydown",function (e) {
+		if (e.keyCode === 114 || (e.ctrlKey && e.keyCode === 70)) {
+			e.preventDefault();
+			search_prompt();
+		}
+	}, false)
+
+	// functions
+	function find_child(node, selector) {
+		var children = node.querySelectorAll(selector);
+		if (children.length) return children[0];
+		return;
+	}
+	function find_group(node) {
+		var parent = node.parentElement;
+		if (!parent) return;
+		if (parent.id == "frames") return node;
+		return find_group(parent);
+	}
+	function orig_save(e, attr, val) {
+		if (e.attributes["_orig_" + attr] != undefined) return;
+		if (e.attributes[attr] == undefined) return;
+		if (val == undefined) val = e.attributes[attr].value;
+		e.setAttribute("_orig_" + attr, val);
+	}
+	function orig_load(e, attr) {
+		if (e.attributes["_orig_"+attr] == undefined) return;
+		e.attributes[attr].value = e.attributes["_orig_" + attr].value;
+		e.removeAttribute("_orig_"+attr);
+	}
+	function g_to_text(e) {
+		var text = find_child(e, "title").firstChild.nodeValue;
+		return (text)
+	}
+	function g_to_func(e) {
+		var func = g_to_text(e);
+		// if there's any manipulation we want to do to the function
+		// name before it's searched, do it here before returning.
+		return (func);
+	}
+	function update_text(e) {
+		var r = find_child(e, "rect");
+		var t = find_child(e, "text");
+		var w = parseFloat(r.attributes.width.value) -3;
+		var txt = find_child(e, "title").textContent.replace(/\([^(]*\)$/,"");
+		t.attributes.x.value = parseFloat(r.attributes.x.value) + 3;
+
+		// Smaller than this size won't fit anything
+		if (w < 2 * 12 * 0.59) {
+			t.textContent = "";
+			return;
+		}
+
+		t.textContent = txt;
+		// Fit in full text width
+		if (/^ *$/.test(txt) || t.getSubStringLength(0, txt.length) < w)
+			return;
+
+		for (var x = txt.length - 2; x > 0; x--) {
+			if (t.getSubStringLength(0, x + 2) <= w) {
+				t.textContent = txt.substring(0, x) + "..";
+				return;
+			}
+		}
+		t.textContent = "";
+	}
+
+	// zoom
+	function zoom_reset(e) {
+		if (e.attributes != undefined) {
+			orig_load(e, "x");
+			orig_load(e, "width");
+		}
+		if (e.childNodes == undefined) return;
+		for (var i = 0, c = e.childNodes; i < c.length; i++) {
+			zoom_reset(c[i]);
+		}
+	}
+	function zoom_child(e, x, ratio) {
+		if (e.attributes != undefined) {
+			if (e.attributes.x != undefined) {
+				orig_save(e, "x");
+				e.attributes.x.value = (parseFloat(e.attributes.x.value) - x - 10) * ratio + 10;
+				if (e.tagName == "text")
+					e.attributes.x.value = find_child(e.parentNode, "rect[x]").attributes.x.value + 3;
+			}
+			if (e.attributes.width != undefined) {
+				orig_save(e, "width");
+				e.attributes.width.value = parseFloat(e.attributes.width.value) * ratio;
+			}
+		}
+
+		if (e.childNodes == undefined) return;
+		for (var i = 0, c = e.childNodes; i < c.length; i++) {
+			zoom_child(c[i], x - 10, ratio);
+		}
+	}
+	function zoom_parent(e) {
+		if (e.attributes) {
+			if (e.attributes.x != undefined) {
+				orig_save(e, "x");
+				e.attributes.x.value = 10;
+			}
+			if (e.attributes.width != undefined) {
+				orig_save(e, "width");
+				e.attributes.width.value = parseInt(svg.width.baseVal.value) - (10 * 2);
+			}
+		}
+		if (e.childNodes == undefined) return;
+		for (var i = 0, c = e.childNodes; i < c.length; i++) {
+			zoom_parent(c[i]);
+		}
+	}
+	function zoom(node) {
+		var attr = find_child(node, "rect").attributes;
+		var width = parseFloat(attr.width.value);
+		var xmin = parseFloat(attr.x.value);
+		var xmax = parseFloat(xmin + width);
+		var ymin = parseFloat(attr.y.value);
+		var ratio = (svg.width.baseVal.value - 2 * 10) / width;
+
+		// XXX: Workaround for JavaScript float issues (fix me)
+		var fudge = 0.0001;
+
+		unzoombtn.classList.remove("hide");
+
+		var el = document.getElementById("frames").children;
+		for (var i = 0; i < el.length; i++) {
+			var e = el[i];
+			var a = find_child(e, "rect").attributes;
+			var ex = parseFloat(a.x.value);
+			var ew = parseFloat(a.width.value);
+			var upstack;
+			// Is it an ancestor
+			if (0 == 0) {
+				upstack = parseFloat(a.y.value) > ymin;
+			} else {
+				upstack = parseFloat(a.y.value) < ymin;
+			}
+			if (upstack) {
+				// Direct ancestor
+				if (ex <= xmin && (ex+ew+fudge) >= xmax) {
+					e.classList.add("parent");
+					zoom_parent(e);
+					update_text(e);
+				}
+				// not in current path
+				else
+					e.classList.add("hide");
+			}
+			// Children maybe
+			else {
+				// no common path
+				if (ex < xmin || ex + fudge >= xmax) {
+					e.classList.add("hide");
+				}
+				else {
+					zoom_child(e, xmin, ratio);
+					update_text(e);
+				}
+			}
+		}
+	}
+	function unzoom() {
+		unzoombtn.classList.add("hide");
+		var el = document.getElementById("frames").children;
+		for(var i = 0; i < el.length; i++) {
+			el[i].classList.remove("parent");
+			el[i].classList.remove("hide");
+			zoom_reset(el[i]);
+			update_text(el[i]);
+		}
+	}
+
+	// search
+	function reset_search() {
+		var el = document.querySelectorAll("#frames rect");
+		for (var i = 0; i < el.length; i++) {
+			orig_load(el[i], "fill")
+		}
+	}
+	function search_prompt() {
+		if (!searching) {
+			var term = prompt("Enter a search term (regexp " +
+			    "allowed, eg: ^ext4_)", "");
+			if (term != null) {
+				search(term)
+			}
+		} else {
+			reset_search();
+			searching = 0;
+			searchbtn.classList.remove("show");
+			searchbtn.firstChild.nodeValue = "Search"
+			matchedtxt.classList.add("hide");
+			matchedtxt.firstChild.nodeValue = ""
+		}
+	}
+	function search(term) {
+		var re = new RegExp(term);
+		var el = document.getElementById("frames").children;
+		var matches = new Object();
+		var maxwidth = 0;
+		for (var i = 0; i < el.length; i++) {
+			var e = el[i];
+			var func = g_to_func(e);
+			var rect = find_child(e, "rect");
+			if (func == null || rect == null)
+				continue;
+
+			// Save max width. Only works as we have a root frame
+			var w = parseFloat(rect.attributes.width.value);
+			if (w > maxwidth)
+				maxwidth = w;
+
+			if (func.match(re)) {
+				// highlight
+				var x = parseFloat(rect.attributes.x.value);
+				orig_save(rect, "fill");
+				rect.attributes.fill.value = "rgb(230,0,230)";
+
+				// remember matches
+				if (matches[x] == undefined) {
+					matches[x] = w;
+				} else {
+					if (w > matches[x]) {
+						// overwrite with parent
+						matches[x] = w;
+					}
+				}
+				searching = 1;
+			}
+		}
+		if (!searching)
+			return;
+
+		searchbtn.classList.add("show");
+		searchbtn.firstChild.nodeValue = "Reset Search";
+
+		// calculate percent matched, excluding vertical overlap
+		var count = 0;
+		var lastx = -1;
+		var lastw = 0;
+		var keys = Array();
+		for (k in matches) {
+			if (matches.hasOwnProperty(k))
+				keys.push(k);
+		}
+		// sort the matched frames by their x location
+		// ascending, then width descending
+		keys.sort(function(a, b){
+			return a - b;
+		});
+		// Step through frames saving only the biggest bottom-up frames
+		// thanks to the sort order. This relies on the tree property
+		// where children are always smaller than their parents.
+		var fudge = 0.0001;	// JavaScript floating point
+		for (var k in keys) {
+			var x = parseFloat(keys[k]);
+			var w = matches[keys[k]];
+			if (x >= lastx + lastw - fudge) {
+				count += w;
+				lastx = x;
+				lastw = w;
+			}
+		}
+		// display matched percent
+		matchedtxt.classList.remove("hide");
+		var pct = 100 * count / maxwidth;
+		if (pct != 100) pct = pct.toFixed(1)
+		matchedtxt.firstChild.nodeValue = "Matched: " + pct + "%";
+	}
+]]>
+</script>
+<rect x="0.0" y="0" width="1200.0" height="326.0" fill="url(#background)"  />
+<text id="title" x="600.00" y="24" >Flame Graph</text>
+<text id="details" x="10.00" y="309" > </text>
+<text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
+<text id="search" x="1090.00" y="24" >Search</text>
+<text id="matched" x="1090.00" y="309" > </text>
+<g id="frames">
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:481 (39 samples, 42.86%)</title><rect x="399.0" y="261" width="505.7" height="15.0" fill="rgb(249,194,5)" rx="2" ry="2" />
+<text  x="402.01" y="271.5" >/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module..</text>
 </g>
-<use xlink:href="#surface6" mask="url(#mask0)"/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(97.647059%,76.078431%,1.960784%);fill-opacity:1;" d="M 2.339844 1.601562 L 5.265625 1.601562 C 5.273438 1.601562 5.277344 1.605469 5.277344 1.613281 L 5.277344 1.679688 C 5.277344 1.6875 5.273438 1.691406 5.265625 1.691406 L 2.339844 1.691406 C 2.332031 1.691406 2.328125 1.6875 2.328125 1.679688 L 2.328125 1.613281 C 2.328125 1.605469 2.332031 1.601562 2.339844 1.601562 Z M 2.339844 1.601562 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="2.34375" y="1.667388"/>
-  <use xlink:href="#glyph2-2" x="2.375372" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="2.419441" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="2.46171" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="2.529448" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="2.570931" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="2.602553" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="2.632272" y="1.667388"/>
-  <use xlink:href="#glyph2-7" x="2.674541" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="2.717932" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="2.760201" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="2.78992" y="1.667388"/>
-  <use xlink:href="#glyph2-9" x="2.831745" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="2.868027" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="2.909509" y="1.667388"/>
-  <use xlink:href="#glyph2-10" x="2.941131" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="2.994788" y="1.667388"/>
-  <use xlink:href="#glyph2-11" x="3.03627" y="1.667388"/>
-  <use xlink:href="#glyph2-12" x="3.072552" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="3.113767" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="3.141208" y="1.667388"/>
-  <use xlink:href="#glyph2-14" x="3.183477" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="3.226868" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="3.25849" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="3.326228" y="1.667388"/>
-  <use xlink:href="#glyph2-15" x="3.368497" y="1.667388"/>
-  <use xlink:href="#glyph2-16" x="3.411888" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="3.456162" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="3.475274" y="1.667388"/>
-  <use xlink:href="#glyph2-9" x="3.517543" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="3.553825" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="3.595649" y="1.667388"/>
-  <use xlink:href="#glyph2-16" x="3.614762" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="3.659036" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="3.686476" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="3.716195" y="1.667388"/>
-  <use xlink:href="#glyph2-18" x="3.75802" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="3.781991" y="1.667388"/>
-  <use xlink:href="#glyph2-9" x="3.823474" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="3.859756" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="3.887196" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="3.929465" y="1.667388"/>
-  <use xlink:href="#glyph2-19" x="3.959185" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="4.0004" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="4.032021" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="4.051134" y="1.667388"/>
-  <use xlink:href="#glyph2-14" x="4.078574" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="4.121965" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="4.141077" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="4.172699" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="4.240438" y="1.667388"/>
-  <use xlink:href="#glyph2-20" x="4.282262" y="1.667388"/>
-  <use xlink:href="#glyph2-21" x="4.301375" y="1.667388"/>
-  <use xlink:href="#glyph2-16" x="4.345444" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="4.389718" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="4.40883" y="1.667388"/>
-  <use xlink:href="#glyph2-14" x="4.43627" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="4.479661" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="4.498774" y="1.667388"/>
-  <use xlink:href="#glyph2-14" x="4.524106" y="1.667388"/>
-  <use xlink:href="#glyph2-19" x="4.567498" y="1.667388"/>
-  <use xlink:href="#glyph2-23" x="4.608713" y="1.667388"/>
-  <use xlink:href="#glyph2-24" x="4.640334" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="4.697323" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="4.765062" y="1.667388"/>
-  <use xlink:href="#glyph2-15" x="4.807331" y="1.667388"/>
-  <use xlink:href="#glyph2-25" x="4.850722" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="4.894791" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="4.913903" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="4.955386" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="4.980719" y="1.667388"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1386 (1 samples, 1.10%)</title><rect x="1073.3" y="149" width="13.0" height="15.0" fill="rgb(229,23,32)" rx="2" ry="2" />
+<text  x="1076.30" y="159.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(89.803922%,9.019608%,12.54902%);fill-opacity:1;" d="M 6.273438 0.914062 L 6.324219 0.914062 C 6.332031 0.914062 6.335938 0.917969 6.335938 0.925781 L 6.335938 0.992188 C 6.335938 1 6.332031 1.007812 6.324219 1.007812 L 6.273438 1.007812 C 6.265625 1.007812 6.261719 1 6.261719 0.992188 L 6.261719 0.925781 C 6.261719 0.917969 6.265625 0.914062 6.273438 0.914062 Z M 6.273438 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.313725%,87.843137%,20%);fill-opacity:1;" d="M 5.363281 1.40625 L 6.476562 1.40625 C 6.484375 1.40625 6.488281 1.410156 6.488281 1.417969 L 6.488281 1.484375 C 6.488281 1.492188 6.484375 1.496094 6.476562 1.496094 L 5.363281 1.496094 C 5.359375 1.496094 5.351562 1.492188 5.351562 1.484375 L 5.351562 1.417969 C 5.351562 1.410156 5.359375 1.40625 5.363281 1.40625 Z M 5.363281 1.40625 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.371094" y="1.468169"/>
-  <use xlink:href="#glyph2-25" x="5.402716" y="1.468169"/>
-  <use xlink:href="#glyph2-11" x="5.446785" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="5.483066" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="5.512786" y="1.468169"/>
-  <use xlink:href="#glyph2-17" x="5.544408" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="5.56352" y="1.468169"/>
-  <use xlink:href="#glyph2-9" x="5.605789" y="1.468169"/>
-  <use xlink:href="#glyph2-8" x="5.64207" y="1.468169"/>
-  <use xlink:href="#glyph2-17" x="5.683895" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="5.703007" y="1.468169"/>
-  <use xlink:href="#glyph2-17" x="5.734629" y="1.468169"/>
-  <use xlink:href="#glyph2-20" x="5.753741" y="1.468169"/>
-  <use xlink:href="#glyph2-7" x="5.772853" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="5.816244" y="1.468169"/>
-  <use xlink:href="#glyph2-14" x="5.847866" y="1.468169"/>
-  <use xlink:href="#glyph2-19" x="5.891257" y="1.468169"/>
-  <use xlink:href="#glyph2-13" x="5.932472" y="1.468169"/>
-  <use xlink:href="#glyph2-2" x="5.959913" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="6.003982" y="1.468169"/>
-  <use xlink:href="#glyph2-21" x="6.046251" y="1.468169"/>
-  <use xlink:href="#glyph2-26" x="6.09032" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="6.134594" y="1.468169"/>
-  <use xlink:href="#glyph2-27" x="6.159927" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="6.204201" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="6.235823" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="6.261156" y="1.468169"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:calc_vel_profile:93 (15 samples, 16.48%)</title><rect x="917.7" y="229" width="194.5" height="15.0" fill="rgb(215,224,51)" rx="2" ry="2" />
+<text  x="920.69" y="239.5" >/usr/local/lib/python3.5/..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(85.490196%,70.588235%,9.803922%);fill-opacity:1;" d="M 2.492188 1.207031 L 3.527344 1.207031 C 3.53125 1.207031 3.539062 1.214844 3.539062 1.222656 L 3.539062 1.289062 C 3.539062 1.296875 3.53125 1.300781 3.527344 1.300781 L 2.492188 1.300781 C 2.484375 1.300781 2.480469 1.296875 2.480469 1.289062 L 2.480469 1.222656 C 2.480469 1.214844 2.484375 1.207031 2.492188 1.207031 Z M 2.492188 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="2.496094" y="1.272856"/>
-  <use xlink:href="#glyph2-16" x="2.553083" y="1.272856"/>
-  <use xlink:href="#glyph2-16" x="2.597357" y="1.272856"/>
-  <use xlink:href="#glyph2-8" x="2.641631" y="1.272856"/>
-  <use xlink:href="#glyph2-6" x="2.683455" y="1.272856"/>
-  <use xlink:href="#glyph2-6" x="2.713175" y="1.272856"/>
-  <use xlink:href="#glyph2-8" x="2.742894" y="1.272856"/>
-  <use xlink:href="#glyph2-19" x="2.784718" y="1.272856"/>
-  <use xlink:href="#glyph2-16" x="2.825933" y="1.272856"/>
-  <use xlink:href="#glyph2-28" x="2.870208" y="1.272856"/>
-  <use xlink:href="#glyph2-25" x="2.894692" y="1.272856"/>
-  <use xlink:href="#glyph2-21" x="2.938761" y="1.272856"/>
-  <use xlink:href="#glyph2-9" x="2.98283" y="1.272856"/>
-  <use xlink:href="#glyph2-13" x="3.019111" y="1.272856"/>
-  <use xlink:href="#glyph2-20" x="3.046552" y="1.272856"/>
-  <use xlink:href="#glyph2-3" x="3.065664" y="1.272856"/>
-  <use xlink:href="#glyph2-21" x="3.107933" y="1.272856"/>
-  <use xlink:href="#glyph2-16" x="3.152002" y="1.272856"/>
-  <use xlink:href="#glyph2-16" x="3.196276" y="1.272856"/>
-  <use xlink:href="#glyph2-29" x="3.24055" y="1.272856"/>
-  <use xlink:href="#glyph2-20" x="3.265034" y="1.272856"/>
-  <use xlink:href="#glyph2-21" x="3.284146" y="1.272856"/>
-  <use xlink:href="#glyph2-13" x="3.328215" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="3.355656" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="3.380989" y="1.272856"/>
+<g >
+<title>&lt;__array_function__ internals&gt;:solve:6 (14 samples, 15.38%)</title><rect x="424.9" y="197" width="181.6" height="15.0" fill="rgb(218,180,25)" rx="2" ry="2" />
+<text  x="427.95" y="207.5" >&lt;__array_function__ int..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(99.215686%,32.156863%,13.333333%);fill-opacity:1;" d="M 2.261719 0.421875 L 2.316406 0.421875 C 2.324219 0.421875 2.328125 0.429688 2.328125 0.4375 L 2.328125 0.503906 C 2.328125 0.511719 2.324219 0.515625 2.316406 0.515625 L 2.261719 0.515625 C 2.257812 0.515625 2.25 0.511719 2.25 0.503906 L 2.25 0.4375 C 2.25 0.429688 2.257812 0.421875 2.261719 0.421875 Z M 2.261719 0.421875 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(81.960784%,77.254902%,12.941176%);fill-opacity:1;" d="M 3.851562 1.207031 L 3.902344 1.207031 C 3.910156 1.207031 3.914062 1.214844 3.914062 1.222656 L 3.914062 1.289062 C 3.914062 1.296875 3.910156 1.300781 3.902344 1.300781 L 3.851562 1.300781 C 3.847656 1.300781 3.839844 1.296875 3.839844 1.289062 L 3.839844 1.222656 C 3.839844 1.214844 3.847656 1.207031 3.851562 1.207031 Z M 3.851562 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.137255%,7.058824%,6.666667%);fill-opacity:1;" d="M 2.261719 1.40625 L 2.316406 1.40625 C 2.324219 1.40625 2.328125 1.410156 2.328125 1.417969 L 2.328125 1.484375 C 2.328125 1.492188 2.324219 1.496094 2.316406 1.496094 L 2.261719 1.496094 C 2.257812 1.496094 2.25 1.492188 2.25 1.484375 L 2.25 1.417969 C 2.25 1.410156 2.257812 1.40625 2.261719 1.40625 Z M 2.261719 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(90.196078%,12.156863%,15.686275%);fill-opacity:1;" d="M 0.371094 1.503906 L 2.011719 1.503906 C 2.019531 1.503906 2.023438 1.507812 2.023438 1.515625 L 2.023438 1.582031 C 2.023438 1.589844 2.019531 1.59375 2.011719 1.59375 L 0.371094 1.59375 C 0.367188 1.59375 0.359375 1.589844 0.359375 1.582031 L 0.359375 1.515625 C 0.359375 1.507812 0.367188 1.503906 0.371094 1.503906 Z M 0.371094 1.503906 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="0.378906" y="1.565825"/>
-  <use xlink:href="#glyph2-2" x="0.410528" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="0.454597" y="1.565825"/>
-  <use xlink:href="#glyph2-4" x="0.496866" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="0.564604" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="0.606087" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="0.637709" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="0.667428" y="1.565825"/>
-  <use xlink:href="#glyph2-7" x="0.709697" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="0.753088" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="0.795357" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="0.825076" y="1.565825"/>
-  <use xlink:href="#glyph2-9" x="0.866901" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="0.903183" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="0.944666" y="1.565825"/>
-  <use xlink:href="#glyph2-10" x="0.976287" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="1.029944" y="1.565825"/>
-  <use xlink:href="#glyph2-11" x="1.071427" y="1.565825"/>
-  <use xlink:href="#glyph2-12" x="1.107708" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="1.148923" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="1.176364" y="1.565825"/>
-  <use xlink:href="#glyph2-14" x="1.218633" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="1.262024" y="1.565825"/>
-  <use xlink:href="#glyph2-4" x="1.293646" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="1.361384" y="1.565825"/>
-  <use xlink:href="#glyph2-15" x="1.403653" y="1.565825"/>
-  <use xlink:href="#glyph2-16" x="1.447044" y="1.565825"/>
-  <use xlink:href="#glyph2-17" x="1.491318" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="1.510431" y="1.565825"/>
-  <use xlink:href="#glyph2-9" x="1.552699" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="1.588981" y="1.565825"/>
-  <use xlink:href="#glyph2-17" x="1.630806" y="1.565825"/>
-  <use xlink:href="#glyph2-16" x="1.649918" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="1.694192" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="1.721632" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="1.751352" y="1.565825"/>
-  <use xlink:href="#glyph2-18" x="1.793176" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="1.817148" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="1.85863" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="1.883963" y="1.565825"/>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:find_spec:1248 (1 samples, 1.10%)</title><rect x="386.0" y="69" width="13.0" height="15.0" fill="rgb(253,82,34)" rx="2" ry="2" />
+<text  x="389.04" y="79.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.627451%,60%,19.607843%);fill-opacity:1;" d="M 2.414062 1.40625 L 2.46875 1.40625 C 2.472656 1.40625 2.480469 1.410156 2.480469 1.417969 L 2.480469 1.484375 C 2.480469 1.492188 2.472656 1.496094 2.46875 1.496094 L 2.414062 1.496094 C 2.410156 1.496094 2.402344 1.492188 2.402344 1.484375 L 2.402344 1.417969 C 2.402344 1.410156 2.410156 1.40625 2.414062 1.40625 Z M 2.414062 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(91.764706%,69.803922%,18.431373%);fill-opacity:1;" d="M 2.035156 1.503906 L 2.238281 1.503906 C 2.246094 1.503906 2.25 1.507812 2.25 1.515625 L 2.25 1.582031 C 2.25 1.589844 2.246094 1.59375 2.238281 1.59375 L 2.035156 1.59375 C 2.03125 1.59375 2.023438 1.589844 2.023438 1.582031 L 2.023438 1.515625 C 2.023438 1.507812 2.03125 1.503906 2.035156 1.503906 Z M 2.035156 1.503906 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="2.042969" y="1.565825"/>
-  <use xlink:href="#glyph2-2" x="2.074591" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="2.11866" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="2.160929" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="2.186261" y="1.565825"/>
+<g >
+<title>&lt;__array_function__ internals&gt;:stack:4 (1 samples, 1.10%)</title><rect x="658.4" y="197" width="12.9" height="15.0" fill="rgb(209,197,33)" rx="2" ry="2" />
+<text  x="661.35" y="207.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.235294%,46.666667%,2.352941%);fill-opacity:1;" d="M 2.414062 1.503906 L 5.265625 1.503906 C 5.273438 1.503906 5.277344 1.507812 5.277344 1.515625 L 5.277344 1.582031 C 5.277344 1.589844 5.273438 1.59375 5.265625 1.59375 L 2.414062 1.59375 C 2.410156 1.59375 2.402344 1.589844 2.402344 1.582031 L 2.402344 1.515625 C 2.402344 1.507812 2.410156 1.503906 2.414062 1.503906 Z M 2.414062 1.503906 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="2.421875" y="1.565825"/>
-  <use xlink:href="#glyph2-2" x="2.453497" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="2.497566" y="1.565825"/>
-  <use xlink:href="#glyph2-4" x="2.539835" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="2.607573" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="2.649056" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="2.680678" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="2.710397" y="1.565825"/>
-  <use xlink:href="#glyph2-7" x="2.752666" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="2.796057" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="2.838326" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="2.868045" y="1.565825"/>
-  <use xlink:href="#glyph2-9" x="2.90987" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="2.946152" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="2.987634" y="1.565825"/>
-  <use xlink:href="#glyph2-10" x="3.019256" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="3.072913" y="1.565825"/>
-  <use xlink:href="#glyph2-11" x="3.114395" y="1.565825"/>
-  <use xlink:href="#glyph2-12" x="3.150677" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="3.191892" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="3.219333" y="1.565825"/>
-  <use xlink:href="#glyph2-14" x="3.261602" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="3.304993" y="1.565825"/>
-  <use xlink:href="#glyph2-4" x="3.336615" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="3.404353" y="1.565825"/>
-  <use xlink:href="#glyph2-15" x="3.446622" y="1.565825"/>
-  <use xlink:href="#glyph2-16" x="3.490013" y="1.565825"/>
-  <use xlink:href="#glyph2-17" x="3.534287" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="3.553399" y="1.565825"/>
-  <use xlink:href="#glyph2-9" x="3.595668" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="3.63195" y="1.565825"/>
-  <use xlink:href="#glyph2-17" x="3.673774" y="1.565825"/>
-  <use xlink:href="#glyph2-16" x="3.692887" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="3.737161" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="3.764601" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="3.79432" y="1.565825"/>
-  <use xlink:href="#glyph2-18" x="3.836145" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="3.860116" y="1.565825"/>
-  <use xlink:href="#glyph2-9" x="3.901599" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="3.937881" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="3.965321" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="4.00759" y="1.565825"/>
-  <use xlink:href="#glyph2-19" x="4.03731" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="4.078525" y="1.565825"/>
-  <use xlink:href="#glyph2-17" x="4.110146" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="4.129259" y="1.565825"/>
-  <use xlink:href="#glyph2-14" x="4.156699" y="1.565825"/>
-  <use xlink:href="#glyph2-17" x="4.20009" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="4.219202" y="1.565825"/>
-  <use xlink:href="#glyph2-20" x="4.250824" y="1.565825"/>
-  <use xlink:href="#glyph2-21" x="4.269937" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="4.314006" y="1.565825"/>
-  <use xlink:href="#glyph2-16" x="4.341446" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="4.38572" y="1.565825"/>
-  <use xlink:href="#glyph2-21" x="4.427989" y="1.565825"/>
-  <use xlink:href="#glyph2-17" x="4.472058" y="1.565825"/>
-  <use xlink:href="#glyph2-20" x="4.49117" y="1.565825"/>
-  <use xlink:href="#glyph2-21" x="4.510282" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="4.554351" y="1.565825"/>
-  <use xlink:href="#glyph2-16" x="4.595834" y="1.565825"/>
-  <use xlink:href="#glyph2-30" x="4.640108" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="4.683499" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="4.713219" y="1.565825"/>
-  <use xlink:href="#glyph2-14" x="4.755043" y="1.565825"/>
-  <use xlink:href="#glyph2-2" x="4.798434" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="4.842503" y="1.565825"/>
-  <use xlink:href="#glyph2-11" x="4.874125" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="4.910407" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="4.93574" y="1.565825"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/ad_interface_functions/zmq_import.py:zmq_import:50 (1 samples, 1.10%)</title><rect x="386.0" y="229" width="13.0" height="15.0" fill="rgb(212,18,17)" rx="2" ry="2" />
+<text  x="389.04" y="239.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.921569%,38.431373%,19.215686%);fill-opacity:1;" d="M 2.261719 1.207031 L 2.316406 1.207031 C 2.324219 1.207031 2.328125 1.214844 2.328125 1.222656 L 2.328125 1.289062 C 2.328125 1.296875 2.324219 1.300781 2.316406 1.300781 L 2.261719 1.300781 C 2.257812 1.300781 2.25 1.296875 2.25 1.289062 L 2.25 1.222656 C 2.25 1.214844 2.257812 1.207031 2.261719 1.207031 Z M 2.261719 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(82.745098%,3.137255%,14.117647%);fill-opacity:1;" d="M 1.808594 1.207031 L 1.9375 1.207031 C 1.945312 1.207031 1.949219 1.214844 1.949219 1.222656 L 1.949219 1.289062 C 1.949219 1.296875 1.945312 1.300781 1.9375 1.300781 L 1.808594 1.300781 C 1.804688 1.300781 1.796875 1.296875 1.796875 1.289062 L 1.796875 1.222656 C 1.796875 1.214844 1.804688 1.207031 1.808594 1.207031 Z M 1.808594 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="1.816406" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="1.848028" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="1.873361" y="1.272856"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:set_initial_pose:214 (22 samples, 24.18%)</title><rect x="61.9" y="245" width="285.2" height="15.0" fill="rgb(230,31,40)" rx="2" ry="2" />
+<text  x="64.87" y="255.5" >/home/roborace/Desktop/mod_local_traje..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.156863%,29.803922%,16.078431%);fill-opacity:1;" d="M 0.0703125 1.601562 L 0.199219 1.601562 C 0.203125 1.601562 0.210938 1.605469 0.210938 1.613281 L 0.210938 1.679688 C 0.210938 1.6875 0.203125 1.691406 0.199219 1.691406 L 0.0703125 1.691406 C 0.0625 1.691406 0.0585938 1.6875 0.0585938 1.679688 L 0.0585938 1.613281 C 0.0585938 1.605469 0.0625 1.601562 0.0703125 1.601562 Z M 0.0703125 1.601562 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-31" x="0.0742188" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="0.105841" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="0.131174" y="1.667388"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:201 (1 samples, 1.10%)</title><rect x="412.0" y="229" width="12.9" height="15.0" fill="rgb(226,153,50)" rx="2" ry="2" />
+<text  x="414.98" y="239.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(96.862745%,80%,20.392157%);fill-opacity:1;" d="M 6.726562 1.503906 L 6.929688 1.503906 C 6.9375 1.503906 6.941406 1.507812 6.941406 1.515625 L 6.941406 1.582031 C 6.941406 1.589844 6.9375 1.59375 6.929688 1.59375 L 6.726562 1.59375 C 6.71875 1.59375 6.714844 1.589844 6.714844 1.582031 L 6.714844 1.515625 C 6.714844 1.507812 6.71875 1.503906 6.726562 1.503906 Z M 6.726562 1.503906 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="6.730469" y="1.565825"/>
-  <use xlink:href="#glyph2-2" x="6.762091" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="6.80616" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="6.848429" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="6.873761" y="1.565825"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:set_initial_pose:243 (3 samples, 3.30%)</title><rect x="347.1" y="245" width="38.9" height="15.0" fill="rgb(234,178,47)" rx="2" ry="2" />
+<text  x="350.14" y="255.5" >/ho..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(87.843137%,27.058824%,1.960784%);fill-opacity:1;" d="M 5.96875 0.71875 L 6.023438 0.71875 C 6.027344 0.71875 6.035156 0.722656 6.035156 0.730469 L 6.035156 0.796875 C 6.035156 0.804688 6.027344 0.808594 6.023438 0.808594 L 5.96875 0.808594 C 5.964844 0.808594 5.957031 0.804688 5.957031 0.796875 L 5.957031 0.730469 C 5.957031 0.722656 5.964844 0.71875 5.96875 0.71875 Z M 5.96875 0.71875 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(95.294118%,66.27451%,16.078431%);fill-opacity:1;" d="M 2.261719 1.601562 L 2.316406 1.601562 C 2.324219 1.601562 2.328125 1.605469 2.328125 1.613281 L 2.328125 1.679688 C 2.328125 1.6875 2.324219 1.691406 2.316406 1.691406 L 2.261719 1.691406 C 2.257812 1.691406 2.25 1.6875 2.25 1.679688 L 2.25 1.613281 C 2.25 1.605469 2.257812 1.601562 2.261719 1.601562 Z M 2.261719 1.601562 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(89.803922%,7.058824%,3.137255%);fill-opacity:1;" d="M 2.492188 1.308594 L 3.527344 1.308594 C 3.53125 1.308594 3.539062 1.3125 3.539062 1.320312 L 3.539062 1.386719 C 3.539062 1.394531 3.53125 1.398438 3.527344 1.398438 L 2.492188 1.398438 C 2.484375 1.398438 2.480469 1.394531 2.480469 1.386719 L 2.480469 1.320312 C 2.480469 1.3125 2.484375 1.308594 2.492188 1.308594 Z M 2.492188 1.308594 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="2.496094" y="1.370513"/>
-  <use xlink:href="#glyph2-25" x="2.527716" y="1.370513"/>
-  <use xlink:href="#glyph2-11" x="2.571785" y="1.370513"/>
-  <use xlink:href="#glyph2-6" x="2.608066" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="2.637786" y="1.370513"/>
-  <use xlink:href="#glyph2-17" x="2.669408" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="2.68852" y="1.370513"/>
-  <use xlink:href="#glyph2-9" x="2.730789" y="1.370513"/>
-  <use xlink:href="#glyph2-8" x="2.76707" y="1.370513"/>
-  <use xlink:href="#glyph2-17" x="2.808895" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="2.828007" y="1.370513"/>
-  <use xlink:href="#glyph2-17" x="2.859629" y="1.370513"/>
-  <use xlink:href="#glyph2-20" x="2.878741" y="1.370513"/>
-  <use xlink:href="#glyph2-7" x="2.897853" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="2.941244" y="1.370513"/>
-  <use xlink:href="#glyph2-14" x="2.972866" y="1.370513"/>
-  <use xlink:href="#glyph2-19" x="3.016257" y="1.370513"/>
-  <use xlink:href="#glyph2-13" x="3.057472" y="1.370513"/>
-  <use xlink:href="#glyph2-2" x="3.084913" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="3.128982" y="1.370513"/>
-  <use xlink:href="#glyph2-21" x="3.171251" y="1.370513"/>
-  <use xlink:href="#glyph2-26" x="3.21532" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="3.259594" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="3.284927" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="3.31026" y="1.370513"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:gen_trajectories:489 (38 samples, 41.76%)</title><rect x="412.0" y="245" width="492.7" height="15.0" fill="rgb(225,119,6)" rx="2" ry="2" />
+<text  x="414.98" y="255.5" >/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/s..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(97.254902%,67.058824%,17.254902%);fill-opacity:1;" d="M 0.976562 1.40625 L 1.9375 1.40625 C 1.945312 1.40625 1.949219 1.410156 1.949219 1.417969 L 1.949219 1.484375 C 1.949219 1.492188 1.945312 1.496094 1.9375 1.496094 L 0.976562 1.496094 C 0.972656 1.496094 0.964844 1.492188 0.964844 1.484375 L 0.964844 1.417969 C 0.964844 1.410156 0.972656 1.40625 0.976562 1.40625 Z M 0.976562 1.40625 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="0.984375" y="1.468169"/>
-  <use xlink:href="#glyph2-2" x="1.015997" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="1.060066" y="1.468169"/>
-  <use xlink:href="#glyph2-4" x="1.102335" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="1.170073" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="1.211556" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="1.243178" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="1.272897" y="1.468169"/>
-  <use xlink:href="#glyph2-7" x="1.315166" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="1.358557" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="1.400826" y="1.468169"/>
-  <use xlink:href="#glyph2-8" x="1.430545" y="1.468169"/>
-  <use xlink:href="#glyph2-9" x="1.47237" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="1.508652" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="1.550134" y="1.468169"/>
-  <use xlink:href="#glyph2-10" x="1.581756" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="1.635413" y="1.468169"/>
-  <use xlink:href="#glyph2-11" x="1.676895" y="1.468169"/>
-  <use xlink:href="#glyph2-12" x="1.713177" y="1.468169"/>
-  <use xlink:href="#glyph2-13" x="1.754392" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="1.781833" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="1.824102" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="1.849434" y="1.468169"/>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load:969 (1 samples, 1.10%)</title><rect x="386.0" y="197" width="13.0" height="15.0" fill="rgb(214,98,49)" rx="2" ry="2" />
+<text  x="389.04" y="207.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(96.862745%,57.647059%,0.392157%);fill-opacity:1;" d="M 6.652344 1.601562 L 6.929688 1.601562 C 6.9375 1.601562 6.941406 1.605469 6.941406 1.613281 L 6.941406 1.679688 C 6.941406 1.6875 6.9375 1.691406 6.929688 1.691406 L 6.652344 1.691406 C 6.644531 1.691406 6.640625 1.6875 6.640625 1.679688 L 6.640625 1.613281 C 6.640625 1.605469 6.644531 1.601562 6.652344 1.601562 Z M 6.652344 1.601562 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="6.65625" y="1.667388"/>
-  <use xlink:href="#glyph2-2" x="6.687872" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="6.731941" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="6.77421" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="6.841948" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="6.883431" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="6.908764" y="1.667388"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:vstack:282 (2 samples, 2.20%)</title><rect x="308.2" y="197" width="26.0" height="15.0" fill="rgb(211,8,36)" rx="2" ry="2" />
+<text  x="311.24" y="207.5" >/..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.235294%,42.352941%,5.098039%);fill-opacity:1;" d="M 6.5 1.503906 L 6.550781 1.503906 C 6.558594 1.503906 6.5625 1.507812 6.5625 1.515625 L 6.5625 1.582031 C 6.5625 1.589844 6.558594 1.59375 6.550781 1.59375 L 6.5 1.59375 C 6.492188 1.59375 6.488281 1.589844 6.488281 1.582031 L 6.488281 1.515625 C 6.488281 1.507812 6.492188 1.503906 6.5 1.503906 Z M 6.5 1.503906 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.235294%,50.196078%,7.843137%);fill-opacity:1;" d="M 1.203125 1.011719 L 1.40625 1.011719 C 1.414062 1.011719 1.417969 1.019531 1.417969 1.023438 L 1.417969 1.09375 C 1.417969 1.097656 1.414062 1.105469 1.40625 1.105469 L 1.203125 1.105469 C 1.199219 1.105469 1.191406 1.097656 1.191406 1.09375 L 1.191406 1.023438 C 1.191406 1.019531 1.199219 1.011719 1.203125 1.011719 Z M 1.203125 1.011719 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="1.210938" y="1.077544"/>
-  <use xlink:href="#glyph2-25" x="1.242559" y="1.077544"/>
-  <use xlink:href="#glyph2-11" x="1.286628" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="1.32291" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="1.348243" y="1.077544"/>
+<g >
+<title>(idle) (2 samples, 2.20%)</title><rect x="10.0" y="261" width="25.9" height="15.0" fill="rgb(235,76,41)" rx="2" ry="2" />
+<text  x="13.00" y="271.5" >(..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.941176%,0.784314%,21.176471%);fill-opacity:1;" d="M 1.128906 1.109375 L 1.785156 1.109375 C 1.792969 1.109375 1.796875 1.117188 1.796875 1.121094 L 1.796875 1.191406 C 1.796875 1.195312 1.792969 1.203125 1.785156 1.203125 L 1.128906 1.203125 C 1.121094 1.203125 1.117188 1.195312 1.117188 1.191406 L 1.117188 1.121094 C 1.117188 1.117188 1.121094 1.109375 1.128906 1.109375 Z M 1.128906 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="1.136719" y="1.1752"/>
-  <use xlink:href="#glyph2-16" x="1.193708" y="1.1752"/>
-  <use xlink:href="#glyph2-16" x="1.237982" y="1.1752"/>
-  <use xlink:href="#glyph2-8" x="1.282256" y="1.1752"/>
-  <use xlink:href="#glyph2-6" x="1.32408" y="1.1752"/>
-  <use xlink:href="#glyph2-6" x="1.3538" y="1.1752"/>
-  <use xlink:href="#glyph2-8" x="1.383519" y="1.1752"/>
-  <use xlink:href="#glyph2-19" x="1.425343" y="1.1752"/>
-  <use xlink:href="#glyph2-16" x="1.466558" y="1.1752"/>
-  <use xlink:href="#glyph2-28" x="1.510833" y="1.1752"/>
-  <use xlink:href="#glyph2-25" x="1.535317" y="1.1752"/>
-  <use xlink:href="#glyph2-21" x="1.579386" y="1.1752"/>
-  <use xlink:href="#glyph2-9" x="1.623455" y="1.1752"/>
-  <use xlink:href="#glyph2-13" x="1.659736" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="1.687177" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="1.71251" y="1.1752"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/Logging.py:log_onlinegraph:91 (3 samples, 3.30%)</title><rect x="1151.1" y="245" width="38.9" height="15.0" fill="rgb(247,204,52)" rx="2" ry="2" />
+<text  x="1154.10" y="255.5" >/ho..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.901961%,71.372549%,11.764706%);fill-opacity:1;" d="M 5.289062 1.601562 L 6.476562 1.601562 C 6.484375 1.601562 6.488281 1.605469 6.488281 1.613281 L 6.488281 1.679688 C 6.488281 1.6875 6.484375 1.691406 6.476562 1.691406 L 5.289062 1.691406 C 5.28125 1.691406 5.277344 1.6875 5.277344 1.679688 L 5.277344 1.613281 C 5.277344 1.605469 5.28125 1.601562 5.289062 1.601562 Z M 5.289062 1.601562 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.296875" y="1.667388"/>
-  <use xlink:href="#glyph2-2" x="5.328497" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="5.372566" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="5.414835" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="5.482573" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="5.524056" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="5.555678" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="5.585397" y="1.667388"/>
-  <use xlink:href="#glyph2-7" x="5.627666" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="5.671057" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="5.713326" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="5.743045" y="1.667388"/>
-  <use xlink:href="#glyph2-9" x="5.78487" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="5.821152" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="5.862634" y="1.667388"/>
-  <use xlink:href="#glyph2-10" x="5.894256" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="5.947913" y="1.667388"/>
-  <use xlink:href="#glyph2-11" x="5.989395" y="1.667388"/>
-  <use xlink:href="#glyph2-12" x="6.025677" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="6.066892" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="6.094333" y="1.667388"/>
-  <use xlink:href="#glyph2-14" x="6.136602" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="6.179993" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="6.211615" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="6.279353" y="1.667388"/>
-  <use xlink:href="#glyph2-15" x="6.321622" y="1.667388"/>
-  <use xlink:href="#glyph2-16" x="6.365013" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="6.409287" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="6.43462" y="1.667388"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/type_check.py:iscomplexobj:320 (1 samples, 1.10%)</title><rect x="1021.4" y="117" width="13.0" height="15.0" fill="rgb(224,69,5)" rx="2" ry="2" />
+<text  x="1024.43" y="127.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.313725%,7.058824%,12.54902%);fill-opacity:1;" d="M 5.894531 1.011719 L 6.097656 1.011719 C 6.105469 1.011719 6.109375 1.019531 6.109375 1.023438 L 6.109375 1.09375 C 6.109375 1.097656 6.105469 1.105469 6.097656 1.105469 L 5.894531 1.105469 C 5.886719 1.105469 5.882812 1.097656 5.882812 1.09375 L 5.882812 1.023438 C 5.882812 1.019531 5.886719 1.011719 5.894531 1.011719 Z M 5.894531 1.011719 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="5.898438" y="1.077544"/>
-  <use xlink:href="#glyph2-16" x="5.955426" y="1.077544"/>
-  <use xlink:href="#glyph2-16" x="5.999701" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="6.043975" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="6.069307" y="1.077544"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:399 (1 samples, 1.10%)</title><rect x="386.0" y="261" width="13.0" height="15.0" fill="rgb(243,169,41)" rx="2" ry="2" />
+<text  x="389.04" y="271.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.705882%,18.823529%,3.137255%);fill-opacity:1;" d="M 0.296875 1.109375 L 0.347656 1.109375 C 0.355469 1.109375 0.359375 1.117188 0.359375 1.121094 L 0.359375 1.191406 C 0.359375 1.195312 0.355469 1.203125 0.347656 1.203125 L 0.296875 1.203125 C 0.289062 1.203125 0.285156 1.195312 0.285156 1.191406 L 0.285156 1.121094 C 0.285156 1.117188 0.289062 1.109375 0.296875 1.109375 Z M 0.296875 1.109375 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.705882%,53.72549%,9.019608%);fill-opacity:1;" d="M 4.078125 1.207031 L 4.207031 1.207031 C 4.214844 1.207031 4.21875 1.214844 4.21875 1.222656 L 4.21875 1.289062 C 4.21875 1.296875 4.214844 1.300781 4.207031 1.300781 L 4.078125 1.300781 C 4.074219 1.300781 4.066406 1.296875 4.066406 1.289062 L 4.066406 1.222656 C 4.066406 1.214844 4.074219 1.207031 4.078125 1.207031 Z M 4.078125 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="4.085938" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="4.117559" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="4.142892" y="1.272856"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:152 (14 samples, 15.38%)</title><rect x="424.9" y="213" width="181.6" height="15.0" fill="rgb(229,18,8)" rx="2" ry="2" />
+<text  x="427.95" y="223.5" >/usr/local/lib/python3...</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(98.431373%,28.235294%,11.764706%);fill-opacity:1;" d="M 5.96875 0.816406 L 6.023438 0.816406 C 6.027344 0.816406 6.035156 0.820312 6.035156 0.828125 L 6.035156 0.894531 C 6.035156 0.902344 6.027344 0.90625 6.023438 0.90625 L 5.96875 0.90625 C 5.964844 0.90625 5.957031 0.902344 5.957031 0.894531 L 5.957031 0.828125 C 5.957031 0.820312 5.964844 0.816406 5.96875 0.816406 Z M 5.96875 0.816406 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.627451%,52.54902%,1.960784%);fill-opacity:1;" d="M 3.550781 1.109375 L 3.828125 1.109375 C 3.835938 1.109375 3.839844 1.117188 3.839844 1.121094 L 3.839844 1.191406 C 3.839844 1.195312 3.835938 1.203125 3.828125 1.203125 L 3.550781 1.203125 C 3.542969 1.203125 3.539062 1.195312 3.539062 1.191406 L 3.539062 1.121094 C 3.539062 1.117188 3.542969 1.109375 3.550781 1.109375 Z M 3.550781 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="3.554688" y="1.1752"/>
-  <use xlink:href="#glyph2-25" x="3.586309" y="1.1752"/>
-  <use xlink:href="#glyph2-11" x="3.630378" y="1.1752"/>
-  <use xlink:href="#glyph2-6" x="3.66666" y="1.1752"/>
-  <use xlink:href="#glyph2-1" x="3.696379" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="3.728001" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="3.753334" y="1.1752"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:get_closest_nodes:249 (13 samples, 14.29%)</title><rect x="165.6" y="229" width="168.6" height="15.0" fill="rgb(248,171,44)" rx="2" ry="2" />
+<text  x="168.60" y="239.5" >/home/roborace/Deskto..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(91.372549%,27.058824%,17.647059%);fill-opacity:1;" d="M 4.382812 1.308594 L 5.265625 1.308594 C 5.273438 1.308594 5.277344 1.3125 5.277344 1.320312 L 5.277344 1.386719 C 5.277344 1.394531 5.273438 1.398438 5.265625 1.398438 L 4.382812 1.398438 C 4.375 1.398438 4.371094 1.394531 4.371094 1.386719 L 4.371094 1.320312 C 4.371094 1.3125 4.375 1.308594 4.382812 1.308594 Z M 4.382812 1.308594 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="4.386719" y="1.370513"/>
-  <use xlink:href="#glyph2-2" x="4.418341" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="4.46241" y="1.370513"/>
-  <use xlink:href="#glyph2-4" x="4.504679" y="1.370513"/>
-  <use xlink:href="#glyph2-5" x="4.572417" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="4.6139" y="1.370513"/>
-  <use xlink:href="#glyph2-6" x="4.645522" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="4.675241" y="1.370513"/>
-  <use xlink:href="#glyph2-7" x="4.71751" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="4.760901" y="1.370513"/>
-  <use xlink:href="#glyph2-6" x="4.80317" y="1.370513"/>
-  <use xlink:href="#glyph2-8" x="4.832889" y="1.370513"/>
-  <use xlink:href="#glyph2-9" x="4.874714" y="1.370513"/>
-  <use xlink:href="#glyph2-5" x="4.910995" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="4.952478" y="1.370513"/>
-  <use xlink:href="#glyph2-10" x="4.9841" y="1.370513"/>
-  <use xlink:href="#glyph2-5" x="5.037756" y="1.370513"/>
-  <use xlink:href="#glyph2-11" x="5.079239" y="1.370513"/>
-  <use xlink:href="#glyph2-12" x="5.115521" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="5.156736" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="5.182069" y="1.370513"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:589 (4 samples, 4.40%)</title><rect x="1138.1" y="261" width="51.9" height="15.0" fill="rgb(247,147,1)" rx="2" ry="2" />
+<text  x="1141.13" y="271.5" >/home..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.529412%,23.137255%,20.784314%);fill-opacity:1;" d="M 2.261719 0.71875 L 2.316406 0.71875 C 2.324219 0.71875 2.328125 0.722656 2.328125 0.730469 L 2.328125 0.796875 C 2.328125 0.804688 2.324219 0.808594 2.316406 0.808594 L 2.261719 0.808594 C 2.257812 0.808594 2.25 0.804688 2.25 0.796875 L 2.25 0.730469 C 2.25 0.722656 2.257812 0.71875 2.261719 0.71875 Z M 2.261719 0.71875 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(82.352941%,59.215686%,2.745098%);fill-opacity:1;" d="M 6.046875 0.914062 L 6.097656 0.914062 C 6.105469 0.914062 6.109375 0.917969 6.109375 0.925781 L 6.109375 0.992188 C 6.109375 1 6.105469 1.007812 6.097656 1.007812 L 6.046875 1.007812 C 6.039062 1.007812 6.035156 1 6.035156 0.992188 L 6.035156 0.925781 C 6.035156 0.917969 6.039062 0.914062 6.046875 0.914062 Z M 6.046875 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(91.764706%,78.431373%,13.333333%);fill-opacity:1;" d="M 1.128906 1.011719 L 1.179688 1.011719 C 1.1875 1.011719 1.191406 1.019531 1.191406 1.023438 L 1.191406 1.09375 C 1.191406 1.097656 1.1875 1.105469 1.179688 1.105469 L 1.128906 1.105469 C 1.121094 1.105469 1.117188 1.097656 1.117188 1.09375 L 1.117188 1.023438 C 1.117188 1.019531 1.121094 1.011719 1.128906 1.011719 Z M 1.128906 1.011719 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(87.058824%,14.901961%,5.098039%);fill-opacity:1;" d="M 6.726562 1.40625 L 6.929688 1.40625 C 6.9375 1.40625 6.941406 1.410156 6.941406 1.417969 L 6.941406 1.484375 C 6.941406 1.492188 6.9375 1.496094 6.929688 1.496094 L 6.726562 1.496094 C 6.71875 1.496094 6.714844 1.492188 6.714844 1.484375 L 6.714844 1.417969 C 6.714844 1.410156 6.71875 1.40625 6.726562 1.40625 Z M 6.726562 1.40625 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="6.730469" y="1.468169"/>
-  <use xlink:href="#glyph2-25" x="6.762091" y="1.468169"/>
-  <use xlink:href="#glyph2-11" x="6.80616" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="6.842441" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="6.867774" y="1.468169"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/get_s_coord.py:get_s_coord:34 (1 samples, 1.10%)</title><rect x="1112.2" y="245" width="13.0" height="15.0" fill="rgb(225,108,13)" rx="2" ry="2" />
+<text  x="1115.20" y="255.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(90.980392%,21.176471%,1.176471%);fill-opacity:1;" d="M 2.261719 1.011719 L 2.316406 1.011719 C 2.324219 1.011719 2.328125 1.019531 2.328125 1.023438 L 2.328125 1.09375 C 2.328125 1.097656 2.324219 1.105469 2.316406 1.105469 L 2.261719 1.105469 C 2.257812 1.105469 2.25 1.097656 2.25 1.09375 L 2.25 1.023438 C 2.25 1.019531 2.257812 1.011719 2.261719 1.011719 Z M 2.261719 1.011719 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(82.745098%,32.941176%,9.411765%);fill-opacity:1;" d="M 2.261719 1.109375 L 2.316406 1.109375 C 2.324219 1.109375 2.328125 1.117188 2.328125 1.121094 L 2.328125 1.191406 C 2.328125 1.195312 2.324219 1.203125 2.316406 1.203125 L 2.261719 1.203125 C 2.257812 1.203125 2.25 1.195312 2.25 1.191406 L 2.25 1.121094 C 2.25 1.117188 2.257812 1.109375 2.261719 1.109375 Z M 2.261719 1.109375 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(93.72549%,11.372549%,15.686275%);fill-opacity:1;" d="M 2.261719 0.621094 L 2.316406 0.621094 C 2.324219 0.621094 2.328125 0.625 2.328125 0.632812 L 2.328125 0.699219 C 2.328125 0.707031 2.324219 0.710938 2.316406 0.710938 L 2.261719 0.710938 C 2.257812 0.710938 2.25 0.707031 2.25 0.699219 L 2.25 0.632812 C 2.25 0.625 2.257812 0.621094 2.261719 0.621094 Z M 2.261719 0.621094 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.54902%,5.882353%,9.019608%);fill-opacity:1;" d="M 4.078125 1.011719 L 4.207031 1.011719 C 4.214844 1.011719 4.21875 1.019531 4.21875 1.023438 L 4.21875 1.09375 C 4.21875 1.097656 4.214844 1.105469 4.207031 1.105469 L 4.078125 1.105469 C 4.074219 1.105469 4.066406 1.097656 4.066406 1.09375 L 4.066406 1.023438 C 4.066406 1.019531 4.074219 1.011719 4.078125 1.011719 Z M 4.078125 1.011719 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="4.085938" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="4.117559" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="4.142892" y="1.077544"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:122 (3 samples, 3.30%)</title><rect x="204.5" y="165" width="38.9" height="15.0" fill="rgb(225,128,20)" rx="2" ry="2" />
+<text  x="207.51" y="175.5" >/us..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(81.568627%,41.960784%,0%);fill-opacity:1;" d="M 6.347656 0.914062 L 6.398438 0.914062 C 6.40625 0.914062 6.410156 0.917969 6.410156 0.925781 L 6.410156 0.992188 C 6.410156 1 6.40625 1.007812 6.398438 1.007812 L 6.347656 1.007812 C 6.34375 1.007812 6.335938 1 6.335938 0.992188 L 6.335938 0.925781 C 6.335938 0.917969 6.34375 0.914062 6.347656 0.914062 Z M 6.347656 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(91.372549%,48.235294%,20.392157%);fill-opacity:1;" d="M 5.820312 1.109375 L 6.097656 1.109375 C 6.105469 1.109375 6.109375 1.117188 6.109375 1.121094 L 6.109375 1.191406 C 6.109375 1.195312 6.105469 1.203125 6.097656 1.203125 L 5.820312 1.203125 C 5.8125 1.203125 5.808594 1.195312 5.808594 1.191406 L 5.808594 1.121094 C 5.808594 1.117188 5.8125 1.109375 5.820312 1.109375 Z M 5.820312 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.824219" y="1.1752"/>
-  <use xlink:href="#glyph2-25" x="5.855841" y="1.1752"/>
-  <use xlink:href="#glyph2-11" x="5.89991" y="1.1752"/>
-  <use xlink:href="#glyph2-6" x="5.936191" y="1.1752"/>
-  <use xlink:href="#glyph2-1" x="5.965911" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="5.997533" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="6.022865" y="1.1752"/>
+<g >
+<title>&lt;__array_function__ internals&gt;:atleast_2d:6 (9 samples, 9.89%)</title><rect x="191.5" y="181" width="116.7" height="15.0" fill="rgb(237,2,54)" rx="2" ry="2" />
+<text  x="194.54" y="191.5" >&lt;__array_funct..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(87.45098%,2.352941%,3.137255%);fill-opacity:1;" d="M 6.421875 1.207031 L 6.476562 1.207031 C 6.484375 1.207031 6.488281 1.214844 6.488281 1.222656 L 6.488281 1.289062 C 6.488281 1.296875 6.484375 1.300781 6.476562 1.300781 L 6.421875 1.300781 C 6.417969 1.300781 6.410156 1.296875 6.410156 1.289062 L 6.410156 1.222656 C 6.410156 1.214844 6.417969 1.207031 6.421875 1.207031 Z M 6.421875 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(90.588235%,12.54902%,3.137255%);fill-opacity:1;" d="M 4.457031 1.207031 L 5.265625 1.207031 C 5.273438 1.207031 5.277344 1.214844 5.277344 1.222656 L 5.277344 1.289062 C 5.277344 1.296875 5.273438 1.300781 5.265625 1.300781 L 4.457031 1.300781 C 4.449219 1.300781 4.445312 1.296875 4.445312 1.289062 L 4.445312 1.222656 C 4.445312 1.214844 4.449219 1.207031 4.457031 1.207031 Z M 4.457031 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="4.464844" y="1.272856"/>
-  <use xlink:href="#glyph2-2" x="4.496466" y="1.272856"/>
-  <use xlink:href="#glyph2-3" x="4.540535" y="1.272856"/>
-  <use xlink:href="#glyph2-4" x="4.582804" y="1.272856"/>
-  <use xlink:href="#glyph2-5" x="4.650542" y="1.272856"/>
-  <use xlink:href="#glyph2-1" x="4.692025" y="1.272856"/>
-  <use xlink:href="#glyph2-6" x="4.723647" y="1.272856"/>
-  <use xlink:href="#glyph2-3" x="4.753366" y="1.272856"/>
-  <use xlink:href="#glyph2-7" x="4.795635" y="1.272856"/>
-  <use xlink:href="#glyph2-3" x="4.839026" y="1.272856"/>
-  <use xlink:href="#glyph2-6" x="4.881295" y="1.272856"/>
-  <use xlink:href="#glyph2-8" x="4.911014" y="1.272856"/>
-  <use xlink:href="#glyph2-9" x="4.952839" y="1.272856"/>
-  <use xlink:href="#glyph2-5" x="4.98912" y="1.272856"/>
-  <use xlink:href="#glyph2-1" x="5.030603" y="1.272856"/>
-  <use xlink:href="#glyph2-10" x="5.062225" y="1.272856"/>
-  <use xlink:href="#glyph2-5" x="5.115881" y="1.272856"/>
-  <use xlink:href="#glyph2-11" x="5.157364" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="5.193646" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="5.218979" y="1.272856"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:522 (16 samples, 17.58%)</title><rect x="904.7" y="261" width="207.5" height="15.0" fill="rgb(242,182,30)" rx="2" ry="2" />
+<text  x="907.73" y="271.5" >/home/roborace/Desktop/mod_..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(96.862745%,17.647059%,9.803922%);fill-opacity:1;" d="M 0.296875 0.914062 L 0.347656 0.914062 C 0.355469 0.914062 0.359375 0.917969 0.359375 0.925781 L 0.359375 0.992188 C 0.359375 1 0.355469 1.007812 0.347656 1.007812 L 0.296875 1.007812 C 0.289062 1.007812 0.285156 1 0.285156 0.992188 L 0.285156 0.925781 C 0.285156 0.917969 0.289062 0.914062 0.296875 0.914062 Z M 0.296875 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(91.764706%,79.215686%,14.901961%);fill-opacity:1;" d="M 0.222656 1.308594 L 0.273438 1.308594 C 0.28125 1.308594 0.285156 1.3125 0.285156 1.320312 L 0.285156 1.386719 C 0.285156 1.394531 0.28125 1.398438 0.273438 1.398438 L 0.222656 1.398438 C 0.214844 1.398438 0.210938 1.394531 0.210938 1.386719 L 0.210938 1.320312 C 0.210938 1.3125 0.214844 1.308594 0.222656 1.308594 Z M 0.222656 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.313725%,36.078431%,9.411765%);fill-opacity:1;" d="M 6.121094 1.109375 L 6.398438 1.109375 C 6.40625 1.109375 6.410156 1.117188 6.410156 1.121094 L 6.410156 1.191406 C 6.410156 1.195312 6.40625 1.203125 6.398438 1.203125 L 6.121094 1.203125 C 6.113281 1.203125 6.109375 1.195312 6.109375 1.191406 L 6.109375 1.121094 C 6.109375 1.117188 6.113281 1.109375 6.121094 1.109375 Z M 6.121094 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="6.128906" y="1.1752"/>
-  <use xlink:href="#glyph2-25" x="6.160528" y="1.1752"/>
-  <use xlink:href="#glyph2-11" x="6.204597" y="1.1752"/>
-  <use xlink:href="#glyph2-6" x="6.240879" y="1.1752"/>
-  <use xlink:href="#glyph2-1" x="6.270598" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="6.30222" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="6.327553" y="1.1752"/>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:6 (3 samples, 3.30%)</title><rect x="1008.5" y="165" width="38.9" height="15.0" fill="rgb(215,18,32)" rx="2" ry="2" />
+<text  x="1011.46" y="175.5" >&lt;__..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.941176%,11.764706%,7.843137%);fill-opacity:1;" d="M 4.003906 1.308594 L 4.054688 1.308594 C 4.0625 1.308594 4.066406 1.3125 4.066406 1.320312 L 4.066406 1.386719 C 4.066406 1.394531 4.0625 1.398438 4.054688 1.398438 L 4.003906 1.398438 C 3.996094 1.398438 3.992188 1.394531 3.992188 1.386719 L 3.992188 1.320312 C 3.992188 1.3125 3.996094 1.308594 4.003906 1.308594 Z M 4.003906 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.627451%,69.803922%,21.176471%);fill-opacity:1;" d="M 3.925781 1.308594 L 3.980469 1.308594 C 3.988281 1.308594 3.992188 1.3125 3.992188 1.320312 L 3.992188 1.386719 C 3.992188 1.394531 3.988281 1.398438 3.980469 1.398438 L 3.925781 1.398438 C 3.921875 1.398438 3.914062 1.394531 3.914062 1.386719 L 3.914062 1.320312 C 3.914062 1.3125 3.921875 1.308594 3.925781 1.308594 Z M 3.925781 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(90.980392%,4.313725%,1.176471%);fill-opacity:1;" d="M 1.734375 1.011719 L 1.785156 1.011719 C 1.792969 1.011719 1.796875 1.019531 1.796875 1.023438 L 1.796875 1.09375 C 1.796875 1.097656 1.792969 1.105469 1.785156 1.105469 L 1.734375 1.105469 C 1.726562 1.105469 1.722656 1.097656 1.722656 1.09375 L 1.722656 1.023438 C 1.722656 1.019531 1.726562 1.011719 1.734375 1.011719 Z M 1.734375 1.011719 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(80.392157%,49.411765%,14.117647%);fill-opacity:1;" d="M 5.441406 1.109375 L 5.796875 1.109375 C 5.800781 1.109375 5.808594 1.117188 5.808594 1.121094 L 5.808594 1.191406 C 5.808594 1.195312 5.800781 1.203125 5.796875 1.203125 L 5.441406 1.203125 C 5.433594 1.203125 5.429688 1.195312 5.429688 1.191406 L 5.429688 1.121094 C 5.429688 1.117188 5.433594 1.109375 5.441406 1.109375 Z M 5.441406 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.445312" y="1.1752"/>
-  <use xlink:href="#glyph2-25" x="5.476934" y="1.1752"/>
-  <use xlink:href="#glyph2-11" x="5.521003" y="1.1752"/>
-  <use xlink:href="#glyph2-6" x="5.557285" y="1.1752"/>
-  <use xlink:href="#glyph2-1" x="5.587004" y="1.1752"/>
-  <use xlink:href="#glyph2-17" x="5.618626" y="1.1752"/>
-  <use xlink:href="#glyph2-3" x="5.637738" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="5.680007" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="5.70534" y="1.1752"/>
+<g >
+<title>&lt;__array_function__ internals&gt;:any:6 (1 samples, 1.10%)</title><rect x="48.9" y="181" width="13.0" height="15.0" fill="rgb(216,48,8)" rx="2" ry="2" />
+<text  x="51.90" y="191.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.27451%,43.529412%,13.333333%);fill-opacity:1;" d="M 1.960938 1.40625 L 2.011719 1.40625 C 2.019531 1.40625 2.023438 1.410156 2.023438 1.417969 L 2.023438 1.484375 C 2.023438 1.492188 2.019531 1.496094 2.011719 1.496094 L 1.960938 1.496094 C 1.953125 1.496094 1.949219 1.492188 1.949219 1.484375 L 1.949219 1.417969 C 1.949219 1.410156 1.953125 1.40625 1.960938 1.40625 Z M 1.960938 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.921569%,25.098039%,9.803922%);fill-opacity:1;" d="M 5.96875 0.914062 L 6.023438 0.914062 C 6.027344 0.914062 6.035156 0.917969 6.035156 0.925781 L 6.035156 0.992188 C 6.035156 1 6.027344 1.007812 6.023438 1.007812 L 5.96875 1.007812 C 5.964844 1.007812 5.957031 1 5.957031 0.992188 L 5.957031 0.925781 C 5.957031 0.917969 5.964844 0.914062 5.96875 0.914062 Z M 5.96875 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.313725%,25.098039%,7.058824%);fill-opacity:1;" d="M 1.128906 1.207031 L 1.785156 1.207031 C 1.792969 1.207031 1.796875 1.214844 1.796875 1.222656 L 1.796875 1.289062 C 1.796875 1.296875 1.792969 1.300781 1.785156 1.300781 L 1.128906 1.300781 C 1.121094 1.300781 1.117188 1.296875 1.117188 1.289062 L 1.117188 1.222656 C 1.117188 1.214844 1.121094 1.207031 1.128906 1.207031 Z M 1.128906 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="1.136719" y="1.272856"/>
-  <use xlink:href="#glyph2-25" x="1.168341" y="1.272856"/>
-  <use xlink:href="#glyph2-11" x="1.21241" y="1.272856"/>
-  <use xlink:href="#glyph2-6" x="1.248691" y="1.272856"/>
-  <use xlink:href="#glyph2-1" x="1.278411" y="1.272856"/>
-  <use xlink:href="#glyph2-17" x="1.310033" y="1.272856"/>
-  <use xlink:href="#glyph2-3" x="1.329145" y="1.272856"/>
-  <use xlink:href="#glyph2-9" x="1.371414" y="1.272856"/>
-  <use xlink:href="#glyph2-8" x="1.407695" y="1.272856"/>
-  <use xlink:href="#glyph2-17" x="1.44952" y="1.272856"/>
-  <use xlink:href="#glyph2-1" x="1.468632" y="1.272856"/>
-  <use xlink:href="#glyph2-17" x="1.500254" y="1.272856"/>
-  <use xlink:href="#glyph2-20" x="1.519366" y="1.272856"/>
-  <use xlink:href="#glyph2-7" x="1.538478" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="1.581869" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="1.607202" y="1.272856"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:set_node_filter_layers:504 (2 samples, 2.20%)</title><rect x="697.3" y="197" width="25.9" height="15.0" fill="rgb(216,137,23)" rx="2" ry="2" />
+<text  x="700.25" y="207.5" >/..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(81.960784%,23.921569%,9.019608%);fill-opacity:1;" d="M 2.261719 0.519531 L 2.316406 0.519531 C 2.324219 0.519531 2.328125 0.527344 2.328125 0.535156 L 2.328125 0.601562 C 2.328125 0.609375 2.324219 0.613281 2.316406 0.613281 L 2.261719 0.613281 C 2.257812 0.613281 2.25 0.609375 2.25 0.601562 L 2.25 0.535156 C 2.25 0.527344 2.257812 0.519531 2.261719 0.519531 Z M 2.261719 0.519531 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(87.45098%,20%,0.784314%);fill-opacity:1;" d="M 3.851562 1.308594 L 3.902344 1.308594 C 3.910156 1.308594 3.914062 1.3125 3.914062 1.320312 L 3.914062 1.386719 C 3.914062 1.394531 3.910156 1.398438 3.902344 1.398438 L 3.851562 1.398438 C 3.847656 1.398438 3.839844 1.394531 3.839844 1.386719 L 3.839844 1.320312 C 3.839844 1.3125 3.847656 1.308594 3.851562 1.308594 Z M 3.851562 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.627451%,49.411765%,4.705882%);fill-opacity:1;" d="M 4.078125 1.40625 L 5.265625 1.40625 C 5.273438 1.40625 5.277344 1.410156 5.277344 1.417969 L 5.277344 1.484375 C 5.277344 1.492188 5.273438 1.496094 5.265625 1.496094 L 4.078125 1.496094 C 4.074219 1.496094 4.066406 1.492188 4.066406 1.484375 L 4.066406 1.417969 C 4.066406 1.410156 4.074219 1.40625 4.078125 1.40625 Z M 4.078125 1.40625 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="4.085938" y="1.468169"/>
-  <use xlink:href="#glyph2-2" x="4.117559" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="4.161628" y="1.468169"/>
-  <use xlink:href="#glyph2-4" x="4.203897" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="4.271636" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="4.313118" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="4.34474" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="4.37446" y="1.468169"/>
-  <use xlink:href="#glyph2-7" x="4.416729" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="4.46012" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="4.502389" y="1.468169"/>
-  <use xlink:href="#glyph2-8" x="4.532108" y="1.468169"/>
-  <use xlink:href="#glyph2-9" x="4.573932" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="4.610214" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="4.651697" y="1.468169"/>
-  <use xlink:href="#glyph2-10" x="4.683319" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="4.736975" y="1.468169"/>
-  <use xlink:href="#glyph2-11" x="4.778458" y="1.468169"/>
-  <use xlink:href="#glyph2-12" x="4.81474" y="1.468169"/>
-  <use xlink:href="#glyph2-13" x="4.855955" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="4.883395" y="1.468169"/>
-  <use xlink:href="#glyph2-14" x="4.925664" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="4.969055" y="1.468169"/>
-  <use xlink:href="#glyph2-4" x="5.000677" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="5.068416" y="1.468169"/>
-  <use xlink:href="#glyph2-15" x="5.110684" y="1.468169"/>
-  <use xlink:href="#glyph2-16" x="5.154076" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="5.19835" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="5.223682" y="1.468169"/>
+<g >
+<title>&lt;__array_function__ internals&gt;:iscomplexobj:6 (1 samples, 1.10%)</title><rect x="1021.4" y="133" width="13.0" height="15.0" fill="rgb(251,72,30)" rx="2" ry="2" />
+<text  x="1024.43" y="143.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.54902%,11.372549%,0.784314%);fill-opacity:1;" d="M 2.261719 0.816406 L 2.316406 0.816406 C 2.324219 0.816406 2.328125 0.820312 2.328125 0.828125 L 2.328125 0.894531 C 2.328125 0.902344 2.324219 0.90625 2.316406 0.90625 L 2.261719 0.90625 C 2.257812 0.90625 2.25 0.902344 2.25 0.894531 L 2.25 0.828125 C 2.25 0.820312 2.257812 0.816406 2.261719 0.816406 Z M 2.261719 0.816406 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(95.294118%,12.156863%,7.058824%);fill-opacity:1;" d="M 0.222656 1.207031 L 0.273438 1.207031 C 0.28125 1.207031 0.285156 1.214844 0.285156 1.222656 L 0.285156 1.289062 C 0.285156 1.296875 0.28125 1.300781 0.273438 1.300781 L 0.222656 1.300781 C 0.214844 1.300781 0.210938 1.296875 0.210938 1.289062 L 0.210938 1.222656 C 0.210938 1.214844 0.214844 1.207031 0.222656 1.207031 Z M 0.222656 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.313725%,78.039216%,5.490196%);fill-opacity:1;" d="M 2.261719 0.226562 L 2.316406 0.226562 C 2.324219 0.226562 2.328125 0.234375 2.328125 0.238281 L 2.328125 0.308594 C 2.328125 0.3125 2.324219 0.320312 2.316406 0.320312 L 2.261719 0.320312 C 2.257812 0.320312 2.25 0.3125 2.25 0.308594 L 2.25 0.238281 C 2.25 0.234375 2.257812 0.226562 2.261719 0.226562 Z M 2.261719 0.226562 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(82.745098%,36.078431%,13.72549%);fill-opacity:1;" d="M 2.339844 1.40625 L 2.390625 1.40625 C 2.398438 1.40625 2.402344 1.410156 2.402344 1.417969 L 2.402344 1.484375 C 2.402344 1.492188 2.398438 1.496094 2.390625 1.496094 L 2.339844 1.496094 C 2.332031 1.496094 2.328125 1.492188 2.328125 1.484375 L 2.328125 1.417969 C 2.328125 1.410156 2.332031 1.40625 2.339844 1.40625 Z M 2.339844 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(82.352941%,5.490196%,18.039216%);fill-opacity:1;" d="M 0.976562 1.308594 L 1.9375 1.308594 C 1.945312 1.308594 1.949219 1.3125 1.949219 1.320312 L 1.949219 1.386719 C 1.949219 1.394531 1.945312 1.398438 1.9375 1.398438 L 0.976562 1.398438 C 0.972656 1.398438 0.964844 1.394531 0.964844 1.386719 L 0.964844 1.320312 C 0.964844 1.3125 0.972656 1.308594 0.976562 1.308594 Z M 0.976562 1.308594 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="0.984375" y="1.370513"/>
-  <use xlink:href="#glyph2-16" x="1.041364" y="1.370513"/>
-  <use xlink:href="#glyph2-16" x="1.085638" y="1.370513"/>
-  <use xlink:href="#glyph2-8" x="1.129912" y="1.370513"/>
-  <use xlink:href="#glyph2-6" x="1.171737" y="1.370513"/>
-  <use xlink:href="#glyph2-6" x="1.201456" y="1.370513"/>
-  <use xlink:href="#glyph2-8" x="1.231175" y="1.370513"/>
-  <use xlink:href="#glyph2-19" x="1.273" y="1.370513"/>
-  <use xlink:href="#glyph2-16" x="1.314215" y="1.370513"/>
-  <use xlink:href="#glyph2-28" x="1.358489" y="1.370513"/>
-  <use xlink:href="#glyph2-25" x="1.382973" y="1.370513"/>
-  <use xlink:href="#glyph2-21" x="1.427042" y="1.370513"/>
-  <use xlink:href="#glyph2-9" x="1.471111" y="1.370513"/>
-  <use xlink:href="#glyph2-13" x="1.507393" y="1.370513"/>
-  <use xlink:href="#glyph2-20" x="1.534833" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="1.553945" y="1.370513"/>
-  <use xlink:href="#glyph2-21" x="1.596214" y="1.370513"/>
-  <use xlink:href="#glyph2-16" x="1.640283" y="1.370513"/>
-  <use xlink:href="#glyph2-16" x="1.684557" y="1.370513"/>
-  <use xlink:href="#glyph2-29" x="1.728831" y="1.370513"/>
-  <use xlink:href="#glyph2-20" x="1.753315" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="1.772428" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="1.79776" y="1.370513"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/linalg/linalg.py:solve:403 (4 samples, 4.40%)</title><rect x="606.5" y="181" width="51.9" height="15.0" fill="rgb(226,134,5)" rx="2" ry="2" />
+<text  x="609.48" y="191.5" >/usr/..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(96.862745%,0.392157%,3.137255%);fill-opacity:1;" d="M 3.550781 1.207031 L 3.828125 1.207031 C 3.835938 1.207031 3.839844 1.214844 3.839844 1.222656 L 3.839844 1.289062 C 3.839844 1.296875 3.835938 1.300781 3.828125 1.300781 L 3.550781 1.300781 C 3.542969 1.300781 3.539062 1.296875 3.539062 1.289062 L 3.539062 1.222656 C 3.539062 1.214844 3.542969 1.207031 3.550781 1.207031 Z M 3.550781 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="3.554688" y="1.272856"/>
-  <use xlink:href="#glyph2-16" x="3.611676" y="1.272856"/>
-  <use xlink:href="#glyph2-16" x="3.655951" y="1.272856"/>
-  <use xlink:href="#glyph2-8" x="3.700225" y="1.272856"/>
-  <use xlink:href="#glyph2-6" x="3.742049" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="3.771768" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="3.797101" y="1.272856"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/gen_local_node_template.py:gen_local_node_template:96 (12 samples, 13.19%)</title><rect x="749.1" y="213" width="155.6" height="15.0" fill="rgb(233,69,45)" rx="2" ry="2" />
+<text  x="752.12" y="223.5" >/home/roborace/Desk..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(91.372549%,29.019608%,2.352941%);fill-opacity:1;" d="M 0.0703125 1.699219 L 6.929688 1.699219 C 6.9375 1.699219 6.941406 1.703125 6.941406 1.710938 L 6.941406 1.777344 C 6.941406 1.785156 6.9375 1.792969 6.929688 1.792969 L 0.0703125 1.792969 C 0.0625 1.792969 0.0585938 1.785156 0.0585938 1.777344 L 0.0585938 1.710938 C 0.0585938 1.703125 0.0625 1.699219 0.0703125 1.699219 Z M 0.0703125 1.699219 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.901961%,55.294118%,0.784314%);fill-opacity:1;" d="M 1.203125 0.914062 L 1.40625 0.914062 C 1.414062 0.914062 1.417969 0.917969 1.417969 0.925781 L 1.417969 0.992188 C 1.417969 1 1.414062 1.007812 1.40625 1.007812 L 1.203125 1.007812 C 1.199219 1.007812 1.191406 1 1.191406 0.992188 L 1.191406 0.925781 C 1.191406 0.917969 1.199219 0.914062 1.203125 0.914062 Z M 1.203125 0.914062 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="1.210938" y="0.979888"/>
-  <use xlink:href="#glyph2-25" x="1.242559" y="0.979888"/>
-  <use xlink:href="#glyph2-11" x="1.286628" y="0.979888"/>
-  <use xlink:href="#glyph2-22" x="1.32291" y="0.979888"/>
-  <use xlink:href="#glyph2-22" x="1.348243" y="0.979888"/>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_spec:896 (1 samples, 1.10%)</title><rect x="386.0" y="117" width="13.0" height="15.0" fill="rgb(213,59,53)" rx="2" ry="2" />
+<text  x="389.04" y="127.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(98.431373%,11.764706%,20.784314%);fill-opacity:1;" d="M 2.261719 1.308594 L 2.316406 1.308594 C 2.324219 1.308594 2.328125 1.3125 2.328125 1.320312 L 2.328125 1.386719 C 2.328125 1.394531 2.324219 1.398438 2.316406 1.398438 L 2.261719 1.398438 C 2.257812 1.398438 2.25 1.394531 2.25 1.386719 L 2.25 1.320312 C 2.25 1.3125 2.257812 1.308594 2.261719 1.308594 Z M 2.261719 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(80.392157%,52.54902%,15.294118%);fill-opacity:1;" d="M 0.222656 1.40625 L 0.273438 1.40625 C 0.28125 1.40625 0.285156 1.410156 0.285156 1.417969 L 0.285156 1.484375 C 0.285156 1.492188 0.28125 1.496094 0.273438 1.496094 L 0.222656 1.496094 C 0.214844 1.496094 0.210938 1.492188 0.210938 1.484375 L 0.210938 1.417969 C 0.210938 1.410156 0.214844 1.40625 0.222656 1.40625 Z M 0.222656 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(93.72549%,50.980392%,14.901961%);fill-opacity:1;" d="M 0.902344 1.308594 L 0.953125 1.308594 C 0.960938 1.308594 0.964844 1.3125 0.964844 1.320312 L 0.964844 1.386719 C 0.964844 1.394531 0.960938 1.398438 0.953125 1.398438 L 0.902344 1.398438 C 0.894531 1.398438 0.890625 1.394531 0.890625 1.386719 L 0.890625 1.320312 C 0.890625 1.3125 0.894531 1.308594 0.902344 1.308594 Z M 0.902344 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.117647%,8.235294%,12.54902%);fill-opacity:1;" d="M 6.574219 1.601562 L 6.628906 1.601562 C 6.632812 1.601562 6.640625 1.605469 6.640625 1.613281 L 6.640625 1.679688 C 6.640625 1.6875 6.632812 1.691406 6.628906 1.691406 L 6.574219 1.691406 C 6.570312 1.691406 6.5625 1.6875 6.5625 1.679688 L 6.5625 1.613281 C 6.5625 1.605469 6.570312 1.601562 6.574219 1.601562 Z M 6.574219 1.601562 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(89.803922%,63.137255%,2.352941%);fill-opacity:1;" d="M 2.035156 1.40625 L 2.089844 1.40625 C 2.09375 1.40625 2.101562 1.410156 2.101562 1.417969 L 2.101562 1.484375 C 2.101562 1.492188 2.09375 1.496094 2.089844 1.496094 L 2.035156 1.496094 C 2.03125 1.496094 2.023438 1.492188 2.023438 1.484375 L 2.023438 1.417969 C 2.023438 1.410156 2.03125 1.40625 2.035156 1.40625 Z M 2.035156 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(98.431373%,80.392157%,20.784314%);fill-opacity:1;" d="M 4.078125 1.308594 L 4.28125 1.308594 C 4.289062 1.308594 4.292969 1.3125 4.292969 1.320312 L 4.292969 1.386719 C 4.292969 1.394531 4.289062 1.398438 4.28125 1.398438 L 4.078125 1.398438 C 4.074219 1.398438 4.066406 1.394531 4.066406 1.386719 L 4.066406 1.320312 C 4.066406 1.3125 4.074219 1.308594 4.078125 1.308594 Z M 4.078125 1.308594 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="4.085938" y="1.370513"/>
-  <use xlink:href="#glyph2-2" x="4.117559" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="4.161628" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="4.203897" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="4.22923" y="1.370513"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1412 (1 samples, 1.10%)</title><rect x="1034.4" y="149" width="13.0" height="15.0" fill="rgb(210,151,7)" rx="2" ry="2" />
+<text  x="1037.40" y="159.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.117647%,11.764706%,11.764706%);fill-opacity:1;" d="M 0.296875 0.816406 L 0.347656 0.816406 C 0.355469 0.816406 0.359375 0.820312 0.359375 0.828125 L 0.359375 0.894531 C 0.359375 0.902344 0.355469 0.90625 0.347656 0.90625 L 0.296875 0.90625 C 0.289062 0.90625 0.285156 0.902344 0.285156 0.894531 L 0.285156 0.828125 C 0.285156 0.820312 0.289062 0.816406 0.296875 0.816406 Z M 0.296875 0.816406 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(87.45098%,46.27451%,9.019608%);fill-opacity:1;" d="M 2.1875 1.109375 L 2.238281 1.109375 C 2.246094 1.109375 2.25 1.117188 2.25 1.121094 L 2.25 1.191406 C 2.25 1.195312 2.246094 1.203125 2.238281 1.203125 L 2.1875 1.203125 C 2.179688 1.203125 2.175781 1.195312 2.175781 1.191406 L 2.175781 1.121094 C 2.175781 1.117188 2.179688 1.109375 2.1875 1.109375 Z M 2.1875 1.109375 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.529412%,35.294118%,19.607843%);fill-opacity:1;" d="M 2.414062 1.308594 L 2.46875 1.308594 C 2.472656 1.308594 2.480469 1.3125 2.480469 1.320312 L 2.480469 1.386719 C 2.480469 1.394531 2.472656 1.398438 2.46875 1.398438 L 2.414062 1.398438 C 2.410156 1.398438 2.402344 1.394531 2.402344 1.386719 L 2.402344 1.320312 C 2.402344 1.3125 2.410156 1.308594 2.414062 1.308594 Z M 2.414062 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(89.019608%,32.54902%,12.941176%);fill-opacity:1;" d="M 5.59375 0.914062 L 5.71875 0.914062 C 5.726562 0.914062 5.730469 0.917969 5.730469 0.925781 L 5.730469 0.992188 C 5.730469 1 5.726562 1.007812 5.71875 1.007812 L 5.59375 1.007812 C 5.585938 1.007812 5.582031 1 5.582031 0.992188 L 5.582031 0.925781 C 5.582031 0.917969 5.585938 0.914062 5.59375 0.914062 Z M 5.59375 0.914062 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.597656" y="0.979888"/>
-  <use xlink:href="#glyph2-22" x="5.629278" y="0.979888"/>
-  <use xlink:href="#glyph2-22" x="5.654611" y="0.979888"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:121 (1 samples, 1.10%)</title><rect x="191.5" y="165" width="13.0" height="15.0" fill="rgb(234,200,34)" rx="2" ry="2" />
+<text  x="194.54" y="175.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.666667%,32.156863%,1.568627%);fill-opacity:1;" d="M 0.296875 1.40625 L 0.347656 1.40625 C 0.355469 1.40625 0.359375 1.410156 0.359375 1.417969 L 0.359375 1.484375 C 0.359375 1.492188 0.355469 1.496094 0.347656 1.496094 L 0.296875 1.496094 C 0.289062 1.496094 0.285156 1.492188 0.285156 1.484375 L 0.285156 1.417969 C 0.285156 1.410156 0.289062 1.40625 0.296875 1.40625 Z M 0.296875 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(80.784314%,89.803922%,0.784314%);fill-opacity:1;" d="M 0.296875 1.011719 L 0.347656 1.011719 C 0.355469 1.011719 0.359375 1.019531 0.359375 1.023438 L 0.359375 1.09375 C 0.359375 1.097656 0.355469 1.105469 0.347656 1.105469 L 0.296875 1.105469 C 0.289062 1.105469 0.285156 1.097656 0.285156 1.09375 L 0.285156 1.023438 C 0.285156 1.019531 0.289062 1.011719 0.296875 1.011719 Z M 0.296875 1.011719 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(91.372549%,36.078431%,4.705882%);fill-opacity:1;" d="M 5.515625 1.011719 L 5.796875 1.011719 C 5.800781 1.011719 5.808594 1.019531 5.808594 1.023438 L 5.808594 1.09375 C 5.808594 1.097656 5.800781 1.105469 5.796875 1.105469 L 5.515625 1.105469 C 5.507812 1.105469 5.503906 1.097656 5.503906 1.09375 L 5.503906 1.023438 C 5.503906 1.019531 5.507812 1.011719 5.515625 1.011719 Z M 5.515625 1.011719 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="5.523438" y="1.077544"/>
-  <use xlink:href="#glyph2-16" x="5.580426" y="1.077544"/>
-  <use xlink:href="#glyph2-16" x="5.624701" y="1.077544"/>
-  <use xlink:href="#glyph2-8" x="5.668975" y="1.077544"/>
-  <use xlink:href="#glyph2-6" x="5.710799" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="5.740518" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="5.765851" y="1.077544"/>
+<g >
+<title>/usr/lib/python3.5/json/__init__.py:dumps:237 (3 samples, 3.30%)</title><rect x="1151.1" y="229" width="38.9" height="15.0" fill="rgb(222,38,13)" rx="2" ry="2" />
+<text  x="1154.10" y="239.5" >/us..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.54902%,29.019608%,7.843137%);fill-opacity:1;" d="M 5.742188 0.914062 L 5.796875 0.914062 C 5.800781 0.914062 5.808594 0.917969 5.808594 0.925781 L 5.808594 0.992188 C 5.808594 1 5.800781 1.007812 5.796875 1.007812 L 5.742188 1.007812 C 5.738281 1.007812 5.730469 1 5.730469 0.992188 L 5.730469 0.925781 C 5.730469 0.917969 5.738281 0.914062 5.742188 0.914062 Z M 5.742188 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.529412%,41.176471%,0.784314%);fill-opacity:1;" d="M 2.261719 0.324219 L 2.316406 0.324219 C 2.324219 0.324219 2.328125 0.332031 2.328125 0.335938 L 2.328125 0.40625 C 2.328125 0.410156 2.324219 0.417969 2.316406 0.417969 L 2.261719 0.417969 C 2.257812 0.417969 2.25 0.410156 2.25 0.40625 L 2.25 0.335938 C 2.25 0.332031 2.257812 0.324219 2.261719 0.324219 Z M 2.261719 0.324219 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.666667%,34.901961%,3.529412%);fill-opacity:1;" d="M 0.371094 1.40625 L 0.953125 1.40625 C 0.960938 1.40625 0.964844 1.410156 0.964844 1.417969 L 0.964844 1.484375 C 0.964844 1.492188 0.960938 1.496094 0.953125 1.496094 L 0.371094 1.496094 C 0.367188 1.496094 0.359375 1.492188 0.359375 1.484375 L 0.359375 1.417969 C 0.359375 1.410156 0.367188 1.40625 0.371094 1.40625 Z M 0.371094 1.40625 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="0.378906" y="1.468169"/>
-  <use xlink:href="#glyph2-2" x="0.410528" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="0.454597" y="1.468169"/>
-  <use xlink:href="#glyph2-4" x="0.496866" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="0.564604" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="0.606087" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="0.637709" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="0.667428" y="1.468169"/>
-  <use xlink:href="#glyph2-7" x="0.709697" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="0.753088" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="0.795357" y="1.468169"/>
-  <use xlink:href="#glyph2-8" x="0.825076" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="0.866901" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="0.892234" y="1.468169"/>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_call_with_frames_removed:222 (1 samples, 1.10%)</title><rect x="386.0" y="165" width="13.0" height="15.0" fill="rgb(232,54,3)" rx="2" ry="2" />
+<text  x="389.04" y="175.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.156863%,32.941176%,20.392157%);fill-opacity:1;" d="M 5.289062 1.40625 L 5.339844 1.40625 C 5.347656 1.40625 5.351562 1.410156 5.351562 1.417969 L 5.351562 1.484375 C 5.351562 1.492188 5.347656 1.496094 5.339844 1.496094 L 5.289062 1.496094 C 5.28125 1.496094 5.277344 1.492188 5.277344 1.484375 L 5.277344 1.417969 C 5.277344 1.410156 5.28125 1.40625 5.289062 1.40625 Z M 5.289062 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.117647%,12.941176%,2.745098%);fill-opacity:1;" d="M 5.59375 0.816406 L 5.71875 0.816406 C 5.726562 0.816406 5.730469 0.820312 5.730469 0.828125 L 5.730469 0.894531 C 5.730469 0.902344 5.726562 0.90625 5.71875 0.90625 L 5.59375 0.90625 C 5.585938 0.90625 5.582031 0.902344 5.582031 0.894531 L 5.582031 0.828125 C 5.582031 0.820312 5.585938 0.816406 5.59375 0.816406 Z M 5.59375 0.816406 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="5.597656" y="0.882231"/>
-  <use xlink:href="#glyph2-22" x="5.654645" y="0.882231"/>
-  <use xlink:href="#glyph2-22" x="5.679978" y="0.882231"/>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load_unlocked:944 (1 samples, 1.10%)</title><rect x="386.0" y="181" width="13.0" height="15.0" fill="rgb(211,84,24)" rx="2" ry="2" />
+<text  x="389.04" y="191.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(82.352941%,76.470588%,16.862745%);fill-opacity:1;" d="M 4.230469 1.207031 L 4.28125 1.207031 C 4.289062 1.207031 4.292969 1.214844 4.292969 1.222656 L 4.292969 1.289062 C 4.292969 1.296875 4.289062 1.300781 4.28125 1.300781 L 4.230469 1.300781 C 4.222656 1.300781 4.21875 1.296875 4.21875 1.289062 L 4.21875 1.222656 C 4.21875 1.214844 4.222656 1.207031 4.230469 1.207031 Z M 4.230469 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.901961%,25.882353%,11.764706%);fill-opacity:1;" d="M 5.289062 1.503906 L 6.476562 1.503906 C 6.484375 1.503906 6.488281 1.507812 6.488281 1.515625 L 6.488281 1.582031 C 6.488281 1.589844 6.484375 1.59375 6.476562 1.59375 L 5.289062 1.59375 C 5.28125 1.59375 5.277344 1.589844 5.277344 1.582031 L 5.277344 1.515625 C 5.277344 1.507812 5.28125 1.503906 5.289062 1.503906 Z M 5.289062 1.503906 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.296875" y="1.565825"/>
-  <use xlink:href="#glyph2-2" x="5.328497" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="5.372566" y="1.565825"/>
-  <use xlink:href="#glyph2-4" x="5.414835" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="5.482573" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="5.524056" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="5.555678" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="5.585397" y="1.565825"/>
-  <use xlink:href="#glyph2-7" x="5.627666" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="5.671057" y="1.565825"/>
-  <use xlink:href="#glyph2-6" x="5.713326" y="1.565825"/>
-  <use xlink:href="#glyph2-8" x="5.743045" y="1.565825"/>
-  <use xlink:href="#glyph2-9" x="5.78487" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="5.821152" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="5.862634" y="1.565825"/>
-  <use xlink:href="#glyph2-10" x="5.894256" y="1.565825"/>
-  <use xlink:href="#glyph2-5" x="5.947913" y="1.565825"/>
-  <use xlink:href="#glyph2-11" x="5.989395" y="1.565825"/>
-  <use xlink:href="#glyph2-12" x="6.025677" y="1.565825"/>
-  <use xlink:href="#glyph2-13" x="6.066892" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="6.094333" y="1.565825"/>
-  <use xlink:href="#glyph2-14" x="6.136602" y="1.565825"/>
-  <use xlink:href="#glyph2-1" x="6.179993" y="1.565825"/>
-  <use xlink:href="#glyph2-4" x="6.211615" y="1.565825"/>
-  <use xlink:href="#glyph2-3" x="6.279353" y="1.565825"/>
-  <use xlink:href="#glyph2-15" x="6.321622" y="1.565825"/>
-  <use xlink:href="#glyph2-16" x="6.365013" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="6.409287" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="6.43462" y="1.565825"/>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:find_spec:1139 (1 samples, 1.10%)</title><rect x="386.0" y="101" width="13.0" height="15.0" fill="rgb(239,29,40)" rx="2" ry="2" />
+<text  x="389.04" y="111.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.117647%,19.607843%,10.196078%);fill-opacity:1;" d="M 5.363281 1.207031 L 6.398438 1.207031 C 6.40625 1.207031 6.410156 1.214844 6.410156 1.222656 L 6.410156 1.289062 C 6.410156 1.296875 6.40625 1.300781 6.398438 1.300781 L 5.363281 1.300781 C 5.359375 1.300781 5.351562 1.296875 5.351562 1.289062 L 5.351562 1.222656 C 5.351562 1.214844 5.359375 1.207031 5.363281 1.207031 Z M 5.363281 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.371094" y="1.272856"/>
-  <use xlink:href="#glyph2-25" x="5.402716" y="1.272856"/>
-  <use xlink:href="#glyph2-11" x="5.446785" y="1.272856"/>
-  <use xlink:href="#glyph2-6" x="5.483066" y="1.272856"/>
-  <use xlink:href="#glyph2-1" x="5.512786" y="1.272856"/>
-  <use xlink:href="#glyph2-17" x="5.544408" y="1.272856"/>
-  <use xlink:href="#glyph2-3" x="5.56352" y="1.272856"/>
-  <use xlink:href="#glyph2-9" x="5.605789" y="1.272856"/>
-  <use xlink:href="#glyph2-8" x="5.64207" y="1.272856"/>
-  <use xlink:href="#glyph2-17" x="5.683895" y="1.272856"/>
-  <use xlink:href="#glyph2-1" x="5.703007" y="1.272856"/>
-  <use xlink:href="#glyph2-17" x="5.734629" y="1.272856"/>
-  <use xlink:href="#glyph2-20" x="5.753741" y="1.272856"/>
-  <use xlink:href="#glyph2-7" x="5.772853" y="1.272856"/>
-  <use xlink:href="#glyph2-1" x="5.816244" y="1.272856"/>
-  <use xlink:href="#glyph2-14" x="5.847866" y="1.272856"/>
-  <use xlink:href="#glyph2-19" x="5.891257" y="1.272856"/>
-  <use xlink:href="#glyph2-13" x="5.932472" y="1.272856"/>
-  <use xlink:href="#glyph2-2" x="5.959913" y="1.272856"/>
-  <use xlink:href="#glyph2-3" x="6.003982" y="1.272856"/>
-  <use xlink:href="#glyph2-21" x="6.046251" y="1.272856"/>
-  <use xlink:href="#glyph2-26" x="6.09032" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="6.134594" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="6.159927" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="6.18526" y="1.272856"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:&lt;listcomp&gt;:3503 (2 samples, 2.20%)</title><rect x="697.3" y="165" width="25.9" height="15.0" fill="rgb(236,15,23)" rx="2" ry="2" />
+<text  x="700.25" y="175.5" >/..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(90.588235%,11.764706%,1.568627%);fill-opacity:1;" d="M 2.339844 1.503906 L 2.390625 1.503906 C 2.398438 1.503906 2.402344 1.507812 2.402344 1.515625 L 2.402344 1.582031 C 2.402344 1.589844 2.398438 1.59375 2.390625 1.59375 L 2.339844 1.59375 C 2.332031 1.59375 2.328125 1.589844 2.328125 1.582031 L 2.328125 1.515625 C 2.328125 1.507812 2.332031 1.503906 2.339844 1.503906 Z M 2.339844 1.503906 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(98.823529%,71.372549%,2.745098%);fill-opacity:1;" d="M 2.414062 1.207031 L 2.46875 1.207031 C 2.472656 1.207031 2.480469 1.214844 2.480469 1.222656 L 2.480469 1.289062 C 2.480469 1.296875 2.472656 1.300781 2.46875 1.300781 L 2.414062 1.300781 C 2.410156 1.300781 2.402344 1.296875 2.402344 1.289062 L 2.402344 1.222656 C 2.402344 1.214844 2.410156 1.207031 2.414062 1.207031 Z M 2.414062 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(81.568627%,6.27451%,3.529412%);fill-opacity:1;" d="M 1.429688 1.011719 L 1.484375 1.011719 C 1.492188 1.011719 1.496094 1.019531 1.496094 1.023438 L 1.496094 1.09375 C 1.496094 1.097656 1.492188 1.105469 1.484375 1.105469 L 1.429688 1.105469 C 1.425781 1.105469 1.417969 1.097656 1.417969 1.09375 L 1.417969 1.023438 C 1.417969 1.019531 1.425781 1.011719 1.429688 1.011719 Z M 1.429688 1.011719 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(97.254902%,83.921569%,18.431373%);fill-opacity:1;" d="M 6.5 1.40625 L 6.550781 1.40625 C 6.558594 1.40625 6.5625 1.410156 6.5625 1.417969 L 6.5625 1.484375 C 6.5625 1.492188 6.558594 1.496094 6.550781 1.496094 L 6.5 1.496094 C 6.492188 1.496094 6.488281 1.492188 6.488281 1.484375 L 6.488281 1.417969 C 6.488281 1.410156 6.492188 1.40625 6.5 1.40625 Z M 6.5 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(98.431373%,33.333333%,20.784314%);fill-opacity:1;" d="M 2.492188 1.109375 L 3.527344 1.109375 C 3.53125 1.109375 3.539062 1.117188 3.539062 1.121094 L 3.539062 1.191406 C 3.539062 1.195312 3.53125 1.203125 3.527344 1.203125 L 2.492188 1.203125 C 2.484375 1.203125 2.480469 1.195312 2.480469 1.191406 L 2.480469 1.121094 C 2.480469 1.117188 2.484375 1.109375 2.492188 1.109375 Z M 2.492188 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="2.496094" y="1.1752"/>
-  <use xlink:href="#glyph2-25" x="2.527716" y="1.1752"/>
-  <use xlink:href="#glyph2-11" x="2.571785" y="1.1752"/>
-  <use xlink:href="#glyph2-6" x="2.608066" y="1.1752"/>
-  <use xlink:href="#glyph2-1" x="2.637786" y="1.1752"/>
-  <use xlink:href="#glyph2-17" x="2.669408" y="1.1752"/>
-  <use xlink:href="#glyph2-3" x="2.68852" y="1.1752"/>
-  <use xlink:href="#glyph2-9" x="2.730789" y="1.1752"/>
-  <use xlink:href="#glyph2-8" x="2.76707" y="1.1752"/>
-  <use xlink:href="#glyph2-17" x="2.808895" y="1.1752"/>
-  <use xlink:href="#glyph2-1" x="2.828007" y="1.1752"/>
-  <use xlink:href="#glyph2-17" x="2.859629" y="1.1752"/>
-  <use xlink:href="#glyph2-20" x="2.878741" y="1.1752"/>
-  <use xlink:href="#glyph2-7" x="2.897853" y="1.1752"/>
-  <use xlink:href="#glyph2-1" x="2.941244" y="1.1752"/>
-  <use xlink:href="#glyph2-14" x="2.972866" y="1.1752"/>
-  <use xlink:href="#glyph2-19" x="3.016257" y="1.1752"/>
-  <use xlink:href="#glyph2-13" x="3.057472" y="1.1752"/>
-  <use xlink:href="#glyph2-2" x="3.084913" y="1.1752"/>
-  <use xlink:href="#glyph2-3" x="3.128982" y="1.1752"/>
-  <use xlink:href="#glyph2-21" x="3.171251" y="1.1752"/>
-  <use xlink:href="#glyph2-26" x="3.21532" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="3.259594" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="3.284927" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="3.31026" y="1.1752"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1412 (1 samples, 1.10%)</title><rect x="1086.3" y="149" width="12.9" height="15.0" fill="rgb(208,107,0)" rx="2" ry="2" />
+<text  x="1089.26" y="159.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.27451%,3.921569%,14.117647%);fill-opacity:1;" d="M 4.382812 1.207031 L 4.433594 1.207031 C 4.441406 1.207031 4.445312 1.214844 4.445312 1.222656 L 4.445312 1.289062 C 4.445312 1.296875 4.441406 1.300781 4.433594 1.300781 L 4.382812 1.300781 C 4.375 1.300781 4.371094 1.296875 4.371094 1.289062 L 4.371094 1.222656 C 4.371094 1.214844 4.375 1.207031 4.382812 1.207031 Z M 4.382812 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.921569%,47.45098%,8.627451%);fill-opacity:1;" d="M 1.507812 1.011719 L 1.710938 1.011719 C 1.71875 1.011719 1.722656 1.019531 1.722656 1.023438 L 1.722656 1.09375 C 1.722656 1.097656 1.71875 1.105469 1.710938 1.105469 L 1.507812 1.105469 C 1.5 1.105469 1.496094 1.097656 1.496094 1.09375 L 1.496094 1.023438 C 1.496094 1.019531 1.5 1.011719 1.507812 1.011719 Z M 1.507812 1.011719 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="1.511719" y="1.077544"/>
-  <use xlink:href="#glyph2-25" x="1.543341" y="1.077544"/>
-  <use xlink:href="#glyph2-11" x="1.58741" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="1.623691" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="1.649024" y="1.077544"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__calc_ax_poss:346 (4 samples, 4.40%)</title><rect x="995.5" y="181" width="51.9" height="15.0" fill="rgb(233,123,52)" rx="2" ry="2" />
+<text  x="998.49" y="191.5" >/usr/..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.627451%,69.803922%,11.764706%);fill-opacity:1;" d="M 0.296875 1.207031 L 0.347656 1.207031 C 0.355469 1.207031 0.359375 1.214844 0.359375 1.222656 L 0.359375 1.289062 C 0.359375 1.296875 0.355469 1.300781 0.347656 1.300781 L 0.296875 1.300781 C 0.289062 1.300781 0.285156 1.296875 0.285156 1.289062 L 0.285156 1.222656 C 0.285156 1.214844 0.289062 1.207031 0.296875 1.207031 Z M 0.296875 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(99.215686%,7.45098%,8.235294%);fill-opacity:1;" d="M 6.121094 1.011719 L 6.398438 1.011719 C 6.40625 1.011719 6.410156 1.019531 6.410156 1.023438 L 6.410156 1.09375 C 6.410156 1.097656 6.40625 1.105469 6.398438 1.105469 L 6.121094 1.105469 C 6.113281 1.105469 6.109375 1.097656 6.109375 1.09375 L 6.109375 1.023438 C 6.109375 1.019531 6.113281 1.011719 6.121094 1.011719 Z M 6.121094 1.011719 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="6.128906" y="1.077544"/>
-  <use xlink:href="#glyph2-16" x="6.185895" y="1.077544"/>
-  <use xlink:href="#glyph2-16" x="6.230169" y="1.077544"/>
-  <use xlink:href="#glyph2-8" x="6.274443" y="1.077544"/>
-  <use xlink:href="#glyph2-6" x="6.316268" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="6.345987" y="1.077544"/>
-  <use xlink:href="#glyph2-22" x="6.37132" y="1.077544"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__solver_fb_acc_profile:285 (1 samples, 1.10%)</title><rect x="1099.2" y="197" width="13.0" height="15.0" fill="rgb(223,6,8)" rx="2" ry="2" />
+<text  x="1102.23" y="207.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(95.294118%,41.568627%,17.647059%);fill-opacity:1;" d="M 4.078125 1.109375 L 4.207031 1.109375 C 4.214844 1.109375 4.21875 1.117188 4.21875 1.121094 L 4.21875 1.191406 C 4.21875 1.195312 4.214844 1.203125 4.207031 1.203125 L 4.078125 1.203125 C 4.074219 1.203125 4.066406 1.195312 4.066406 1.191406 L 4.066406 1.121094 C 4.066406 1.117188 4.074219 1.109375 4.078125 1.109375 Z M 4.078125 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="4.085938" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="4.117559" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="4.142892" y="1.1752"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:remove_nodes_filter:536 (11 samples, 12.09%)</title><rect x="762.1" y="197" width="142.6" height="15.0" fill="rgb(231,32,8)" rx="2" ry="2" />
+<text  x="765.09" y="207.5" >/home/roborace/Des..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.627451%,80.392157%,4.705882%);fill-opacity:1;" d="M 2.113281 1.40625 L 2.164062 1.40625 C 2.171875 1.40625 2.175781 1.410156 2.175781 1.417969 L 2.175781 1.484375 C 2.175781 1.492188 2.171875 1.496094 2.164062 1.496094 L 2.113281 1.496094 C 2.105469 1.496094 2.101562 1.492188 2.101562 1.484375 L 2.101562 1.417969 C 2.101562 1.410156 2.105469 1.40625 2.113281 1.40625 Z M 2.113281 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.529412%,65.098039%,18.431373%);fill-opacity:1;" d="M 2.492188 1.40625 L 3.980469 1.40625 C 3.988281 1.40625 3.992188 1.410156 3.992188 1.417969 L 3.992188 1.484375 C 3.992188 1.492188 3.988281 1.496094 3.980469 1.496094 L 2.492188 1.496094 C 2.484375 1.496094 2.480469 1.492188 2.480469 1.484375 L 2.480469 1.417969 C 2.480469 1.410156 2.484375 1.40625 2.492188 1.40625 Z M 2.492188 1.40625 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="2.496094" y="1.468169"/>
-  <use xlink:href="#glyph2-2" x="2.527716" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="2.571785" y="1.468169"/>
-  <use xlink:href="#glyph2-4" x="2.614054" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="2.681792" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="2.723275" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="2.754897" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="2.784616" y="1.468169"/>
-  <use xlink:href="#glyph2-7" x="2.826885" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="2.870276" y="1.468169"/>
-  <use xlink:href="#glyph2-6" x="2.912545" y="1.468169"/>
-  <use xlink:href="#glyph2-8" x="2.942264" y="1.468169"/>
-  <use xlink:href="#glyph2-9" x="2.984089" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="3.02037" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="3.061853" y="1.468169"/>
-  <use xlink:href="#glyph2-10" x="3.093475" y="1.468169"/>
-  <use xlink:href="#glyph2-5" x="3.147131" y="1.468169"/>
-  <use xlink:href="#glyph2-11" x="3.188614" y="1.468169"/>
-  <use xlink:href="#glyph2-12" x="3.224896" y="1.468169"/>
-  <use xlink:href="#glyph2-13" x="3.266111" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="3.293551" y="1.468169"/>
-  <use xlink:href="#glyph2-14" x="3.33582" y="1.468169"/>
-  <use xlink:href="#glyph2-1" x="3.379211" y="1.468169"/>
-  <use xlink:href="#glyph2-4" x="3.410833" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="3.478572" y="1.468169"/>
-  <use xlink:href="#glyph2-15" x="3.520841" y="1.468169"/>
-  <use xlink:href="#glyph2-16" x="3.564232" y="1.468169"/>
-  <use xlink:href="#glyph2-17" x="3.608506" y="1.468169"/>
-  <use xlink:href="#glyph2-3" x="3.627618" y="1.468169"/>
-  <use xlink:href="#glyph2-9" x="3.669887" y="1.468169"/>
-  <use xlink:href="#glyph2-8" x="3.706169" y="1.468169"/>
-  <use xlink:href="#glyph2-17" x="3.747993" y="1.468169"/>
-  <use xlink:href="#glyph2-16" x="3.767105" y="1.468169"/>
-  <use xlink:href="#glyph2-13" x="3.811379" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="3.83882" y="1.468169"/>
-  <use xlink:href="#glyph2-22" x="3.864153" y="1.468169"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/fromnumeric.py:_wrapreduction:88 (1 samples, 1.10%)</title><rect x="48.9" y="149" width="13.0" height="15.0" fill="rgb(247,45,25)" rx="2" ry="2" />
+<text  x="51.90" y="159.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(99.215686%,67.058824%,15.686275%);fill-opacity:1;" d="M 6.726562 1.207031 L 6.929688 1.207031 C 6.9375 1.207031 6.941406 1.214844 6.941406 1.222656 L 6.941406 1.289062 C 6.941406 1.296875 6.9375 1.300781 6.929688 1.300781 L 6.726562 1.300781 C 6.71875 1.300781 6.714844 1.296875 6.714844 1.289062 L 6.714844 1.222656 C 6.714844 1.214844 6.71875 1.207031 6.726562 1.207031 Z M 6.726562 1.207031 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="6.730469" y="1.272856"/>
-  <use xlink:href="#glyph2-25" x="6.762091" y="1.272856"/>
-  <use xlink:href="#glyph2-11" x="6.80616" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="6.842441" y="1.272856"/>
-  <use xlink:href="#glyph2-22" x="6.867774" y="1.272856"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/get_s_coord.py:get_s_coord:34 (1 samples, 1.10%)</title><rect x="35.9" y="213" width="13.0" height="15.0" fill="rgb(234,202,38)" rx="2" ry="2" />
+<text  x="38.93" y="223.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(96.862745%,31.764706%,16.078431%);fill-opacity:1;" d="M 0.296875 1.308594 L 0.347656 1.308594 C 0.355469 1.308594 0.359375 1.3125 0.359375 1.320312 L 0.359375 1.386719 C 0.359375 1.394531 0.355469 1.398438 0.347656 1.398438 L 0.296875 1.398438 C 0.289062 1.398438 0.285156 1.394531 0.285156 1.386719 L 0.285156 1.320312 C 0.285156 1.3125 0.289062 1.308594 0.296875 1.308594 Z M 0.296875 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.666667%,74.509804%,17.254902%);fill-opacity:1;" d="M 4.304688 1.308594 L 4.359375 1.308594 C 4.363281 1.308594 4.371094 1.3125 4.371094 1.320312 L 4.371094 1.386719 C 4.371094 1.394531 4.363281 1.398438 4.359375 1.398438 L 4.304688 1.398438 C 4.300781 1.398438 4.292969 1.394531 4.292969 1.386719 L 4.292969 1.320312 C 4.292969 1.3125 4.300781 1.308594 4.304688 1.308594 Z M 4.304688 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(85.098039%,29.411765%,20.392157%);fill-opacity:1;" d="M 1.808594 1.109375 L 1.9375 1.109375 C 1.945312 1.109375 1.949219 1.117188 1.949219 1.121094 L 1.949219 1.191406 C 1.949219 1.195312 1.945312 1.203125 1.9375 1.203125 L 1.808594 1.203125 C 1.804688 1.203125 1.796875 1.195312 1.796875 1.191406 L 1.796875 1.121094 C 1.796875 1.117188 1.804688 1.109375 1.808594 1.109375 Z M 1.808594 1.109375 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-24" x="1.816406" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="1.873395" y="1.1752"/>
-  <use xlink:href="#glyph2-22" x="1.898728" y="1.1752"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__calc_ax_poss:358 (4 samples, 4.40%)</title><rect x="1047.4" y="181" width="51.8" height="15.0" fill="rgb(215,92,24)" rx="2" ry="2" />
+<text  x="1050.36" y="191.5" >/usr/..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(96.862745%,66.666667%,14.117647%);fill-opacity:1;" d="M 4.382812 1.011719 L 4.433594 1.011719 C 4.441406 1.011719 4.445312 1.019531 4.445312 1.023438 L 4.445312 1.09375 C 4.445312 1.097656 4.441406 1.105469 4.433594 1.105469 L 4.382812 1.105469 C 4.375 1.105469 4.371094 1.097656 4.371094 1.09375 L 4.371094 1.023438 C 4.371094 1.019531 4.375 1.011719 4.382812 1.011719 Z M 4.382812 1.011719 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(83.529412%,78.823529%,10.980392%);fill-opacity:1;" d="M 6.652344 1.503906 L 6.703125 1.503906 C 6.710938 1.503906 6.714844 1.507812 6.714844 1.515625 L 6.714844 1.582031 C 6.714844 1.589844 6.710938 1.59375 6.703125 1.59375 L 6.652344 1.59375 C 6.644531 1.59375 6.640625 1.589844 6.640625 1.582031 L 6.640625 1.515625 C 6.640625 1.507812 6.644531 1.503906 6.652344 1.503906 Z M 6.652344 1.503906 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(89.803922%,46.27451%,12.156863%);fill-opacity:1;" d="M 2.1875 1.308594 L 2.238281 1.308594 C 2.246094 1.308594 2.25 1.3125 2.25 1.320312 L 2.25 1.386719 C 2.25 1.394531 2.246094 1.398438 2.238281 1.398438 L 2.1875 1.398438 C 2.179688 1.398438 2.175781 1.394531 2.175781 1.386719 L 2.175781 1.320312 C 2.175781 1.3125 2.179688 1.308594 2.1875 1.308594 Z M 2.1875 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(97.254902%,33.333333%,3.529412%);fill-opacity:1;" d="M 2.261719 1.503906 L 2.316406 1.503906 C 2.324219 1.503906 2.328125 1.507812 2.328125 1.515625 L 2.328125 1.582031 C 2.328125 1.589844 2.324219 1.59375 2.316406 1.59375 L 2.261719 1.59375 C 2.257812 1.59375 2.25 1.589844 2.25 1.582031 L 2.25 1.515625 C 2.25 1.507812 2.257812 1.503906 2.261719 1.503906 Z M 2.261719 1.503906 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(98.039216%,29.019608%,7.843137%);fill-opacity:1;" d="M 4.003906 1.207031 L 4.054688 1.207031 C 4.0625 1.207031 4.066406 1.214844 4.066406 1.222656 L 4.066406 1.289062 C 4.066406 1.296875 4.0625 1.300781 4.054688 1.300781 L 4.003906 1.300781 C 3.996094 1.300781 3.992188 1.296875 3.992188 1.289062 L 3.992188 1.222656 C 3.992188 1.214844 3.996094 1.207031 4.003906 1.207031 Z M 4.003906 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.666667%,30.588235%,14.901961%);fill-opacity:1;" d="M 6.726562 1.308594 L 6.929688 1.308594 C 6.9375 1.308594 6.941406 1.3125 6.941406 1.320312 L 6.941406 1.386719 C 6.941406 1.394531 6.9375 1.398438 6.929688 1.398438 L 6.726562 1.398438 C 6.71875 1.398438 6.714844 1.394531 6.714844 1.386719 L 6.714844 1.320312 C 6.714844 1.3125 6.71875 1.308594 6.726562 1.308594 Z M 6.726562 1.308594 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="6.730469" y="1.370513"/>
-  <use xlink:href="#glyph2-25" x="6.762091" y="1.370513"/>
-  <use xlink:href="#glyph2-11" x="6.80616" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="6.842441" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="6.867774" y="1.370513"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_head_curv_an.py:calc_head_curv_an:55 (1 samples, 1.10%)</title><rect x="684.3" y="213" width="13.0" height="15.0" fill="rgb(237,30,20)" rx="2" ry="2" />
+<text  x="687.29" y="223.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.117647%,86.666667%,14.901961%);fill-opacity:1;" d="M 2.1875 1.40625 L 2.238281 1.40625 C 2.246094 1.40625 2.25 1.410156 2.25 1.417969 L 2.25 1.484375 C 2.25 1.492188 2.246094 1.496094 2.238281 1.496094 L 2.1875 1.496094 C 2.179688 1.496094 2.175781 1.492188 2.175781 1.484375 L 2.175781 1.417969 C 2.175781 1.410156 2.179688 1.40625 2.1875 1.40625 Z M 2.1875 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(92.156863%,34.509804%,10.980392%);fill-opacity:1;" d="M 5.363281 1.308594 L 6.476562 1.308594 C 6.484375 1.308594 6.488281 1.3125 6.488281 1.320312 L 6.488281 1.386719 C 6.488281 1.394531 6.484375 1.398438 6.476562 1.398438 L 5.363281 1.398438 C 5.359375 1.398438 5.351562 1.394531 5.351562 1.386719 L 5.351562 1.320312 C 5.351562 1.3125 5.359375 1.308594 5.363281 1.308594 Z M 5.363281 1.308594 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="5.371094" y="1.370513"/>
-  <use xlink:href="#glyph2-25" x="5.402716" y="1.370513"/>
-  <use xlink:href="#glyph2-11" x="5.446785" y="1.370513"/>
-  <use xlink:href="#glyph2-6" x="5.483066" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="5.512786" y="1.370513"/>
-  <use xlink:href="#glyph2-17" x="5.544408" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="5.56352" y="1.370513"/>
-  <use xlink:href="#glyph2-9" x="5.605789" y="1.370513"/>
-  <use xlink:href="#glyph2-8" x="5.64207" y="1.370513"/>
-  <use xlink:href="#glyph2-17" x="5.683895" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="5.703007" y="1.370513"/>
-  <use xlink:href="#glyph2-17" x="5.734629" y="1.370513"/>
-  <use xlink:href="#glyph2-20" x="5.753741" y="1.370513"/>
-  <use xlink:href="#glyph2-7" x="5.772853" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="5.816244" y="1.370513"/>
-  <use xlink:href="#glyph2-14" x="5.847866" y="1.370513"/>
-  <use xlink:href="#glyph2-19" x="5.891257" y="1.370513"/>
-  <use xlink:href="#glyph2-13" x="5.932472" y="1.370513"/>
-  <use xlink:href="#glyph2-2" x="5.959913" y="1.370513"/>
-  <use xlink:href="#glyph2-3" x="6.003982" y="1.370513"/>
-  <use xlink:href="#glyph2-21" x="6.046251" y="1.370513"/>
-  <use xlink:href="#glyph2-26" x="6.09032" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="6.134594" y="1.370513"/>
-  <use xlink:href="#glyph2-27" x="6.159927" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="6.204201" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="6.235823" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="6.261156" y="1.370513"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:96 (1 samples, 1.10%)</title><rect x="671.3" y="213" width="13.0" height="15.0" fill="rgb(226,178,54)" rx="2" ry="2" />
+<text  x="674.32" y="223.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(81.568627%,72.941176%,6.666667%);fill-opacity:1;" d="M 4.382812 1.109375 L 4.433594 1.109375 C 4.441406 1.109375 4.445312 1.117188 4.445312 1.121094 L 4.445312 1.191406 C 4.445312 1.195312 4.441406 1.203125 4.433594 1.203125 L 4.382812 1.203125 C 4.375 1.203125 4.371094 1.195312 4.371094 1.191406 L 4.371094 1.121094 C 4.371094 1.117188 4.375 1.109375 4.382812 1.109375 Z M 4.382812 1.109375 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.901961%,54.901961%,8.235294%);fill-opacity:1;" d="M 6.5 1.601562 L 6.550781 1.601562 C 6.558594 1.601562 6.5625 1.605469 6.5625 1.613281 L 6.5625 1.679688 C 6.5625 1.6875 6.558594 1.691406 6.550781 1.691406 L 6.5 1.691406 C 6.492188 1.691406 6.488281 1.6875 6.488281 1.679688 L 6.488281 1.613281 C 6.488281 1.605469 6.492188 1.601562 6.5 1.601562 Z M 6.5 1.601562 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(88.235294%,1.960784%,11.764706%);fill-opacity:1;" d="M 2.1875 1.207031 L 2.238281 1.207031 C 2.246094 1.207031 2.25 1.214844 2.25 1.222656 L 2.25 1.289062 C 2.25 1.296875 2.246094 1.300781 2.238281 1.300781 L 2.1875 1.300781 C 2.179688 1.300781 2.175781 1.296875 2.175781 1.289062 L 2.175781 1.222656 C 2.175781 1.214844 2.179688 1.207031 2.1875 1.207031 Z M 2.1875 1.207031 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(94.901961%,53.333333%,19.215686%);fill-opacity:1;" d="M 0.222656 1.503906 L 0.347656 1.503906 C 0.355469 1.503906 0.359375 1.507812 0.359375 1.515625 L 0.359375 1.582031 C 0.359375 1.589844 0.355469 1.59375 0.347656 1.59375 L 0.222656 1.59375 C 0.214844 1.59375 0.210938 1.589844 0.210938 1.582031 L 0.210938 1.515625 C 0.210938 1.507812 0.214844 1.503906 0.222656 1.503906 Z M 0.222656 1.503906 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="0.226562" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="0.258184" y="1.565825"/>
-  <use xlink:href="#glyph2-22" x="0.283517" y="1.565825"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:129 (1 samples, 1.10%)</title><rect x="295.3" y="165" width="12.9" height="15.0" fill="rgb(232,11,3)" rx="2" ry="2" />
+<text  x="298.27" y="175.5" ></text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.27451%,10.196078%,0.392157%);fill-opacity:1;" d="M 4.003906 1.40625 L 4.054688 1.40625 C 4.0625 1.40625 4.066406 1.410156 4.066406 1.417969 L 4.066406 1.484375 C 4.066406 1.492188 4.0625 1.496094 4.054688 1.496094 L 4.003906 1.496094 C 3.996094 1.496094 3.992188 1.492188 3.992188 1.484375 L 3.992188 1.417969 C 3.992188 1.410156 3.996094 1.40625 4.003906 1.40625 Z M 4.003906 1.40625 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(89.019608%,26.27451%,14.509804%);fill-opacity:1;" d="M 5.820312 1.011719 L 5.871094 1.011719 C 5.878906 1.011719 5.882812 1.019531 5.882812 1.023438 L 5.882812 1.09375 C 5.882812 1.097656 5.878906 1.105469 5.871094 1.105469 L 5.820312 1.105469 C 5.8125 1.105469 5.808594 1.097656 5.808594 1.09375 L 5.808594 1.023438 C 5.808594 1.019531 5.8125 1.011719 5.820312 1.011719 Z M 5.820312 1.011719 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(84.705882%,11.372549%,7.058824%);fill-opacity:1;" d="M 5.289062 1.308594 L 5.339844 1.308594 C 5.347656 1.308594 5.351562 1.3125 5.351562 1.320312 L 5.351562 1.386719 C 5.351562 1.394531 5.347656 1.398438 5.339844 1.398438 L 5.289062 1.398438 C 5.28125 1.398438 5.277344 1.394531 5.277344 1.386719 L 5.277344 1.320312 C 5.277344 1.3125 5.28125 1.308594 5.289062 1.308594 Z M 5.289062 1.308594 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(87.058824%,23.921569%,16.078431%);fill-opacity:1;" d="M 5.515625 0.914062 L 5.570312 0.914062 C 5.574219 0.914062 5.582031 0.917969 5.582031 0.925781 L 5.582031 0.992188 C 5.582031 1 5.574219 1.007812 5.570312 1.007812 L 5.515625 1.007812 C 5.507812 1.007812 5.503906 1 5.503906 0.992188 L 5.503906 0.925781 C 5.503906 0.917969 5.507812 0.914062 5.515625 0.914062 Z M 5.515625 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(93.333333%,52.941176%,17.254902%);fill-opacity:1;" d="M 2.261719 0.914062 L 2.316406 0.914062 C 2.324219 0.914062 2.328125 0.917969 2.328125 0.925781 L 2.328125 0.992188 C 2.328125 1 2.324219 1.007812 2.316406 1.007812 L 2.261719 1.007812 C 2.257812 1.007812 2.25 1 2.25 0.992188 L 2.25 0.925781 C 2.25 0.917969 2.257812 0.914062 2.261719 0.914062 Z M 2.261719 0.914062 "/>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(96.078431%,44.705882%,18.431373%);fill-opacity:1;" d="M 0.222656 1.601562 L 2.238281 1.601562 C 2.246094 1.601562 2.25 1.605469 2.25 1.613281 L 2.25 1.679688 C 2.25 1.6875 2.246094 1.691406 2.238281 1.691406 L 0.222656 1.691406 C 0.214844 1.691406 0.210938 1.6875 0.210938 1.679688 L 0.210938 1.613281 C 0.210938 1.605469 0.214844 1.601562 0.222656 1.601562 Z M 0.222656 1.601562 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="0.226562" y="1.667388"/>
-  <use xlink:href="#glyph2-2" x="0.258184" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="0.302253" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="0.344522" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="0.412261" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="0.453743" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="0.485365" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="0.515085" y="1.667388"/>
-  <use xlink:href="#glyph2-7" x="0.557354" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="0.600745" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="0.643014" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="0.672733" y="1.667388"/>
-  <use xlink:href="#glyph2-9" x="0.714557" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="0.750839" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="0.792322" y="1.667388"/>
-  <use xlink:href="#glyph2-10" x="0.823944" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="0.8776" y="1.667388"/>
-  <use xlink:href="#glyph2-11" x="0.919083" y="1.667388"/>
-  <use xlink:href="#glyph2-12" x="0.955365" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="0.99658" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="1.02402" y="1.667388"/>
-  <use xlink:href="#glyph2-14" x="1.066289" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="1.10968" y="1.667388"/>
-  <use xlink:href="#glyph2-4" x="1.141302" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="1.209041" y="1.667388"/>
-  <use xlink:href="#glyph2-15" x="1.251309" y="1.667388"/>
-  <use xlink:href="#glyph2-16" x="1.294701" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="1.338975" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="1.358087" y="1.667388"/>
-  <use xlink:href="#glyph2-9" x="1.400356" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="1.436637" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="1.478462" y="1.667388"/>
-  <use xlink:href="#glyph2-16" x="1.497574" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="1.541848" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="1.569289" y="1.667388"/>
-  <use xlink:href="#glyph2-8" x="1.599008" y="1.667388"/>
-  <use xlink:href="#glyph2-18" x="1.640833" y="1.667388"/>
-  <use xlink:href="#glyph2-5" x="1.664804" y="1.667388"/>
-  <use xlink:href="#glyph2-9" x="1.706287" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="1.742568" y="1.667388"/>
-  <use xlink:href="#glyph2-3" x="1.770009" y="1.667388"/>
-  <use xlink:href="#glyph2-6" x="1.812278" y="1.667388"/>
-  <use xlink:href="#glyph2-19" x="1.841997" y="1.667388"/>
-  <use xlink:href="#glyph2-1" x="1.883212" y="1.667388"/>
-  <use xlink:href="#glyph2-17" x="1.914834" y="1.667388"/>
-  <use xlink:href="#glyph2-13" x="1.933946" y="1.667388"/>
-  <use xlink:href="#glyph2-14" x="1.961387" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="2.004778" y="1.667388"/>
-  <use xlink:href="#glyph2-22" x="2.030111" y="1.667388"/>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__calc_ax_poss:345 (5 samples, 5.49%)</title><rect x="930.7" y="181" width="64.8" height="15.0" fill="rgb(205,126,36)" rx="2" ry="2" />
+<text  x="933.66" y="191.5" >/usr/lo..</text>
 </g>
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(86.666667%,20.784314%,3.529412%);fill-opacity:1;" d="M 3.550781 1.308594 L 3.828125 1.308594 C 3.835938 1.308594 3.839844 1.3125 3.839844 1.320312 L 3.839844 1.386719 C 3.839844 1.394531 3.835938 1.398438 3.828125 1.398438 L 3.550781 1.398438 C 3.542969 1.398438 3.539062 1.394531 3.539062 1.386719 L 3.539062 1.320312 C 3.539062 1.3125 3.542969 1.308594 3.550781 1.308594 Z M 3.550781 1.308594 "/>
-<g style="fill:rgb(0%,0%,0%);fill-opacity:1;">
-  <use xlink:href="#glyph2-1" x="3.554688" y="1.370513"/>
-  <use xlink:href="#glyph2-25" x="3.586309" y="1.370513"/>
-  <use xlink:href="#glyph2-11" x="3.630378" y="1.370513"/>
-  <use xlink:href="#glyph2-6" x="3.66666" y="1.370513"/>
-  <use xlink:href="#glyph2-1" x="3.696379" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="3.728001" y="1.370513"/>
-  <use xlink:href="#glyph2-22" x="3.753334" y="1.370513"/>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:get_closest_nodes:250 (1 samples, 1.10%)</title><rect x="334.2" y="229" width="12.9" height="15.0" fill="rgb(220,111,34)" rx="2" ry="2" />
+<text  x="337.18" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1381 (1 samples, 1.10%)</title><rect x="1021.4" y="149" width="13.0" height="15.0" fill="rgb(214,64,25)" rx="2" ry="2" />
+<text  x="1024.43" y="159.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:vstack:279 (9 samples, 9.89%)</title><rect x="191.5" y="197" width="116.7" height="15.0" fill="rgb(215,64,18)" rx="2" ry="2" />
+<text  x="194.54" y="207.5" >/usr/local/lib..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:_get_spec:1113 (1 samples, 1.10%)</title><rect x="386.0" y="85" width="13.0" height="15.0" fill="rgb(209,61,23)" rx="2" ry="2" />
+<text  x="389.04" y="95.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:160 (1 samples, 1.10%)</title><rect x="658.4" y="213" width="12.9" height="15.0" fill="rgb(223,51,2)" rx="2" ry="2" />
+<text  x="661.35" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:66 (16 samples, 17.58%)</title><rect x="697.3" y="229" width="207.4" height="15.0" fill="rgb(226,126,12)" rx="2" ry="2" />
+<text  x="700.25" y="239.5" >/home/roborace/Desktop/mod_..</text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load_unlocked:954 (1 samples, 1.10%)</title><rect x="386.0" y="133" width="13.0" height="15.0" fill="rgb(236,29,2)" rx="2" ry="2" />
+<text  x="389.04" y="143.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/closest_path_index.py:closest_path_index:24 (1 samples, 1.10%)</title><rect x="35.9" y="197" width="13.0" height="15.0" fill="rgb(243,31,18)" rx="2" ry="2" />
+<text  x="38.93" y="207.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:&lt;listcomp&gt;:53 (1 samples, 1.10%)</title><rect x="386.0" y="37" width="13.0" height="15.0" fill="rgb(215,199,14)" rx="2" ry="2" />
+<text  x="389.04" y="47.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/closest_path_index.py:closest_path_index:27 (1 samples, 1.10%)</title><rect x="399.0" y="229" width="13.0" height="15.0" fill="rgb(211,92,35)" rx="2" ry="2" />
+<text  x="402.01" y="239.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:vstack:6 (13 samples, 14.29%)</title><rect x="165.6" y="213" width="168.6" height="15.0" fill="rgb(210,14,46)" rx="2" ry="2" />
+<text  x="168.60" y="223.5" >&lt;__array_function__ i..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:solve:6 (4 samples, 4.40%)</title><rect x="606.5" y="197" width="51.9" height="15.0" fill="rgb(247,1,8)" rx="2" ry="2" />
+<text  x="609.48" y="207.5" >&lt;__ar..</text>
+</g>
+<g >
+<title>all (91 samples, 100%)</title><rect x="10.0" y="277" width="1180.0" height="15.0" fill="rgb(233,74,6)" rx="2" ry="2" />
+<text  x="13.00" y="287.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/_asarray.py:asanyarray:138 (3 samples, 3.30%)</title><rect x="204.5" y="149" width="38.9" height="15.0" fill="rgb(242,141,2)" rx="2" ry="2" />
+<text  x="207.51" y="159.5" >/us..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/zmq/sugar/socket.py:recv_string:592 (1 samples, 1.10%)</title><rect x="386.0" y="213" width="13.0" height="15.0" fill="rgb(251,30,53)" rx="2" ry="2" />
+<text  x="389.04" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/check_inside_bounds.py:check_inside_bounds:32 (1 samples, 1.10%)</title><rect x="35.9" y="229" width="13.0" height="15.0" fill="rgb(205,134,39)" rx="2" ry="2" />
+<text  x="38.93" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:&lt;listcomp&gt;:248 (1 samples, 1.10%)</title><rect x="152.6" y="213" width="13.0" height="15.0" fill="rgb(239,130,38)" rx="2" ry="2" />
+<text  x="155.64" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:574 (1 samples, 1.10%)</title><rect x="1125.2" y="261" width="12.9" height="15.0" fill="rgb(240,21,32)" rx="2" ry="2" />
+<text  x="1128.16" y="271.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/interp_splines.py:interp_splines:114 (1 samples, 1.10%)</title><rect x="347.1" y="229" width="13.0" height="15.0" fill="rgb(229,161,6)" rx="2" ry="2" />
+<text  x="350.14" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/gen_local_node_template.py:gen_local_node_template:121 (3 samples, 3.30%)</title><rect x="697.3" y="213" width="38.9" height="15.0" fill="rgb(251,205,53)" rx="2" ry="2" />
+<text  x="700.25" y="223.5" >/ho..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/_methods.py:_any:45 (1 samples, 1.10%)</title><rect x="48.9" y="133" width="13.0" height="15.0" fill="rgb(240,30,30)" rx="2" ry="2" />
+<text  x="51.90" y="143.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/function_base.py:linspace:147 (1 samples, 1.10%)</title><rect x="373.1" y="181" width="12.9" height="15.0" fill="rgb(223,118,23)" rx="2" ry="2" />
+<text  x="376.08" y="191.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:search_graph_layer:654 (1 samples, 1.10%)</title><rect x="412.0" y="213" width="12.9" height="15.0" fill="rgb(213,90,50)" rx="2" ry="2" />
+<text  x="414.98" y="223.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1381 (2 samples, 2.20%)</title><rect x="956.6" y="149" width="25.9" height="15.0" fill="rgb(227,83,33)" rx="2" ry="2" />
+<text  x="959.59" y="159.5" >/..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/check_inside_bounds.py:check_inside_bounds:35 (1 samples, 1.10%)</title><rect x="48.9" y="229" width="13.0" height="15.0" fill="rgb(221,82,4)" rx="2" ry="2" />
+<text  x="51.90" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/fromnumeric.py:any:2270 (1 samples, 1.10%)</title><rect x="48.9" y="165" width="13.0" height="15.0" fill="rgb(206,229,2)" rx="2" ry="2" />
+<text  x="51.90" y="175.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:6 (4 samples, 4.40%)</title><rect x="943.6" y="165" width="51.9" height="15.0" fill="rgb(233,92,12)" rx="2" ry="2" />
+<text  x="946.63" y="175.5" >&lt;__ar..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1412 (1 samples, 1.10%)</title><rect x="982.5" y="149" width="13.0" height="15.0" fill="rgb(236,74,20)" rx="2" ry="2" />
+<text  x="985.53" y="159.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap_external&gt;:_path_join:53 (1 samples, 1.10%)</title><rect x="386.0" y="53" width="13.0" height="15.0" fill="rgb(213,105,2)" rx="2" ry="2" />
+<text  x="389.04" y="63.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:get_closest_nodes:247 (8 samples, 8.79%)</title><rect x="61.9" y="229" width="103.7" height="15.0" fill="rgb(221,89,9)" rx="2" ry="2" />
+<text  x="64.87" y="239.5" >/home/robora..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:calc_vel_profile:79 (1 samples, 1.10%)</title><rect x="904.7" y="229" width="13.0" height="15.0" fill="rgb(235,84,52)" rx="2" ry="2" />
+<text  x="907.73" y="239.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:iscomplexobj:6 (2 samples, 2.20%)</title><rect x="956.6" y="133" width="25.9" height="15.0" fill="rgb(240,33,7)" rx="2" ry="2" />
+<text  x="959.59" y="143.5" >&lt;..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:set_node_filter_layers:510 (1 samples, 1.10%)</title><rect x="723.2" y="197" width="13.0" height="15.0" fill="rgb(210,195,43)" rx="2" ry="2" />
+<text  x="726.19" y="207.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:trim_trajectory:885 (16 samples, 17.58%)</title><rect x="904.7" y="245" width="207.5" height="15.0" fill="rgb(242,66,30)" rx="2" ry="2" />
+<text  x="907.73" y="255.5" >/home/roborace/Desktop/mod_..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__solver_fb_acc_profile:283 (14 samples, 15.38%)</title><rect x="917.7" y="197" width="181.5" height="15.0" fill="rgb(240,50,26)" rx="2" ry="2" />
+<text  x="920.69" y="207.5" >/usr/local/lib/python3...</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:gen_trajectories:465 (1 samples, 1.10%)</title><rect x="399.0" y="245" width="13.0" height="15.0" fill="rgb(231,30,4)" rx="2" ry="2" />
+<text  x="402.01" y="255.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:search_graph:602 (1 samples, 1.10%)</title><rect x="412.0" y="197" width="12.9" height="15.0" fill="rgb(252,182,7)" rx="2" ry="2" />
+<text  x="414.98" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:123 (1 samples, 1.10%)</title><rect x="243.4" y="165" width="13.0" height="15.0" fill="rgb(208,16,9)" rx="2" ry="2" />
+<text  x="246.41" y="175.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/closest_path_index.py:closest_path_index:24 (1 samples, 1.10%)</title><rect x="1112.2" y="229" width="13.0" height="15.0" fill="rgb(248,214,47)" rx="2" ry="2" />
+<text  x="1115.20" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/linalg/linalg.py:solve:403 (14 samples, 15.38%)</title><rect x="424.9" y="181" width="181.6" height="15.0" fill="rgb(251,85,53)" rx="2" ry="2" />
+<text  x="427.95" y="191.5" >/usr/local/lib/python3...</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/data_objects/GraphBase.py:remove_nodes_filter:535 (1 samples, 1.10%)</title><rect x="749.1" y="197" width="13.0" height="15.0" fill="rgb(220,10,36)" rx="2" ry="2" />
+<text  x="752.12" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/shape_base.py:atleast_2d:126 (3 samples, 3.30%)</title><rect x="256.4" y="165" width="38.9" height="15.0" fill="rgb(214,121,22)" rx="2" ry="2" />
+<text  x="259.37" y="175.5" >/us..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/function_base.py:linspace:150 (1 samples, 1.10%)</title><rect x="48.9" y="197" width="13.0" height="15.0" fill="rgb(226,178,30)" rx="2" ry="2" />
+<text  x="51.90" y="207.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:6 (4 samples, 4.40%)</title><rect x="1047.4" y="165" width="51.8" height="15.0" fill="rgb(253,19,21)" rx="2" ry="2" />
+<text  x="1050.36" y="175.5" >&lt;__ar..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:select:3503 (2 samples, 2.20%)</title><rect x="697.3" y="181" width="25.9" height="15.0" fill="rgb(243,106,45)" rx="2" ry="2" />
+<text  x="700.25" y="191.5" >/..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/interp_splines.py:interp_splines:120 (1 samples, 1.10%)</title><rect x="360.1" y="229" width="13.0" height="15.0" fill="rgb(226,205,12)" rx="2" ry="2" />
+<text  x="363.11" y="239.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:296 (20 samples, 21.98%)</title><rect x="424.9" y="229" width="259.4" height="15.0" fill="rgb(213,166,47)" rx="2" ry="2" />
+<text  x="427.95" y="239.5" >/home/roborace/Desktop/mod_local_t..</text>
+</g>
+<g >
+<title>/usr/lib/python3.5/json/encoder.py:iterencode:256 (3 samples, 3.30%)</title><rect x="1151.1" y="197" width="38.9" height="15.0" fill="rgb(253,171,40)" rx="2" ry="2" />
+<text  x="1154.10" y="207.5" >/us..</text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:linspace:6 (1 samples, 1.10%)</title><rect x="48.9" y="213" width="13.0" height="15.0" fill="rgb(247,81,41)" rx="2" ry="2" />
+<text  x="51.90" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/gen_local_node_template.py:gen_local_node_template:94 (1 samples, 1.10%)</title><rect x="736.2" y="213" width="12.9" height="15.0" fill="rgb(221,190,44)" rx="2" ry="2" />
+<text  x="739.15" y="223.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:concatenate:6 (2 samples, 2.20%)</title><rect x="308.2" y="181" width="26.0" height="15.0" fill="rgb(217,75,52)" rx="2" ry="2" />
+<text  x="311.24" y="191.5" >&lt;..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:select:3477 (1 samples, 1.10%)</title><rect x="749.1" y="165" width="13.0" height="15.0" fill="rgb(247,170,36)" rx="2" ry="2" />
+<text  x="752.12" y="175.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/helper_funcs_loc/src/Logging.py:log_onlinegraph:74 (1 samples, 1.10%)</title><rect x="1138.1" y="245" width="13.0" height="15.0" fill="rgb(213,201,28)" rx="2" ry="2" />
+<text  x="1141.13" y="255.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_spline_lengths.py:calc_spline_lengths:57 (1 samples, 1.10%)</title><rect x="373.1" y="213" width="12.9" height="15.0" fill="rgb(229,118,31)" rx="2" ry="2" />
+<text  x="376.08" y="223.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:imp_bhst:316 (1 samples, 1.10%)</title><rect x="386.0" y="245" width="13.0" height="15.0" fill="rgb(248,85,9)" rx="2" ry="2" />
+<text  x="389.04" y="255.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/normalize_psi.py:normalize_psi:28 (1 samples, 1.10%)</title><rect x="684.3" y="197" width="13.0" height="15.0" fill="rgb(250,74,20)" rx="2" ry="2" />
+<text  x="687.29" y="207.5" ></text>
+</g>
+<g >
+<title>/usr/lib/python3.5/json/encoder.py:encode:198 (3 samples, 3.30%)</title><rect x="1151.1" y="213" width="38.9" height="15.0" fill="rgb(221,78,38)" rx="2" ry="2" />
+<text  x="1154.10" y="223.5" >/us..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/interp_splines.py:interp_splines:71 (1 samples, 1.10%)</title><rect x="373.1" y="229" width="12.9" height="15.0" fill="rgb(240,221,38)" rx="2" ry="2" />
+<text  x="376.08" y="239.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_vel_profile.py:__solver_fb_unclosed:146 (15 samples, 16.48%)</title><rect x="917.7" y="213" width="194.5" height="15.0" fill="rgb(235,88,28)" rx="2" ry="2" />
+<text  x="920.69" y="223.5" >/usr/local/lib/python3.5/..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/igraph/__init__.py:select:3504 (1 samples, 1.10%)</title><rect x="749.1" y="181" width="13.0" height="15.0" fill="rgb(208,186,17)" rx="2" ry="2" />
+<text  x="752.12" y="191.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:569 (1 samples, 1.10%)</title><rect x="1112.2" y="261" width="13.0" height="15.0" fill="rgb(242,140,21)" rx="2" ry="2" />
+<text  x="1115.20" y="271.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:linspace:6 (1 samples, 1.10%)</title><rect x="373.1" y="197" width="12.9" height="15.0" fill="rgb(225,5,30)" rx="2" ry="2" />
+<text  x="376.08" y="207.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/OnlineTrajectoryHandler.py:set_initial_pose:207 (2 samples, 2.20%)</title><rect x="35.9" y="245" width="26.0" height="15.0" fill="rgb(242,136,49)" rx="2" ry="2" />
+<text  x="38.93" y="255.5" >/..</text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/int_online_graph/src/main_online_callback.py:main_online_callback:309 (1 samples, 1.10%)</title><rect x="684.3" y="229" width="13.0" height="15.0" fill="rgb(220,26,1)" rx="2" ry="2" />
+<text  x="687.29" y="239.5" ></text>
+</g>
+<g >
+<title>&lt;__array_function__ internals&gt;:interp:4 (1 samples, 1.10%)</title><rect x="995.5" y="165" width="13.0" height="15.0" fill="rgb(227,67,37)" rx="2" ry="2" />
+<text  x="998.49" y="175.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/core/numeric.py:full:332 (1 samples, 1.10%)</title><rect x="904.7" y="213" width="13.0" height="15.0" fill="rgb(216,29,18)" rx="2" ry="2" />
+<text  x="907.73" y="223.5" ></text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/numpy/lib/function_base.py:interp:1379 (1 samples, 1.10%)</title><rect x="943.6" y="149" width="13.0" height="15.0" fill="rgb(222,61,41)" rx="2" ry="2" />
+<text  x="946.63" y="159.5" ></text>
+</g>
+<g >
+<title>&lt;frozen importlib._bootstrap&gt;:_find_and_load:969 (1 samples, 1.10%)</title><rect x="386.0" y="149" width="13.0" height="15.0" fill="rgb(238,135,44)" rx="2" ry="2" />
+<text  x="389.04" y="159.5" ></text>
+</g>
+<g >
+<title>/home/roborace/Desktop/mod_local_trajectory/ltpl/main_ltpl.py:&lt;module&gt;:390 (27 samples, 29.67%)</title><rect x="35.9" y="261" width="350.1" height="15.0" fill="rgb(245,114,47)" rx="2" ry="2" />
+<text  x="38.93" y="271.5" >/home/roborace/Desktop/mod_local_trajectory/ltp..</text>
+</g>
+<g >
+<title>/usr/local/lib/python3.5/dist-packages/trajectory_planning_helpers/calc_splines.py:calc_splines:153 (4 samples, 4.40%)</title><rect x="606.5" y="213" width="51.9" height="15.0" fill="rgb(221,53,9)" rx="2" ry="2" />
+<text  x="609.48" y="223.5" >/usr/..</text>
 </g>
 </g>
 </svg>
