@@ -217,7 +217,7 @@ explicitly cast the type, for example, in the step `create template for M array 
 
 .. code-block:: python
     :emphasize-lines: 6,9,11
-
+    
     for i in range(no_splines):
             ..
             ..
@@ -231,6 +231,8 @@ explicitly cast the type, for example, in the step `create template for M array 
             b_y[j: j + 2] = np.array([[path[i,     1]],
                             [path[i + 1, 1]]])
 
+It is explicitly specified with ``np.array(...)`` that the element declared inside is of type Numpy array, not a list of list. It is
+ needed to be explicitly specified because the signature of M, b_x and b_y are Numpy array. This is also related to the `type unification` problem mentioned in `calc_vel_profile_numba`
 
 
 conv_filt_numba
