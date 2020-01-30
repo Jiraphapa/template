@@ -16,6 +16,10 @@ The conventional CPU profiling is done through the sampling of function calls st
   :width: 600
   :alt: Flame graph of the process main_mod_local_traj.py
 
+.. raw:: html
+
+    <object data="images/mod_local_traj_interactive_profile.svg.svg" type="image/svg+xml"></object>
+
 
 The stack traces are collected using sampling where each box represents the function. The boxes are stack from bottom (parent) to top (child) which corresponds to the calling ancestry. The horizontal ordering and colors has no indication of performance profile. The width of the stack boxes is proportional to the function time and frequency (for example, blocking time) according to the sample time.
 
