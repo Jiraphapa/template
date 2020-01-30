@@ -209,6 +209,10 @@ parameter the last axis, however, one shall implement the function for axis supp
         else:
             return np.diff(np.copy(arr))    # default is the last axis (axis=1)
 
+The above implemention supports ``diff`` operation of 2D array. In case the axis is not the last axis (axis is 0), the array ``col_diff_arr`` is created to store the result of
+discrete difference along the axis 0 (row axis) then columns are looped through to get the value. The array ``col_arr`` is created to store the value of all elements of the same column index disregarding the row, 
+the discrete difference along each row is then calculated by ``np.diff(col_arr)`` of 1D ``col_arr`` and stored into ``col_diff_arr``. The ``col_diff_arr`` is then transpose for the correct format of the result.
+
 
 conv_filt_numba
 ----------
