@@ -175,10 +175,12 @@ the call is made to internal ``isclose`` function implementation.
         # check if arrays are element-wise equal within a tolerance (assume that both arrays are of valid format)
         result = np.less_equal(np.abs(x-y), atol + rtol * np.abs(y))   
         return result 
+
     ..
     ..
 
     def calc_splines(...):
+    
         ..
         ..
 
@@ -191,9 +193,10 @@ Another limitation of Numba is on the support of Numpy's ``diff`` function with 
 parameter the last axis, however, this can be fixed by array transposing technique.
 
 .. code-block:: python
-    :emphasize-lines: 7
+    :emphasize-lines: 8
 
     def calc_splines(...):
+
         ..
         ..
 
@@ -212,23 +215,22 @@ It is also important to note that with AOT compilation, Numba cannot statically 
 explicitly cast the type, for example, in the step `create template for M array entries` of ``calc_splines`` function:
 
 .. code-block:: python
-    :emphasize-lines: 6,9,11
-    
-    for i in range(no_splines):
-            ..
-            ..
+    :emphasize-lines: 7,9
 
-            else:
-                M[j: j + 2, j: j + 4] = np.array([[1,  0,  0,  0],  # no curvature and heading bounds on last element
-                                        [1,  1,  1,  1]])
+    b_x = np.zeros((no_splines * 4, 1))
+    b_y = np.zeros((no_splines * 4, 1))
 
-            b_x[j: j + 2] = np.array([[path[i,     0]],      # NOTE: the bounds of the two last equations remain zero
-                            [path[i + 1, 0]]])
-            b_y[j: j + 2] = np.array([[path[i,     1]],
-                            [path[i + 1, 1]]])
+    ..
+    ..
+
+    b_x[j: j + 2] = np.array([[path[i,     0]],      # NOTE: the bounds of the two last equations remain zero
+                         [path[i + 1, 0]]])
+    b_y[j: j + 2] = np.array([[path[i,     1]],
+                         [path[i + 1, 1]]])
+
 
 It is explicitly specified with ``np.array(...)`` that the element declared inside is of type Numpy array, not a list of list. It is
- needed to be explicitly specified because the signature of M, b_x and b_y are Numpy array. This is also related to the `type unification` problem mentioned in `calc_vel_profile_numba` section.
+ needed to be explicitly specified because the signature of b_x and b_y are Numpy array. This is also related to the `type unification` problem mentioned in `calc_vel_profile_numba` section.
 
 
 conv_filt_numba
