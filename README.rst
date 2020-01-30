@@ -208,7 +208,7 @@ parameter the last axis, however, this can be fixed by array transposing techniq
 The unsupported Numpy ``diff`` operation in the row axis of ``path`` can be resolved by transposing the ``path`` array and calculate 
 the discrete difference along the axis and then transpose back.
 
-It is important to note that with AOT compilation, Numba cannot statically determine the type of the variable, sometimes we need to 
+It is also important to note that with AOT compilation, Numba cannot statically determine the type of the variable, sometimes we need to 
 explicitly cast the type, for example, in the step `create template for M array entries` of ``calc_splines`` function:
 
 .. code-block:: python
