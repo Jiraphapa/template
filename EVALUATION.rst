@@ -42,7 +42,7 @@ The example code are executed on x86\_64 architecture and gave the following out
     Execution time for calc_splines with numba (with compilation): 3.6058600189999988
     Execution time for calc_splines with numba (after compilation): 0.0004452480000001202
 
-Comparing with original calc_splines.py where the execution time was  0.0011502260000000042 sec., Numba optimized code can boost the exe. time to approx. 2.58 times faster on the given input. To follwing steps are applied to measure the execution time (The ``timeit`` tool can also be invoke in the command-line):
+Comparing with original ``calc_splines.py`` where the execution time was  0.0011502260000000042 seconds, Numba optimized code can boost the execution time to approximately 2.58 times faster on the given input. To follwing steps are applied to measure the execution time (The ``timeit`` tool can also be invoke in the command-line):
 
 - importing ``from timeit import Timer``
 - define a timer for function call like ``t = Timer(lambda: calc_splines(path))``
@@ -59,8 +59,16 @@ According to CPU profiling, the following Python mudules are the main bottleneck
 3. **conv_filt** 
   Filter a given temporal signal using a convolution (moving average) filter.
 
-Each of the modules are converted into the optimized version with `Numba` in a separated modules named with the suffix `_numba` as follows:
+.. list-table:: Title
+   :widths: 25 25 50
+   :header-rows: 1
 
-
-calc_vel_profile_numba
---------
+   * - Heading row 1, column 1
+     - Heading row 1, column 2
+     - Heading row 1, column 3
+   * - Row 1, column 1
+     -
+     - Row 1, column 3
+   * - Row 2, column 1
+     - Row 2, column 2
+     - Row 2, column 3
