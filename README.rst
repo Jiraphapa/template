@@ -232,12 +232,34 @@ explicitly cast the type, for example, in the step `create template for M array 
                             [path[i + 1, 1]]])
 
 It is explicitly specified with ``np.array(...)`` that the element declared inside is of type Numpy array, not a list of list. It is
- needed to be explicitly specified because the signature of M, b_x and b_y are Numpy array. This is also related to the `type unification` problem mentioned in `calc_vel_profile_numba`
+ needed to be explicitly specified because the signature of M, b_x and b_y are Numpy array. This is also related to the `type unification` problem mentioned in `calc_vel_profile_numba` section.
 
 
 conv_filt_numba
 ----------
+The ``calc_splines_numba`` consists of the main functions ``conv_filt`` (which usually called within internal `trajectory planning helper` modules ex. ``calc_vel_profile``) and additional functions implementing Numpy helper features e.g. ``__get_middle_values``.
+The first step is to import necessary Numba modules and declare module name just as above steps.
 
+.. code-block:: python
+   
+   from timeit import Timer
+   from numba.pycc import CC
+   from numba import jit
+
+   # Module name
+   cc = CC('conv_filt_numba')
+
+The main change from the original implemenation of ``conv_filt`` in ``conv_filt_numba`` is the apply convolution filter step:
+
+.. code-block:: python
+    :emphasize-lines: 4
+
+    # apply convolution filter used as a moving average filter and remove temporary points
+            signal_filt = np.convolve(signal_tmp,
+                                    np.ones(filt_window) / float(filt_window),
+                                    mode="same")[w_window_half:-w_window_half]
+
+Another limitation of Numba is on the support of Numpy’s ``convolve`` function with ``mode`` argument, the default argument for the `mode` parameter is ‘full’, this returns the convolution at each point of overlap, with an output shape of (N+M-1,), however, one shall implement the function for another `mode` support.
 
 
 
