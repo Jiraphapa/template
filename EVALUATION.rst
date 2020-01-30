@@ -49,7 +49,6 @@ Comparing with original ``calc_splines.py`` where the execution time was  0.0011
 
 Exucution Time Comparison for Numba-optimized modules
 --------
-
 The contained data used to test is always for an entire race track (Berlin, Monteblanco, Modena). Below are comparisons of execution time of the original and optimized modules. The system is tested on the x86_64 platform 2,4 GHz Intel Core i5 with 
 memory 16 GB.
 
