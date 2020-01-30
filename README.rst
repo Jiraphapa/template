@@ -133,7 +133,7 @@ This can be solved by explicitly casting the ``acc_inds_rel`` into `list` type, 
 
 calc_splines_numba
 ------------
-The ``calc_splines_numba`` consists of the main functions ``calc_splines`` (which usually called by external modules ex. ``OnlineTrajectoryHandler``) and additional functions implementing Numpy features e.g. ``isclose`` and ``diff``.
+The ``calc_splines_numba`` consists of the main functions ``calc_splines`` (which usually called by external modules ex. ``OnlineTrajectoryHandler``) and additional functions implementing Numpy features e.g. ``isclose``.
 The first step is to import necessary Numba modules and declare module name, the additional `timeit` module can also be used for runtime measurement:
 
 .. code-block:: python
@@ -175,12 +175,10 @@ the call is made to internal ``isclose`` function implementation.
         # check if arrays are element-wise equal within a tolerance (assume that both arrays are of valid format)
         result = np.less_equal(np.abs(x-y), atol + rtol * np.abs(y))   
         return result 
-
     ..
     ..
 
     def calc_splines(...):
-
         ..
         ..
 
@@ -190,27 +188,25 @@ the call is made to internal ``isclose`` function implementation.
 The compact implemention of Numpy's is according to the original Numpy's implemention, with a restriction on finite array.
 
 Another limitation of Numba is on the support of Numpy's ``diff`` function with ``axis`` argument, the default argument for the ``axis``
-parameter the last axis, however, one shall implement the function for axis support:
+parameter the last axis, however, this can be fixed by array transposing technique.
 
 .. code-block:: python
+    :emphasize-lines: 7
 
-    @cc.export('diff', 'float64[:,:](float64[:,:], optional(uint8))')
-    @jit(nopython=True, cache=True)
-    def diff(arr, axis=1):   # implementation for np.diff function with axis parameter supported
-        assert arr.ndim == 2
-        assert axis in [0, 1]
-        if axis == 0:
-            col_diff_arr = np.empty((arr.shape[1], arr.shape[0]-1))
-            for i in range(arr.shape[1]):   # loop through columns
-                col_arr = np.copy(arr)[:, i].flatten()
-                col_diff_arr[i] = np.diff(col_arr)
-            return np.transpose(col_diff_arr)
-        else:
-            return np.diff(np.copy(arr))    # default is the last axis (axis=1)
+    def calc_splines(...):
+        ..
+        ..
 
-The above implemention supports ``diff`` operation of 2D array. In case the axis is not the last axis (axis is 0), the array ``col_diff_arr`` is created to store the result of
-discrete difference along the axis 0 (row axis) then columns are looped through to get the value. The array ``col_arr`` is created to store the value of all elements of the same column index disregarding the row, 
-the discrete difference along each row is then calculated by ``np.diff(col_arr)`` of 1D ``col_arr`` and stored into ``col_diff_arr``. The ``col_diff_arr`` is then transpose for the correct format of the result.
+        # if distances between path coordinates are not provided but required, calculate euclidean distances as el_lengths
+        if use_dist_scaling and el_lengths is None:
+            #el_lengths = np.sqrt(np.sum(np.power(diff(path, axis=0), 2), axis=1))
+            path_transpose = np.transpose(path)
+            diff_path_transpose = np.diff(np.copy(path_transpose))
+            diff_path_axis_0 = np.transpose(diff_path_transpose)
+            el_lengths = np.sqrt(np.sum(np.power(diff_path_axis_0, 2), axis=1))
+
+The unsupported Numpy ``diff`` operation in the row axis of ``path`` can be resolved by transposing the ``path`` array and calculate 
+the discrete difference along the axis and then transpose back.
 
 It is important to note that with AOT compilation, Numba cannot statically determine the type of the variable, sometimes we need to 
 explicitly cast the type, for example, in the step `create template for M array entries` of ``calc_splines`` function:
