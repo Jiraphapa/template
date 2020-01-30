@@ -20,11 +20,11 @@ The conventional CPU profiling is done through the sampling of function calls st
 
    <img src="mod_local_traj_interactive_profile.svg" alt="Latest PyPi version"></a>
 
-
+From `Flame Graphs <http://www.brendangregg.com/flamegraphs.html>`_, the x-axis shows the stack profile population, sorted alphabetically (it is not the passage of time), and the y-axis shows stack depth, counting from zero at the bottom. Each rectangle represents a stack frame. The wider a frame is is, the more often it was present in the stacks. The top edge shows what is on-CPU, and beneath it is its ancestry. The colors are usually not significant, picked randomly to differentiate frames.
 The stack traces are collected using sampling where each box represents the function. The boxes are stack from bottom (parent) to top (child) which corresponds to the calling ancestry. The horizontal ordering and colors has no indication of performance profile. The width of the stack boxes is proportional to the function time and frequency (for example, blocking time) according to the sample time.
 
 In the graph, the module ``main_ltpl`` consumes most of the computation time, its main bottleneck children includes:
 
 - ``OnlineTrajectoryHandler.py`` calling ``calc_splines.py`` from ``main_online_callback.py``
-2. ``OnlineTrajectoryHandler.py`` calling ``calc_vel_profile.py`` from ``trim_trajectory`` function.
-3. ``GraphBase.py`` called by ``gen_local_node_template.py`` (external library, could be optimized internally)
+- ``OnlineTrajectoryHandler.py`` calling ``calc_vel_profile.py`` from ``trim_trajectory`` function.
+- ``GraphBase.py`` called by ``gen_local_node_template.py`` (external library, could be optimized internally)
