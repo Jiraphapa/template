@@ -193,7 +193,6 @@ Another limitation of Numba is on the support of Numpy's ``diff`` function with 
 parameter the last axis, however, one shall implement the function for axis support
 
 .. code-block:: python
-    :emphasize-lines: 19
 
     @cc.export('diff', 'float64[:,:](float64[:,:], optional(uint8))')
     @jit(nopython=True, cache=True)
@@ -212,6 +211,26 @@ parameter the last axis, however, one shall implement the function for axis supp
 The above implemention supports ``diff`` operation of 2D array. In case the axis is not the last axis (axis is 0), the array ``col_diff_arr`` is created to store the result of
 discrete difference along the axis 0 (row axis) then columns are looped through to get the value. The array ``col_arr`` is created to store the value of all elements of the same column index disregarding the row, 
 the discrete difference along each row is then calculated by ``np.diff(col_arr)`` of 1D ``col_arr`` and stored into ``col_diff_arr``. The ``col_diff_arr`` is then transpose for the correct format of the result.
+
+It is important to note that with AOT compilation, Numba cannot statically determine the type of the variable, sometimes we need to 
+explicitly cast the type, for example, in the step `create template for M array entries` of ``calc_splines`` function:
+
+.. code-block:: python
+    :emphasize-lines: 6,9,11
+
+    for i in range(no_splines):
+            ..
+            ..
+
+            else:
+                M[j: j + 2, j: j + 4] = np.array([[1,  0,  0,  0],  # no curvature and heading bounds on last element
+                                        [1,  1,  1,  1]])
+
+            b_x[j: j + 2] = np.array([[path[i,     0]],      # NOTE: the bounds of the two last equations remain zero
+                            [path[i + 1, 0]]])
+            b_y[j: j + 2] = np.array([[path[i,     1]],
+                            [path[i + 1, 1]]])
+
 
 
 conv_filt_numba
