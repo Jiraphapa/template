@@ -72,7 +72,7 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    * - Module name
      - Average execution time (without compilation)
    * - calc_vel_profile.py
-     - 55
+     - 009551632000011523
    * - calc_vel_profile_numba.py
      - 555
 
