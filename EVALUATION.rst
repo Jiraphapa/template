@@ -58,12 +58,13 @@ According to CPU profiling, the following Python mudules are the main bottleneck
 3. **conv_filt** 
   Filter a given temporal signal using a convolution (moving average) filter.
 
-Each of the modules are converted into the optimized version with Numba in a separated modules named with the suffix _numba.
+Each of the modules are converted into the optimized version with Numba in a separated modules named with the suffix `_numba`.
 
-Runtime Comparison
+Exucution Time Comparison
 --------
 
-.. list-table:: 
+
+.. list-table:: Exucution Time Comparison for `calc_vel_profile` module
    :widths: 25 25 50
    :header-rows: 1
 
