@@ -259,7 +259,36 @@ The main change from the original implemenation of ``conv_filt`` in ``conv_filt_
                                     np.ones(filt_window) / float(filt_window),
                                     mode="same")[w_window_half:-w_window_half]
 
-Another limitation of Numba is on the support of Numpy’s ``convolve`` function with ``mode`` argument, the default argument for the `mode` parameter is ‘full’, this returns the convolution at each point of overlap, with an output shape of (N+M-1,), however, one shall implement the function for another `mode` support.
+Another limitation of Numba is on the support of Numpy’s ``convolve`` function with ``mode`` argument, the default argument for the `mode` parameter is ‘full’, this returns the convolution at each point of overlap, with an output shape of (N+M-1,)
+ where N is the first one-dimensional input array and M is the second one-dimensional input array, however, one shall implement the function for another `mode` support.
+
+.. code-block:: python
+
+    # returns output of length max(n1, n2).
+    @cc.export('__get_middle_values', 'float64[:](float64[:], int64, int64)')
+    @jit(nopython=True)
+    def __get_middle_values(array, n1, n2):
+        if n1 < n2:
+            n1, n2 = n2, n1
+        n = n2
+        n_left = int(n/2)
+        n_right = n - n_left - 1;
+        return array[n_left:-n_right]
+
+    ..
+    ..
+
+    def conv_filt(...):
+
+        ..
+
+        signal_filt = np.convolve(signal_tmp,
+                                  np.ones(filt_window) / float(filt_window))
+
+        # get_middle_values function works equivalent to adding 'mode="same"' argument in numpy.convolve
+        signal_filt = __get_middle_values(signal_filt, signal_tmp.shape[0], filt_window)[w_window_half:-w_window_half]
 
 
+The mode ‘same’ returns output of length max(M, N). The Numpy function ``convolve`` with mode ``same`` and ``full`` actually follows identical calculation step in implemenation, the 
+only difference is the output length. The function ``__get_middle_values`` helps to trim the output from applying ``np.convolve`` into the output of length max(M, N).
 
