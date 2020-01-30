@@ -47,7 +47,7 @@ Comparing with original ``calc_splines.py`` where the execution time was  0.0011
 - define a timer for function call like ``t = Timer(lambda: calc_splines(path))``
 - item execute timer ``t.timeit(number=1)`` multiple times and compare the time of first call and last execution
 
-Exucution Time Comparison
+Exucution Time Comparison for Numba-optimized modules
 --------
 
 The contained data used to test is always for an entire race track (Berlin, Monteblanco, Modena). Below are comparisons of execution time of the original and optimized modules. The system is tested
@@ -64,6 +64,8 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    * - calc_vel_profile_numba.py
      - 0.00015319499999977282
 
+The module ``calc_vel_profile_numba`` achieved an average of 50.9762% decrease in computation time.
+
 .. list-table:: Table 2: Execution time comparison
    :widths: 40 40
    :header-rows: 1
@@ -74,6 +76,8 @@ The contained data used to test is always for an entire race track (Berlin, Mont
      - 0.4699571319999999
    * - calc_splines_numba.py
      - 0.43418659700000006
+
+The module ``calc_splines_numba`` achieved an average of 7.61145% decrease in computation time.
 
     
 
