@@ -65,14 +65,14 @@ Exucution Time Comparison
 
 The contained data used to test is always for an entire race track (Berlin, Monteblanco, Modena). Below are comparisons of execution time of the original and optimized modules. 
 
-.. list-table:: Execution time comparison for `calc_vel_profile` and `calc_vel_profile_numba` module
-   :widths: 25 25 50
+.. list-table:: Execution time comparison
+   :widths: 40 40
    :header-rows: 1
 
    * - Module name
      - Average execution time (without compilation)
-   * - calc_vel_profile
+   * - calc_vel_profile.py
      - 55
-   * - calc_vel_profile_numba
+   * - calc_vel_profile_numba.py
      - 555
 
