@@ -70,9 +70,9 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    * - Module name
      - Average execution time after compilation (seconds)
    * - calc_splines.py
-     - 0.4458398690000001
+     - 0.4699571319999999
    * - calc_splines_numba.py
-     - 0.44003033999999985
+     - 0.43418659700000006
 
 
 
