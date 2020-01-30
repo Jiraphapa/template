@@ -12,10 +12,17 @@ CPU Profile for Local Trajectory Planner Module
 The conventional CPU profiling is done through the sampling of function calls stack traces. Below is the profile output of the running process 
 ``main_mod_local_traj.py``
 
+.. image:: images/mod_local_traj_interactive_profile.svg
+  :width: 600
+  :alt: Flame graph of the process main_mod_local_traj.py
+
 .. raw:: html
-    :file: mod_local_traj_interactive_profile.svg.svg
+
+   <img src="../images/mod_local_traj_interactive_profile.svg" alt="Latest PyPi version"></a>
 
 
+.. raw:: html
+    :file: mod_local_traj_interactive_profile.svg
 
 From `Flame Graphs <http://www.brendangregg.com/flamegraphs.html>`_, the x-axis shows the stack profile population, sorted alphabetically (it is not the passage of time), and the y-axis shows stack depth, counting from zero at the bottom. Each rectangle represents a stack frame. The wider a frame is is, the more often it was present in the stacks. The top edge shows what is on-CPU, and beneath it is its ancestry. The colors are usually not significant, picked randomly to differentiate frames.
 

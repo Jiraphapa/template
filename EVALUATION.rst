@@ -92,9 +92,9 @@ The contained data used to test is always for an entire race track (Berlin, Mont
    :header-rows: 1
 
    * - Module name
-     - Average execution time (without compilation)
+     - Average execution time without compilation (in seconds)
    * - conv_filt.py
-     - 55
+     - 0.009551632000011523 
    * - conv_filt_numba.py
      - 555
 
