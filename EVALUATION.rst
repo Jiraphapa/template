@@ -32,6 +32,20 @@ The measurement of the performance is done by using the ``timeit`` module functi
 
     print("Execution time for calc_splines with numba (after compilation):",t.timeit(number=1))
 
+The example code are executed on x86\_64 architecture and gave the following output:
+
+.. code-block:: python
+
+    Execution time for calc_splines with numba (with compilation): 3.6058600189999988
+    Execution time for calc_splines with numba (after compilation): 0.0004452480000001202
+
+Comparing with original calc_splines.py where the execution time was  0.0011502260000000042 sec., Numba optimized code can boost the exe. time to approx. 2.58 times faster on the given input. To follwing steps are applied to measure the execution time (The ``timeit`` tool can also be invoke in the command-line):
+
+- importing ``from timeit import Timer``
+- define a timer for function call like ``t = Timer(lambda: calc_splines(path))``
+- item execute timer ``t.timeit(number=1)`` multiple times and compare the time of first call and last execution
+
+
 
 According to CPU profiling, the following Python mudules are the main bottleneck of the running process `main_mod_local_traj`:
 
