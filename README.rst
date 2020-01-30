@@ -190,7 +190,7 @@ the call is made to internal ``isclose`` function implementation.
 The compact implemention of Numpy's is according to the original Numpy's implemention, with a restriction on finite array.
 
 Another limitation of Numba is on the support of Numpy's ``diff`` function with ``axis`` argument, the default argument for the ``axis``
-parameter the last axis, however, one shall implement the function for axis support
+parameter the last axis, however, one shall implement the function for axis support:
 
 .. code-block:: python
 
@@ -289,6 +289,6 @@ Another limitation of Numba is on the support of Numpy’s ``convolve`` function
         signal_filt = __get_middle_values(signal_filt, signal_tmp.shape[0], filt_window)[w_window_half:-w_window_half]
 
 
-The mode ‘same’ returns output of length max(M, N). The Numpy function ``convolve`` with mode ``same`` and ``full`` actually follows identical calculation step in implemenation, the 
+The `mode = same` returns output of length max(M, N). The Numpy function ``convolve`` with mode ``same`` and ``full`` actually follows identical calculation step in implemenation, the 
 only difference is the output length. The function ``__get_middle_values`` helps to trim the output from applying ``np.convolve`` into the output of length max(M, N).
 
