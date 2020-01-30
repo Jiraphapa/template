@@ -209,7 +209,8 @@ parameter the last axis, however, this can be fixed by array transposing techniq
             el_lengths = np.sqrt(np.sum(np.power(diff_path_axis_0, 2), axis=1))
 
 The unsupported Numpy ``diff`` operation in the row axis of ``path`` can be resolved by transposing the ``path`` array and calculate 
-the discrete difference along the axis and then transpose back.
+the discrete difference along the axis and then transpose back. Notes that there are lots of variables declaration due to 
+requirement of static typing of AOT compilation mode (otherwise it may cause errors like in `BoundFunction` due to array reshape, incompatible size, etc.).
 
 It is also important to note that with AOT compilation, Numba cannot statically determine the type of the variable, sometimes we need to 
 explicitly cast the type, for example, in the step `create template for M array entries` of ``calc_splines`` function:
