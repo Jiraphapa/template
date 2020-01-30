@@ -25,8 +25,7 @@ The stack traces are collected using sampling where each box represents the func
 
 In the graph, the module ``main_ltpl`` consumes most of the computation time, its main bottleneck children includes:
 
-1. **calc_vel_profile** 
-  Calculates a velocity profile using the tire and motor limits as good as possible.
+- ``OnlineTrajectoryHandler.py`` calling ``calc_splines.py`` from ``main_online_callback.py``
 2. **calc_splines** 
   Solve for a curvature continuous cubic spline between given poses.
 3. **conv_filt** 
