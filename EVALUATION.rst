@@ -75,11 +75,9 @@ In the example below, the dictionary data of each race track is stored in the ``
     t = Timer(lambda: calc_splines(path, el_lengths, psi_s, psi_e, use_dist_scaling))
     print("Execution time for calc_splines with numba (after compilation):",t.timeit(number=1))
 
-To get an average execution time, ones could use ``timeit.repeat``
+To get an average execution time, ones could use ``timeit.repeat`` to benchmark repeatedly. The default repetition is 3 and the parameter `n` is the number of executions.
 
 .. code-block:: python
-
-  import timeit 
 
   reps = timeit.repeat(repeat=3, n=10000,
                       stmt="calc_splines(path, el_lengths, psi_s, psi_e, use_dist_scaling)",
