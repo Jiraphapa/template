@@ -1,6 +1,8 @@
 Performace Evaluation
 ================================
 
+timeit Module for Execution Time Measurement
+--------
 The measurement of the performance is done by using the ``timeit`` module functions. As Numba has to compile the function for the argument types given before it executes the machine code version of the function, there can be overhead in compilation time when measuring 
 calling function for the first time but when it is called again the with same types, it can reuse the cached version instead of having to compile again (setting ``cache=True`` in ``@jit`` decorator), results 
 in a faster code. For instance, the code taken partially from ``calc_splines_numba.py``:
