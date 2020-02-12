@@ -8,8 +8,10 @@ one may yield only 7.61145% improvement. With Numba alone the performance varied
 Numba works best on code that uses NumPy arrays and functions, and loops. The efficiency improvement possibilities are
 
 
-- Numpy support: Some Numpy implementations are not supported which leads to lower efficiency in optimization. Numba's community is maturing and in the future there's possibility for more Numpy support.
-
+- Numpy support: some Numpy implementations are not supported which leads to lower efficiency in optimization. Numba's community is maturing and in the future there might be more support possibilities in Numpy implementation.
+- Scipy support: 
+- Compiler techniques:
+- Use of accelerator:
 
 Frequent Issues and Troubleshooting
 --------
