@@ -1,7 +1,7 @@
 Performace Evaluation
 ================================
 
-timeit Module for Execution Time Measurement
+The timeit Module for Execution Time Measurement
 --------
 The measurement of the performance is done by using the ``timeit`` module functions. As Numba has to compile the function for the argument types given before it executes the machine code version of the function, there can be overhead in compilation time when measuring 
 calling function for the first time but when it is called again the with same types, it can reuse the cached version instead of having to compile again (setting ``cache=True`` in ``@jit`` decorator), results 
@@ -48,6 +48,33 @@ Comparing with original ``calc_splines.py`` where the execution time was  0.0011
 - importing ``from timeit import Timer``
 - define a timer for function call like ``t = Timer(lambda: calc_splines(path))``
 - item execute timer ``t.timeit(number=1)`` multiple times and compare the time of first call and last execution
+
+Testing With Race Track (Berlin, Monteblanco, Modena) Data
+--------
+To test 
+
+.. code-block:: python
+
+  from timeit import Timer
+  import pickle
+  import os, glob
+
+  path = 'unittest/calc_splines_inputs/'
+  inputs = list()
+  for filename in glob.glob(os.path.join(path, '*.pkl')):
+      with open(filename, 'rb') as fh:
+          data = pickle.load(fh)
+          inputs.append(data)
+
+  input = inputs[0]
+  print("Execution time for calc_splines with numba (with compilation):",t.timeit(number=1))
+
+  for input in self.inputs:
+    path, el_lengths, psi_s, psi_e, use_dist_scaling = input['path'], input.get('el_lengths',None), input.get('psi_s',None), input.get('psi_e',None), input.get('use_dist_scaling',True)
+    t = Timer(lambda: calc_splines(path, el_lengths, psi_s, psi_e, use_dist_scaling))
+    print("Execution time for calc_splines with numba (after compilation):",t.timeit(number=1))
+
+
 
 Exucution Time Comparison for Numba-optimized modules
 --------
