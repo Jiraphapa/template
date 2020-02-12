@@ -51,8 +51,8 @@ Comparing with original ``calc_splines.py`` where the execution time was  0.0011
 
 Testing With Race Track (Berlin, Monteblanco, Modena) Data
 --------
-To evaluate the functions given the `Pickle` file of race track data, ones shall specify the path and load the file with ``.pkl`` extension. 
-In the example below, the dictionary data of each race track is stored in the ``inputs`` list.
+To evaluate the functions given the `Pickle` file of race track data, ones shall specify the path and load files with ``.pkl`` extension. 
+In the example below, the dictionary data of each race track is stored in the ``inputs`` list. The code below outputs the execution time before and after the compilation.
 
 .. code-block:: python
 
@@ -75,7 +75,18 @@ In the example below, the dictionary data of each race track is stored in the ``
     t = Timer(lambda: calc_splines(path, el_lengths, psi_s, psi_e, use_dist_scaling))
     print("Execution time for calc_splines with numba (after compilation):",t.timeit(number=1))
 
+To get an average execution time, ones could use ``timeit.repeat``
 
+.. code-block:: python
+
+  import timeit 
+
+  reps = timeit.repeat(repeat=3, n=10000,
+                      stmt="calc_splines(path, el_lengths, psi_s, psi_e, use_dist_scaling)",
+                      setup="import numpy as np")
+
+  average_time = np.mean(reps)
+  
 
 Exucution Time Comparison for Numba-optimized modules
 --------
