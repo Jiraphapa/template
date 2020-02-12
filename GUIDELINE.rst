@@ -84,8 +84,6 @@ To get an average execution time, ones could use ``timeit.repeat`` to benchmark 
                       setup="import numpy as np")
 
   average_time = np.mean(reps)
-
-Further examples on unit testing can be found on the unittest modules in the repository.
   
 
 Exucution Time Comparison for Numba-optimized modules
