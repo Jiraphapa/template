@@ -51,7 +51,8 @@ Comparing with original ``calc_splines.py`` where the execution time was  0.0011
 
 Testing With Race Track (Berlin, Monteblanco, Modena) Data
 --------
-To test 
+To evaluate the functions given the `Pickle` file of race track data, ones shall specify the path and load the file with ``.pkl`` extension
+ as in the example below:
 
 .. code-block:: python
 
