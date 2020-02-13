@@ -20,8 +20,10 @@ Cython is a language with a mixture of C and Python syntax that aims to deliver 
 Numba is suitable for instantly integrate with existing project with minor code changes (if Numba code does not work, it can be revert back to Python easily). 
 
 - Parallel computing
-- Compiler techniques
+Numba supports parallelization both on CPU and GPU. The platform Nvidia Drive PX 2 using to run the algorithm and Numba support for both NVIDIA's CUDA provide a potential room for further development. Numba also supports SIMD vectorization which can automatically translate some loops into vector instructions for 2-4x speed improvements (see `Numba for CUDA GPUs <http://numba.pydata.org/numba-doc/latest/cuda/index.html>`_). 
+
 - Usage of hardware accelerator
+
 
 It is inevitable to note the famous saying among software engineers ``“Premature optimization is the root of all evil”`` (Donald Ervin Knuth, The Art of Computer Programming, Volume 1: Fundamental Algorithms), too early optimization of the code is not a best practice and may lead to misfunctionality and spaghetti code. Optimization shall be 
 done with code with possibly minimal further changes for effective delopment process.
