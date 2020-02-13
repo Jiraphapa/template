@@ -15,12 +15,15 @@ some Numpy implementations are not supported which leads to lower efficiency in 
 apart from Numpy, SciPy is a free and open-source popular Python library also used for scientific computing and technical computing. SciPy usually contains more complex computation functionalities and modules and it is built on top of Numpy. This can be considered as an alternative in case of unsupported Numpy operation. Some operations in SciPy is claimed to be faster than Numpy in Numba (see `This thread <https://stackoverflow.com/questions/15670094/speed-up-solving-a-triangular-linear-system-with-numpy>`_), however, Numpy is generally faster than SciPy as it is written in C. Note 
 that SciPy support in Numba is also limited.
 
-- Cython:
-- Parallel computing: 
-- Compiler techniques:
-- Usage of hardware accelerator:
+- Cython
+Cython is a language with a mixture of C and Python syntax that aims to deliver the C performance on Python code. Unlike Numba which is a just-in-time (JIT) compiler that translates Python code into native machine instructions using the LLVM compiler library, Cython is translates Cython code to C code. Cython code is a separated file from Python file and compiled by C compiler. Cython is very matured and widely used in many scientific computing libraries. In comparison,
+Numba is suitable for instantly integrate with existing project with minor code changes (if Numba code does not work, it can be revert back to Python easily). 
 
-tradeoffs: readability
+- Parallel computing
+- Compiler techniques
+- Usage of hardware accelerator
+
+It is important to note that
 
 Frequent Issues and Troubleshooting
 --------
