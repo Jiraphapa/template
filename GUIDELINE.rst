@@ -71,6 +71,7 @@ Tuple built-in is not supported in nopython mode (see `this thread <https://gith
 
 - Unicode string support
 see the following solutions:
+
 https://stackoverflow.com/questions/56463147/how-to-specify-the-string-data-type-when-using-numba
 
 https://stackoverflow.com/questions/56463147/how-to-specify-the-string-data-type-when-using-numba
