@@ -39,4 +39,44 @@ Problem when trying to call uncompiled function from a compiled function: ones s
 How to deal with signatures of the function with default values 
 (see `this thread <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_).
 
-- Invalid use of Function(<function diff at 0x111c6b950>) with argument(s) of type(s): (array(float64, 2d, A), Literal[int](0))
+- Cannot execute NumPy methods on non-contiguous arrays
+Solution: replace numpy array with ``np.copy(numpy_array)`` (see `this thread <https://github.com/numba/numba/issues/1418>`_).
+
+- Python(41093,0x7fff7623f300) malloc: *** error for object 0x7fea3b73c628: incorrect checksum for freed object - object was probably modified after being freed. #3
+Caused by passing argument not the type declared (see `this thread <https://github.com/hhatto/otamapy/issues/3>`_).
+
+- Support for axis arguments on reduction functions
+(see `this thread <https://github.com/numba/numba/issues/1269>`_).
+
+- Unicode string support
+https://stackoverflow.com/questions/56463147/how-to-specify-the-string-data-type-when-using-numba
+
+https://stackoverflow.com/questions/56463147/how-to-specify-the-string-data-type-when-using-numba
+
+https://stackoverflow.com/questions/48987368/how-can-i-pass-string-type-in-class-in-numba-jitclass-python
+
+https://stackoverflow.com/questions/32056337/python-can-numba-work-with-arrays-of-strings-in-nopython-mode
+
+https://stackoverflow.com/questions/46708708/compare-strings-in-numba-compiled-function
+
+https://github.com/numba/numba/issues/3323
+
+https://github.com/numba/numba/issues/4018
+
+https://github.com/numba/numba/pull/4425
+
+
+- Tuple not supported
+Tuple built-in is not supported in nopython mode (see `this thread <https://github.com/numba/numba/issues/2771>`_).
+
+- numpy.hstack() not working in a jitted function
+(see `this thread <https://stackoverflow.com/questions/54217007/numpy-hstack-not-working-in-a-jitted-function>`_).
+
+- Issue with np.concatenate
+(see `this thread <https://github.com/numba/numba/issues/2787>`_).
+
+- Enable automatic parallel execution in pre-compiled code
+(see `this thread <https://github.com/numba/numba/issues/3336>`_).
+
+
+
