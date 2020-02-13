@@ -12,7 +12,7 @@ Numba works best on code that uses NumPy arrays and functions, and loops. The ef
 some Numpy implementations are not supported which leads to lower efficiency in optimization, however, Numba's community is maturing and in the future there might be more support possibilities in Numpy implementation.
 
 - SciPy support
-apart from Numpy, SciPy is a free and open-source popular Python library also used for scientific computing and technical computing. SciPy usually contains more complex computation functionalities and modules and it is built on top of Numpy. This can be considered as an alternative in case of unsupported Numpy operation. Some operations in SciPy is claimed to be faster than Numpy in Numba (see `This thread <https://stackoverflow.com/questions/15670094/speed-up-solving-a-triangular-linear-system-with-numpy>`_), however, Numpy is generally faster than SciPy as it is written in C. Note 
+apart from Numpy, SciPy is a free and open-source popular Python library also used for scientific computing and technical computing. SciPy usually contains more complex computation functionalities and modules and it is built on top of Numpy. This can be considered as an alternative in case of unsupported Numpy operation. Some operations in SciPy is claimed to be faster than Numpy in Numba (see `this thread <https://stackoverflow.com/questions/15670094/speed-up-solving-a-triangular-linear-system-with-numpy>`_), however, Numpy is generally faster than SciPy as it is written in C. Note 
 that SciPy support in Numba is also limited.
 
 - Cython
@@ -30,10 +30,13 @@ Frequent Issues and Troubleshooting
 Several issues and errors are encountered during the development and below are the approaches for commonly found errors: 
 
 - Cannot determine Numba type" when calling AOT-compiled function from AOT-compiled function
-Problem when trying to call uncompiled function from a compiled function: ones shall compile the functions to be called from compiled function (see ` this thread <https://github.com/numba/numba/issues/3823>`_).
+Problem when trying to call uncompiled function from a compiled function: ones shall compile the functions to be called from compiled function (see `this thread <https://github.com/numba/numba/issues/3823>`_).
 
 - Untyped list problem
-(see ` this troubleshooting <http://numba.pydata.org/numba-doc/latest/user/troubleshoot.html#my-code-has-an-untyped-list-problem>`_).
+(see `untyped list troubleshooting <http://numba.pydata.org/numba-doc/latest/user/troubleshoot.html#my-code-has-an-untyped-list-problem>`_).
 
 - Numba: calling jit with explicit signature using arguments with default values
-How to deal with signatures of the function with default values (see ` <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_).
+How to deal with signatures of the function with default values 
+(see `this thread <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_).
+
+- Invalid use of Function(<function diff at 0x111c6b950>) with argument(s) of type(s): (array(float64, 2d, A), Literal[int](0))
