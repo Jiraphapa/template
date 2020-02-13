@@ -23,7 +23,7 @@ Numba is suitable for instantly integrate with existing project with minor code 
 - Compiler techniques
 - Usage of hardware accelerator
 
-It is important to note that
+It is inevitable to note the famous saying among software engineers ``“Premature optimization is the root of all evil”``, too early optimization of the code is not a best practice and may lead to several
 
 Frequent Issues and Troubleshooting
 --------
