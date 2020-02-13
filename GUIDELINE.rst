@@ -48,6 +48,15 @@ Caused by passing argument not the type declared (see `this thread <https://gith
 - Support for axis arguments on reduction functions
 (see `this thread <https://github.com/numba/numba/issues/1269>`_).
 
+- JIT results differs from AOT precompiled module
+Caused by data type, precision (see `this thread <https://github.com/numba/numba/issues/2755>`_).
+
+- None value error: None construct in nopython mode
+(see `this thread <https://github.com/numba/numba/issues/3585>`_).
+
+- Issue with np.concatenate
+(see `this thread <https://github.com/numba/numba/issues/2787>`_).
+
 - Unicode string support
 https://stackoverflow.com/questions/56463147/how-to-specify-the-string-data-type-when-using-numba
 
