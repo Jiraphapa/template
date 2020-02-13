@@ -28,3 +28,12 @@ done with code with possibly minimal further changes for effective delopment pro
 Frequent Issues and Troubleshooting
 --------
 Several issues and errors are encountered during the development and below are the approaches for commonly found errors: 
+
+- Cannot determine Numba type" when calling AOT-compiled function from AOT-compiled function
+Problem when trying to call uncompiled function from a compiled function: ones shall compile the functions to be called from compiled function, see ` <https://github.com/numba/numba/issues/3823>`_.
+
+- Untyped list problem
+see ` <http://numba.pydata.org/numba-doc/latest/user/troubleshoot.html#my-code-has-an-untyped-list-problem>`_.
+
+- Numba: calling jit with explicit signature using arguments with default values
+How to deal with signatures of the function with default values, see ` <https://stackoverflow.com/questions/46123657/numba-calling-jit-with-explicit-signature-using-arguments-with-default-values>`_.
