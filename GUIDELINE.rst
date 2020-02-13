@@ -23,7 +23,8 @@ Numba is suitable for instantly integrate with existing project with minor code 
 - Compiler techniques
 - Usage of hardware accelerator
 
-It is inevitable to note the famous saying among software engineers ``“Premature optimization is the root of all evil”``, too early optimization of the code is not a best practice and may lead to several
+It is inevitable to note the famous saying among software engineers ``“Premature optimization is the root of all evil”`` (Donald Ervin Knuth, The Art of Computer Programming, Volume 1: Fundamental Algorithms), too early optimization of the code is not a best practice and may lead to misfunctionality and spaghetti code. Optimization shall be 
+done with code with possibly minimal further changes for effective delopment process.
 
 Frequent Issues and Troubleshooting
 --------
